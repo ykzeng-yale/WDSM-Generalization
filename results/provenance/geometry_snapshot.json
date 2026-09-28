@@ -1,0 +1,16 @@
+{
+  "snapshot_id": "4485ffbfce20",
+  "created_utc": "2026-09-28T16:41:17.468932+00:00",
+  "hash_algorithm": "SHA256",
+  "file_hashes": {
+    "R/wm_geometry.R": "d8653bb84e3f294f810797b1727d0415dc3de6165e928f50c7cbef06f9875c49",
+    "R/wm_geometry_alpha.R": "f74e262a126d13b41c98b0f977c27ed8fb3a8ea78952a37085d8dfcdf3b07284",
+    "R/wm_geometry_overlap.R": "e1b827f7383ddb0d189fb6a83aaafa8575569e0e0b97156450ec66066e47b0e3",
+    "simulations/benchmarks.R": "ee5d820636ce3a0fc3f3a84b8c2c263fd9f0996b48fc40defc5611e212b6ff0b",
+    "simulations/geometry_boundary_constants.R": "7694d5c44deedfa6e3a363c6a489cc692ac223a06a998f08c174d1e33a6b220b",
+    "simulations/geometry_boundary_constants.csv": "c0b2978f1e302d560f5541dea26abb6af7760b68006a55af04d2504121d84749"
+  },
+  "original_manifest_sha256": "e2bcb7aef80cf8820b9e8570d6fb63acdf7075414c25d6341dcf440a1b3debc0",
+  "scope": "Source artifact digests at execution freeze; not the current checkout and not a Git commit.",
+  "annotation": "The original pilot-comparison sentence applies to comparisons.csv, not every pilot alpha comparison; no estimates were changed."
+}

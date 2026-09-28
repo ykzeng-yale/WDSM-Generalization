@@ -1,0 +1,47 @@
+{
+  "upstream": "https://github.com/ykzeng-yale/wdsmatch",
+  "upstream_commit": "f3ddc9bd962482501321ee050df2a093f80694ca",
+  "upstream_version": "0.2.1",
+  "license": "GPL-3",
+  "excluded": [
+    "source manuscripts",
+    "research notes",
+    "imported memories",
+    "source caches",
+    "upstream historical simulation outputs and raw per-replication records"
+  ],
+  "release_status": "package and all three synthetic studies independently validated; aggregate replay evidence in results/provenance.json",
+  "data_note": "Exact upstream synthetic dataset and generator, seed 2025; no real application data copied.",
+  "upstream_starting_paths": [
+    "DESCRIPTION",
+    "NAMESPACE",
+    "NEWS.md",
+    "R/",
+    "man/",
+    "tests/",
+    "data/survey_obs.rda",
+    "data-raw/make_survey_data.R"
+  ],
+  "validation": {
+    "package_snapshot": "c2817610a917",
+    "R_CMD_check": "--no-manual; Status OK",
+    "test_expectations_passed": 2347,
+    "standalone_checks_passed": 7,
+    "subsequent_changes": "Documentation and explanatory inference-contract text only in package R/man; independent content review and 18 Rd parse checks passed. Collector, plotting and first-stage validation-only repairs separately checked. Gaussian distance assertion repair does not change the estimator, DGP or RNG; all retained first-stage records and source lineage independently audited.",
+    "primary_datasets": 48000,
+    "primary_comparison_records": 576000,
+    "supplement_datasets": 1600,
+    "supplement_comparison_records": 10800,
+    "first_stage": {
+      "datasets": 39000,
+      "comparison_records": 234000,
+      "aggregate_rows": 234,
+      "successful_records": 233972,
+      "genuine_failure_records": 28,
+      "affected_datasets": 7,
+      "independent_audit": "automated full-record, source-lineage, RNG, summary and geometry audit passed; not human peer review"
+    },
+    "aggregate_provenance": "results/provenance.json"
+  },
+  "publication_status": "Code and aggregate synthetic results only; manuscript maintained separately."
+}

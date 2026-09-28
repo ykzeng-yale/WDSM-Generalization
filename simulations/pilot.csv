@@ -1,0 +1,9 @@
+scenario,n,d,M,design,seed
+strong_d1_m1_n200,200,1,1,strong,928001
+strong_d2_m3_n200,200,2,3,strong,928002
+strong_d3_m3_n200,200,3,3,strong,928003
+strong_d5_m3_n200,200,5,3,strong,928004
+weak_d1_m1_n200,200,1,1,weak,928005
+weak_d2_m3_n200,200,2,3,weak,928006
+weak_d3_m3_n200,200,3,3,weak,928007
+weak_d5_m3_n200,200,5,3,weak,928008

@@ -1,0 +1,11 @@
+.DS_Store
+.Rhistory
+.RData
+*.Rcheck/
+*.tar.gz
+*.so
+*.o
+local-runtime/
+scratch/
+logs/
+results/raw/

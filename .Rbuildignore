@@ -1,0 +1,11 @@
+^\.git$
+^\.gitignore$
+^SOURCE_PROVENANCE\.json$
+^simulations$
+^validation$
+^results$
+^logs$
+^scratch$
+^local-runtime$
+^data-raw$
+^README\.md$

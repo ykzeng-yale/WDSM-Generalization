@@ -1,0 +1,9 @@
+scenario,branch,n,d,M,fraction1,seed,replications
+spline_d1_n800,spline,800,1,3,NA,933101,200
+spline_d1_n2000,spline,2000,1,3,NA,933102,200
+spline_d2_n800,spline,800,2,3,NA,933103,200
+spline_d2_n2000,spline,2000,2,3,NA,933104,200
+strata_n800,strata,800,1,3,NA,933105,200
+strata_n2000,strata,2000,1,3,NA,933106,200
+split_half_n2000,split,2000,2,3,0.5,933107,200
+split_third_n2000,split,2000,2,3,0.333333333333333,933108,200

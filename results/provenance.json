@@ -1,0 +1,276 @@
+{
+  "schema_version": 1,
+  "status": "All three completed studies independently audited; code and aggregate synthetic results only.",
+  "prepared_date": "2026-09-28",
+  "contents": "Synthetic-study aggregate summaries, configuration/replication manifests and numerical integration summaries only. No individual subject data or per-replication estimator records.",
+  "sources": [
+    "provenance/primary_snapshot.json",
+    "provenance/extension_snapshot.json",
+    "provenance/geometry_snapshot.json",
+    "first_stage/provenance.json"
+  ],
+  "artifacts": [
+    {
+      "path": "primary/summary.csv",
+      "source_snapshot": "a8f9cf66188d",
+      "source_artifact": "summary.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "945af521ef223456f6609d7a3f9ca0bd3c2722c05b9c279f328a7e5c7213eb78"
+    },
+    {
+      "path": "primary/summary_joined.csv",
+      "source_snapshot": "a8f9cf66188d",
+      "source_artifact": "summary_joined.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "715cc3f32827ec2b6be54a83ebd253599bbe804a7c519fde53cec947bc15a48e"
+    },
+    {
+      "path": "primary/config.csv",
+      "source_snapshot": "a8f9cf66188d",
+      "source_artifact": "production_config.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "33d516159766f721f2d984d2e3a6b0babdb65b040395e7964d678fb8f6955319"
+    },
+    {
+      "path": "primary/task_plan.csv",
+      "source_snapshot": "a8f9cf66188d",
+      "source_artifact": "production_plan.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "e47b64036181b816bf5070ecf2c758636bf7e486aa9969ed895c15a90f230491"
+    },
+    {
+      "path": "supplement/summary.csv",
+      "source_snapshot": "7fa0a62d1f9f",
+      "source_artifact": "supplement_summary.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "272640242a7b0fdcda3ec110bc47d92fbf6c326a7efe107296c603aa4a0cf2d2"
+    },
+    {
+      "path": "supplement/summary_joined.csv",
+      "source_snapshot": "7fa0a62d1f9f",
+      "source_artifact": "supplement_summary_joined.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "b9fea02e81bd2d56773e546ff81d897b30be50932c8d5ff5ac09e6f1f7cbf393"
+    },
+    {
+      "path": "supplement/task_plan.csv",
+      "source_snapshot": "7fa0a62d1f9f",
+      "source_artifact": "plan.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "98be516baae01ad7384ce3d716c88ee0331ddba3b9c56cc719722d4a18987364"
+    },
+    {
+      "path": "geometry/config.csv",
+      "source_snapshot": "4485ffbfce20",
+      "source_artifact": "config.csv",
+      "transformation": "byte-for-byte copy",
+      "source_sha256": "c0b2978f1e302d560f5541dea26abb6af7760b68006a55af04d2504121d84749"
+    },
+    {
+      "path": "primary/recovery_audit.csv",
+      "source_snapshot": "a8f9cf66188d",
+      "source_artifact": "recovery_plan.csv",
+      "transformation": "absolute artifact paths replaced by basenames; other values retained",
+      "source_sha256": "0523150038f5a864fa9ec882404ea8218f09a0db94284011d9fb9a41a1354b5b"
+    },
+    {
+      "path": "supplement/config.csv",
+      "source_snapshot": "7fa0a62d1f9f",
+      "source_artifact": "plan.csv",
+      "transformation": "distinct declared configuration columns in first-occurrence order",
+      "source_sha256": "98be516baae01ad7384ce3d716c88ee0331ddba3b9c56cc719722d4a18987364"
+    },
+    {
+      "path": "geometry/geometry.csv",
+      "source_snapshot": "4485ffbfce20",
+      "source_artifact": "validated numeric geometry CSV export",
+      "transformation": "combined component/covariance tables with explicit geometry keys; numeric strings retained"
+    },
+    {
+      "path": "geometry/beta.csv",
+      "source_snapshot": "4485ffbfce20",
+      "source_artifact": "validated numeric geometry CSV export",
+      "transformation": "combined component/covariance tables with explicit geometry keys; numeric strings retained"
+    },
+    {
+      "path": "geometry/beta_covariance.csv",
+      "source_snapshot": "4485ffbfce20",
+      "source_artifact": "validated numeric geometry CSV export",
+      "transformation": "Combined keyed covariance tables; numeric covariance strings retained. Matrix positions 1..M mapped to overlap indices 0..M-1, including originally unnamed exact zero matrices."
+    },
+    {
+      "path": "geometry/boundary_terms.csv",
+      "source_snapshot": "4485ffbfce20",
+      "source_artifact": "validated numeric geometry CSV export",
+      "transformation": "combined component/covariance tables with explicit geometry keys; numeric strings retained"
+    },
+    {
+      "path": "geometry/boundary_term_covariance.csv",
+      "source_snapshot": "4485ffbfce20",
+      "source_artifact": "validated numeric geometry CSV export",
+      "transformation": "combined component/covariance tables with explicit geometry keys; numeric strings retained"
+    }
+  ],
+  "postprocessing": {
+    "supplement_join_source_md5": {
+      "simulations/supplement_join.R": "4d538bde52a74fc2d060bb8668e830b2",
+      "simulations/first_stage.R": "6900c52cf7803ddab86b948c966d633c",
+      "simulations/first_stage_benchmarks.R": "10af6bc4490e5574d4938c6e24119466",
+      "simulations/benchmarks.R": "5a14ed72ae9f1795cd5c352b4adb9984",
+      "simulations/supplement.R": "7e9618d98f485fcea0566bb32a7d8254"
+    },
+    "separate_from_frozen_estimator_source": true
+  },
+  "studies": {
+    "primary": {
+      "snapshot_id": "a8f9cf66188d",
+      "scenarios": 48,
+      "replications_per_scenario": 1000,
+      "datasets": 48000,
+      "records": 576000,
+      "summary_rows": 576,
+      "estimator_failures": 0,
+      "task_count_original": 244,
+      "recovery_suffixes": 25,
+      "recovered_dataset_ids": 168,
+      "retained_records_before_recovery": 573984,
+      "replication_ids": "1:1000 per scenario",
+      "config": "primary/config.csv",
+      "plan": "primary/task_plan.csv",
+      "recovery": "primary/recovery_audit.csv"
+    },
+    "supplement": {
+      "snapshot_id": "7fa0a62d1f9f",
+      "replications_per_scenario": 200,
+      "datasets": 1600,
+      "records": 10800,
+      "summary_rows": 54,
+      "estimator_failures": 0,
+      "task_count": 34,
+      "retained_pilot_tasks": 8,
+      "replication_ids": "1:200 per scenario",
+      "retained_pilot_ids": "1:5 per scenario",
+      "config": "supplement/config.csv",
+      "plan": "supplement/task_plan.csv",
+      "scenarios": 8
+    },
+    "first_stage": {
+      "snapshot_id": "7fa0a62d1f9f",
+      "guard_correction_snapshot_id": "a689f96ccedc",
+      "status": "completed and independently audited",
+      "scenarios": 39,
+      "replications_per_scenario": 1000,
+      "datasets": 39000,
+      "records": 234000,
+      "summary_rows": 234,
+      "successful_records": 233972,
+      "genuine_failure_records": 28,
+      "affected_datasets": 7,
+      "failure_reason": "Logistic weight fit reached its declared parameter boundary; no clipping, replacement or refitting. Summaries condition on successful records and retain requested/completed/failed denominators.",
+      "original_records_retained": 222813,
+      "guard_error_records_corrected": 327,
+      "missing_dataset_records_generated": 10860,
+      "original_errors_retained_in_history": 355,
+      "config": "first_stage/config.csv",
+      "plan": "first_stage/task_plan.csv",
+      "recovery": "first_stage/recovery_summary.csv",
+      "provenance": "first_stage/provenance.json"
+    }
+  },
+  "geometry": {
+    "snapshot_id": "4485ffbfce20",
+    "config": "geometry/config.csv",
+    "method": "boundary rank Monte Carlo for d>1; exact closed form for d=1",
+    "source_geometry_rds_sha256": "85a624c3193dd6e121a57fc8d250f89e39cc3d5202960c2eb4e7f148dfc703f4",
+    "source_metadata_rds_sha256": "b38835b20c9dcd0bec42c6e021d2cfa18cb81ea4c93dc4ed2fe88c5e58ad4503",
+    "covariance_scope": "covariance of beta estimates, already divided by integration draw count",
+    "independent_of_estimator_simulation": true,
+    "relative_benchmark_mcse_goal": 0.01,
+    "error_guarantee": false,
+    "rng_kind": "Mersenne-Twister/Inversion/Rejection",
+    "runtime": "R 4.4.2",
+    "numeric_source_hashes": "provenance/geometry_export_inputs.json",
+    "first_stage_assembly": {
+      "selection": "first_stage/geometry_selection.csv",
+      "scalar_refinement": "first_stage/alpha_only.csv",
+      "scope": "M3_d5 scalar alpha refined for first-stage joins only; primary/supplemental geometry unchanged. Shared geometry covariance is reconstructed by reproduce_first_stage.R."
+    }
+  },
+  "rng": {
+    "simulation_kind": "L'Ecuyer-CMRG",
+    "normal_kind": "Inversion",
+    "sample_kind": "Rejection",
+    "indexing": "Set each scenario base seed; replication r uses the r-th independent stream via parallel::nextRNGStream. Paired estimators share its dataset. See source helpers for exact draw order.",
+    "base_seeds": "Simulation seeds: primary/config.csv, supplement/config.csv and first_stage/config.csv. Independent numerical-integration seeds: geometry/config.csv and first_stage/alpha_only.csv."
+  },
+  "privacy_transformations": [
+    "Retained only source-relative paths and artifact basenames in public provenance.",
+    "Did not copy execution hosts, accounts, absolute paths, internal review documents or raw estimator/subject records."
+  ],
+  "aggregate_reproduction": {
+    "entry_point": "results/reproduce_benchmarks.R",
+    "uses_random_numbers": false,
+    "validation_status": "passed_retained_v2",
+    "tolerance": 2e-10,
+    "preflight_correction": "Initial runtime rejected exact-d1 fallback covariance labels 1..M. Export now explicitly maps matrix positions to overlap indices 0..M-1; covariance values unchanged.",
+    "recorded_utc": "2026-09-28T18:30:09.708870+00:00",
+    "runtime": "R 4.4.2",
+    "command": "Rscript --vanilla results/reproduce_benchmarks.R",
+    "result": "PASS: public artifact hashes and all 576 primary / 54 supplemental benchmark rows agree.",
+    "resources": {
+      "cpus": 1,
+      "wall_seconds_cap": 600,
+      "rng_or_estimator_runs": false
+    },
+    "validation_log": "provenance/aggregate_check_v2.log",
+    "validation_log_sha256": "70d3312d8ae8e97f8d0cf9892a6fcdbb45179d429977c233c6cda047f83faca8",
+    "retained_validation_manifest_sha256": "a1f2815fbb340d8ae35669c102dd59a6f10e0d6619bc1193da2d8b22f9e046b7",
+    "validated_check_script_sha256": "9b9c9b3ab29c3d8a6fea871c9156bbdbdd995260fa87e9661729abe110d29066",
+    "validated_numeric_and_configuration_csv_sha256": {
+      "results/geometry/beta.csv": "97ae7a698633bdaffe22499a709b091715aeb36f2261f979ae2a36a874481bf9",
+      "results/geometry/beta_covariance.csv": "0e6d271bf526d935096c03548b90fe98737d69795afa74d02b01f0888ab21e10",
+      "results/geometry/boundary_term_covariance.csv": "2441cb4e5467925cafd0712ebde24bd7b67cfbb58be035c0d0388d8af741e595",
+      "results/geometry/boundary_terms.csv": "c81eb2d4818b2fc2c3a4eafd4498ec652812a3137d87b6ce0a19dae49ffe220b",
+      "results/geometry/config.csv": "c0b2978f1e302d560f5541dea26abb6af7760b68006a55af04d2504121d84749",
+      "results/geometry/geometry.csv": "de0a1c43dc7e7f8106ed8405184b635e125bd9428f0e8828df581edddb46f04c",
+      "results/primary/config.csv": "33d516159766f721f2d984d2e3a6b0babdb65b040395e7964d678fb8f6955319",
+      "results/primary/recovery_audit.csv": "0b6a8e06cdc16a22f05d0f867f44b653609b5bf9a94cdb50cafe9c11ed4f653d",
+      "results/primary/summary.csv": "945af521ef223456f6609d7a3f9ca0bd3c2722c05b9c279f328a7e5c7213eb78",
+      "results/primary/summary_joined.csv": "715cc3f32827ec2b6be54a83ebd253599bbe804a7c519fde53cec947bc15a48e",
+      "results/primary/task_plan.csv": "e47b64036181b816bf5070ecf2c758636bf7e486aa9969ed895c15a90f230491",
+      "results/supplement/config.csv": "6beaf9628065c332f50c404b89df0257c4847761c097b6f0051f0523af58fbe8",
+      "results/supplement/summary.csv": "272640242a7b0fdcda3ec110bc47d92fbf6c326a7efe107296c603aa4a0cf2d2",
+      "results/supplement/summary_joined.csv": "b9fea02e81bd2d56773e546ff81d897b30be50932c8d5ff5ac09e6f1f7cbf393",
+      "results/supplement/task_plan.csv": "98be516baae01ad7384ce3d716c88ee0331ddba3b9c56cc719722d4a18987364"
+    },
+    "subsequent_change_scope": "Documentation/provenance update and artifact-hash refresh only; validated numerical/configuration CSVs and R reproduction logic unchanged."
+  },
+  "final_aggregate_reproduction": {
+    "status": "passed",
+    "recorded_utc": "2026-09-28T21:46:39.120519+00:00",
+    "runtime": "R 4.4.2 arm64",
+    "execution": "local",
+    "uses_random_numbers": false,
+    "runs_estimators": false,
+    "checks": [
+      {
+        "command": "Rscript --vanilla results/reproduce_benchmarks.R",
+        "exit_code": 0,
+        "wall_seconds": 0.532988167,
+        "script_sha256": "9b9c9b3ab29c3d8a6fea871c9156bbdbdd995260fa87e9661729abe110d29066",
+        "result": "PASS: public artifact hashes and all 576 primary / 54 supplemental benchmark rows agree.",
+        "validation_log_sha256": "70d3312d8ae8e97f8d0cf9892a6fcdbb45179d429977c233c6cda047f83faca8"
+      },
+      {
+        "command": "Rscript --vanilla results/reproduce_first_stage.R",
+        "exit_code": 0,
+        "wall_seconds": 0.924472625,
+        "script_sha256": "263510c13fdbee62f92235590aabaf940c80e7d35ca4eae8be325fa51320edc0",
+        "result": "PASS: artifact checks and all 234 saved first-stage benchmark joins agree.\nThis replays benchmark arithmetic; it does not independently reconstruct sampling summaries.",
+        "validation_log_sha256": "73fe0263fec850d302305f65a48d511855711b9c6580e5745040092b9aa29219"
+      }
+    ],
+    "scope": "Verifies aggregate artifact hashes, all 864 benchmark rows and first-stage recovery accounting/shared geometry covariance. Complete sampling summaries were independently reconstructed from retained raw records before export; this replay does not regenerate them.",
+    "subsequent_change_scope": "Evidence/provenance documentation and hash-manifest refresh only; numerical/configuration inputs and replay logic unchanged."
+  }
+}
