@@ -1,0 +1,73 @@
+{
+  "purpose": "Formal source-faithful original WDSM comparison with generalized matching; this extends the existing32-cell study contract without changing main WM assumptions",
+  "designs": [
+    "retrospective",
+    "prospective"
+  ],
+  "overlap": [
+    "GoodOverlap",
+    "PoorOverlap"
+  ],
+  "scenarios": [
+    "CorCor",
+    "CorMis",
+    "MisCor",
+    "MisMis"
+  ],
+  "estimands": [
+    "PATE",
+    "PATT"
+  ],
+  "requested_R": 1000,
+  "nominal_n": 5000,
+  "sample_seed_rule": "2025 + replicate, original RNGkind Mersenne-Twister/Inversion/Rejection",
+  "sampler": "Verbatim original draw_sample; retrospective Bernoulli selection with random realized n; prospective source multistage selection with original allocations",
+  "target": "Fixed realized source-population potential-outcome PATE/PATT, not a nominal regression coefficient",
+  "M": [
+    1,
+    3,
+    5
+  ],
+  "B": 200,
+  "alpha": 0.05,
+  "WM_and_WDSM_common_counts": {
+    "seed_rule": "2000000 + 100*replicate + 13",
+    "interpretation": "Original WDSM M3 count stream supplied explicitly to every WDSM and WM M value, preserving each procedure's count law while pairing its finite-B comparison",
+    "RNG": [
+      "Mersenne-Twister",
+      "Inversion",
+      "Rejection"
+    ],
+    "coupling_change_disclosed": "Historical driver used a separate stream for each M. This comparison shares its M3 stream across M and model scenarios; it is not a claim of historical M1/M5 finite-B record identity.",
+    "source_reference": "Use original WDSM routines with the exact same supplied matrix as generalized WM. Save seed, RNG endpoints, matrix and column hashes. No replacement counts after failures."
+  },
+  "native_method_bootstrap": "Original method-specific seed2000000+100*replicate+10*method_id+M, where seed M=1 for DSM/PGM/PSM and seed M=0 for SWPSM_full (its comparator interface still receives M=1); native nearest-neighbor rows retain M1 and B-1 variance; SWPSM retains full matching and subclass sandwich",
+  "tie_seed_rule": "Original WDSM3000000+100*replicate+M with original boundary tolerance; modern deterministic ties retained and graph discrepancies explicitly recorded",
+  "score_specification": "Correct PS/PG includes X1:X2; misspecified excludes it. Original WDSM PS probability weighting retrospective, unit weighting prospective; PG unweighted in both. WM_PS uses the same declared PS fitting convention.",
+  "weighted_rows": {
+    "WDSM_M1_M3_M5": "Original independently sourced own-arm two-dimensional scores, correction, random-boundary tie allocation, donor normalization, point estimator and B-divisor fixed-reuse prediction-refit law",
+    "WM_DSM_M1_M3_M5": "Independent modern own-arm WDSM stack and self-normalized WM engine; same correction, fitting conventions and count matrix. Compare graphs, points, every draw, B-divisor variance and CI directly against original WDSM.",
+    "WM_PS_M1_M3_M5": "Scalar fitted probability coordinate, affine standardization, self-normalized WM; weighted full-X regression correction on the scenario's PG design (main effects, plus interaction when PG is correct). This is explicitly full-X-adjusted PS matching, not score-quadratic-only PSM.",
+    "WM_X6_M1_M3_M5": "Six original covariates with pooled divisor-n coordinate standardization and Euclidean metric; weighted complete quadratic full-X correction (28 coefficients), held common across PS/PG specification labels. The full-X basis contains the generating mean interaction.",
+    "WM_DSM_analytic_M1_M3_M5": "Separate fitted-stack full-X variance approximation, including nuisance covariance; report empirically in both designs/all scenarios, labeling full-X and iid premises as unverified and often inapplicable. Never substitute this for original refit intervals."
+  },
+  "unweighted_and_full_matching_rows": [
+    "PSM_M1",
+    "PGM_M1",
+    "DSM_M1",
+    "SWPSM_full"
+  ],
+  "point_output": "Retain raw and corrected WM points separately. Historical rows preserve their actual source point corrections, coordinates and metric; unit weights alone do not align different algorithms.",
+  "inference": "WM counts hold original graph/reuse/weights fixed. DSM refits the complete PS/PG/scaling/quadratic prediction stack. PS and X6 refit their declared full-X outcome regressions; refitting unused PS with a frozen graph would not affect those draws. All B draws required for an interval, divisor B, normal qnorm(.975) limits. Analytic rows remain distinct.",
+  "batching": "Within one sample/estimand/specification, fit each original/modern prediction stack once per shared count and reuse predictions across M. Do not share failure states between independent families/arms. Native PSM/PGM/SWPSM may reuse calls only when all effective inputs, method seeds and formulas are identical; record that dependency explicitly.",
+  "failure_policy": "Preserve every planned case/method/count and successful point after interval failure; retain failed count index/hash/warning/solver diagnostics; never drop failed draws, redraw samples, reseed or replace the source method. An original/modern numerical mismatch remains evidence to investigate, not an excluded replicate.",
+  "metrics": {
+    "reference": "Unweighted PSM_M1 in CorCor, within the same design/overlap/estimand, shared across all four model scenarios",
+    "relative_bias": "100*(mean estimate - realized population truth)/truth; audited source targets are strictly positive",
+    "relative_efficiency": "Reference empirical variance divided by method empirical variance; no replacement by an MSE ratio",
+    "uncertainty": "Paired actual sample identities for RE and differences; retain operational coverage, interval availability, failures and conditional-on-success diagnostics separately"
+  },
+  "scope": "Empirical source-design comparison. No cluster/stratum variance theorem or unmeasured-confounding case is introduced. Correct target PS alone is not asserted sufficient for fixed-M self-normalized donor centering; full-X adjustment choices are explicit.",
+  "population_input": "User-generated or source-matching synthetic populations; historical raw population artifacts are not distributed.",
+  "run_status": "Exported implementation candidate; direct public entrypoints require separate saved-data integration validation before any execution/replication claim."
+}

@@ -1,0 +1,144 @@
+{
+  "schema": "authored_portable_WM_application_source_provenance_v1",
+  "license": "GPL-3.0-only",
+  "author_credits": "Retain root DESCRIPTION/COPYING and original WDSM/wdsmatch author credits",
+  "public_upstream_context": [
+    "https://github.com/ykzeng-yale/wdsmatch",
+    "https://github.com/ykzeng-yale/SW_DSM"
+  ],
+  "upstream_context_is_not_unchanged_commit_byte_identity": true,
+  "local_statistical_origins": {
+    "application_engine_sha256": "102d0db2ced4535ba898d44ea5346d2533e174cda4263b39e3fbd4d12797cdbb",
+    "WDSM_adaptive_solver_sha256": "757ed59932b57adaf22cbe9500324a9299b83ddbb191a48343e37b5b50090f67"
+  },
+  "exact_extraction_note": "Eight statistical functions and checked propensity solver retain accepted definition/spans; provider and portable assembly/preparation/reporting code have scoped source reviews",
+  "application_files": [
+    {
+      "path": "applications/APPLICATION_PIPELINE.md",
+      "bytes": 16235,
+      "sha256": "b70bc99ffbf88902aa6e17f82505833708b3a272f6a906dddae53bc5946494f6"
+    },
+    {
+      "path": "applications/common/application_pipeline.R",
+      "bytes": 26593,
+      "sha256": "265a836377b03f306887731fc65ca763d5c51fd66fe259fa90e78874e54b6ad8"
+    },
+    {
+      "path": "applications/common/application_reporting.R",
+      "bytes": 8356,
+      "sha256": "c4b9f0b369b2b374b6a368063814a4857b18cfcea4c841ca2ba8e772e219c45f"
+    },
+    {
+      "path": "applications/common/prepared_input.R",
+      "bytes": 6998,
+      "sha256": "0d9e7804ae1d5011624dc2e07c3ee69530a4e3ab774d40998d0764227e4492b0"
+    },
+    {
+      "path": "applications/ecls/README.md",
+      "bytes": 6743,
+      "sha256": "533f117175c6078b9ef6c6fed43f2a19d29eb16aa1e1d3f6ab2eb451017cd453"
+    },
+    {
+      "path": "applications/ecls/balance_schema.json",
+      "bytes": 18072,
+      "sha256": "567681c4ef5ba21b088fccc759d4356f73b8a61a4285e86b3b1f34016687617d"
+    },
+    {
+      "path": "applications/ecls/construct_selected_ecls.R",
+      "bytes": 15661,
+      "sha256": "8d05caab5c135199637ea0b103beb47d4b913baeda22979e3acc7de4ef082e4e"
+    },
+    {
+      "path": "applications/ecls/decode_selected_fields.py",
+      "bytes": 16106,
+      "sha256": "bd58b2f84e9b9a7e37ccce908ec5892de340089229cabacdd96e5466db047477"
+    },
+    {
+      "path": "applications/ecls/selected39_variable_handling.csv",
+      "bytes": 14283,
+      "sha256": "b2aa346c596e14e37086d1f7859af62ce9309e28e916367e940594e494047e6b"
+    },
+    {
+      "path": "applications/ecls/selected_data_schema.dcf",
+      "bytes": 3183,
+      "sha256": "b9a8e8b9026ded3b410fe0d56ef47754cc9b8488cbb43d1b0515609fc711c761"
+    },
+    {
+      "path": "applications/nhanes/README.md",
+      "bytes": 4204,
+      "sha256": "7ac4df73cedbcfd9a9b57d45ba8cef6952d329ff87d108fbfde74e93b4eecf0f"
+    },
+    {
+      "path": "applications/nhanes/balance_schema.json",
+      "bytes": 3691,
+      "sha256": "959603e9c94ff2527f40d361cc055551522db26774d05618d2b7c7ab5bc08ade"
+    },
+    {
+      "path": "applications/nsduh/README.md",
+      "bytes": 4084,
+      "sha256": "7ec1bda7898ac87006fb07da37a7fa2f574c0f36d74005ce997449f3f932f6ac"
+    },
+    {
+      "path": "applications/nsduh/balance_schema.json",
+      "bytes": 1855,
+      "sha256": "452c934eadc64165f61035cd029f0c7d05b53a174d94fffebedd4af46f4d1947"
+    }
+  ],
+  "retained_statistical_dependencies": [
+    {
+      "path": "applications/common/weighted_balance.R",
+      "sha256": "8769d136577f3ce21e6ab7f81bb2492f932ced940519704d6659a33d2c4724a4",
+      "bytes": 6755
+    },
+    {
+      "path": "applications/common/README.md",
+      "sha256": "b507b6c3d7e0f2be092aa9ab5538a565bae5d16abecbe1b482afc917ac9bf409",
+      "bytes": 4294
+    },
+    {
+      "path": "applications/common/application_statistics.R",
+      "sha256": "a42b2fffc76bc7c6875c24031b032f88a33f0967f151494cb8925d274eab11cc",
+      "bytes": 7721
+    },
+    {
+      "path": "applications/common/case_propensity_solver.R",
+      "sha256": "35a7cad805577c79ac1e66078fc838959310d8e3b43f65eb2e95d4020278890e",
+      "bytes": 2997
+    },
+    {
+      "path": "applications/common/application_modules.R",
+      "sha256": "23233ec83ff188bd800e43e96a6db01ee2900fe5934a33745bafd51a1dcb896a",
+      "bytes": 2103
+    },
+    {
+      "path": "applications/common/statistical_interface.md",
+      "sha256": "43e34a0a6519286120ae029066163ac953697177f7afe10d1a994d53380c2cca",
+      "bytes": 11628
+    }
+  ],
+  "known_supplied_probability_weights_only": true,
+  "data_boundary": {
+    "ECLS": "User obtains ICPSR28023-v1 TSV and official revised-disability source; selected39 handling only",
+    "NHANES": "Caller supplies authenticated primary3783 or canonical3790 prepared cohort; full source merge/pregnancy processing excluded",
+    "NSDUH": "Caller supplies authentic prepared17471 cohort; agency raw eligibility/sentinels not regenerated"
+  },
+  "external_code_redistribution": {
+    "Lenis": "Supplement R files are external user-supplied dependencies; no redistribution permission established and no relicensing or copying",
+    "WDSM": "Published projects are provenance context; revised local statistical code is identified by SHA, under this author GPL distribution"
+  },
+  "data_access_rights_separate_from_code_license": true,
+  "participant_fitted_count_or_private_controller_payloads_distributed": false,
+  "validation": {
+    "kind": "Actual complete adopted saved-bundle replay under authenticated default recipe",
+    "rows": 72,
+    "available_rows": 63,
+    "full_B200_draws": 12600,
+    "unavailable_ECLS_PATE_rows": 9,
+    "failed_columns_per_unavailable_row": 69,
+    "native_max_numeric_gap": 0,
+    "CSV_max_numeric_gap": 5.10702591327572e-15,
+    "models_neighbors_counts_or_RNG_generated": false,
+    "causal_design_inference_or_coverage_certified": false,
+    "arbitrary_custom_or_new_fit_or_full_agency_raw_pipeline_certified": false
+  }
+}

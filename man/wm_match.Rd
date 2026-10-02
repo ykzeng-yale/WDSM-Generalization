@@ -7,7 +7,9 @@ wm_match(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   method = c("self_normalized", "stabilized"),
   mean0 = NULL, mean1 = NULL, rho0 = NULL, rho1 = NULL,
   fold_id = NULL, strata = NULL, variance = TRUE,
-  nuisance_influence = NULL, sensitivity = NULL)
+  nuisance_influence = NULL, sensitivity = NULL,
+  tie_rule = c("row_order", "source_random"),
+  tie_seed = NULL, tie_tolerance = 64 * .Machine$double.eps)
 }
 \arguments{
   \item{Y}{Finite numeric outcome vector, with at least two rows.}
@@ -17,7 +19,9 @@ wm_match(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
     with one row per observation and at least one column.}
   \item{scores1}{Matching matrix for treated donors in PATE. Its dimension may
     differ for the self-normalized method. NULL reuses scores0. Omit for PATT.
-    Stabilized PATE requires identical supplied matrices for the two arms.}
+    Stabilized PATE requires identical supplied matrices when requesting its
+    row/edge variance; distinct maps are allowed with \code{variance = FALSE}
+    and the separate \code{\link{wm_reciprocal_inference}} contract.}
   \item{M}{Positive integer number of distinct donors per query.}
   \item{estimand}{Population average treatment effect (PATE), or population
     average treatment effect on treated individuals (PATT). Interpretation of
@@ -45,6 +49,20 @@ wm_match(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
     of the already normalized effect estimate. Its product with each
     nuisance influence row is added to the normalized matching contribution,
     and the resulting rows are centered.}
+  \item{tie_rule}{\code{"row_order"} (default) uses exact Euclidean distances
+    and original row indices. \code{"source_random"} opts into the original
+    WDSM randomized squared-distance boundary policy and requires
+    \code{variance = FALSE}; sampling inference is unsupported.}
+  \item{tie_seed}{Explicit nonnegative integer required for \code{"source_random"}.
+    A dedicated Mersenne-Twister/Inversion/Rejection stream restores the
+    caller's RNG kind and seed, including prior seed absence, on every exit.
+    External Box--Muller normal RNG is rejected because its hidden cache
+    cannot be restored. Ignored for \code{"row_order"}.}
+  \item{tie_tolerance}{Nonnegative finite squared-distance boundary multiplier
+    for \code{"source_random"}; default \eqn{64} times machine epsilon.
+    The width is this value times \code{max(1, Mth squared distance)}.
+    Positive tolerance can change neighborhood geometry. Ignored for
+    \code{"row_order"}.}
 }
 \description{
 An exact reference implementation of fixed-M weighted matching in any supplied
@@ -76,12 +94,14 @@ requires a negligible root-n matching-bias remainder, consistent fitted
 contribution rows and the stated nuisance rates. Positive limiting variance
 is required for nondegenerate Wald inference. Finite input values and
 successful numerical fitting do not verify these population conditions.
-Full-sample stabilized PATE additionally requires the bounded-outcome and
-common-score assumptions stated below; finite moments alone do not replace
-them. Unknown fitted maps or weights require a separately justified
-nuisance correction.
+The row/edge variance for full-sample stabilized PATE additionally requires
+bounded outcomes and a common score. Its point calculation permits distinct
+maps with \code{variance = FALSE}. The separate
+\code{\link{wm_reciprocal_inference}} API uses complete rows and reciprocal pairs
+under its bounded fixed-map theorem, allowing distinct arm maps. Unknown
+fitted maps or weights require a separately justified nuisance correction.
 
-For original PATE, residuals must be centered conditional on treatment,
+For this function's original PATE row variance, residuals must be centered conditional on treatment,
 both matching maps and the individual weight. For original PATT, control
 residuals around the control reduced mean must be centered conditional on
 treatment, the control matching map and weight. The treated-side
@@ -101,13 +121,34 @@ unrestricted discrete ties are outside these inference claims.
 
 Matching uses Euclidean distances on the supplied coordinates, with no automatic
 standardization. Exact numerical distance ties are resolved by original row
-index. Every query selects M distinct opposite-arm donors; a donor may be
+index by default. Every query selects M distinct opposite-arm donors; a donor may be
 reused by different queries. Calipers, variable match counts and matching
 without replacement are not implemented. The continuous-score assumptions of
 the statistical theory cannot be established by inspecting a finite matrix.
 In particular, all-discrete coordinates with fixed-M row-priority matching
 do not inherit the continuous-score variance theorem merely because ties
 have a deterministic computational resolution.
+
+The opt-in \code{"source_random"} policy computes squared coordinate
+differences in supplied-column order, retaining the literal original arithmetic
+in dimension two. Donor arm zero is processed before arm one, with ascending
+original recipient rows and eligible donor rows; PATT uses only arm zero.
+Fold/stratum restrictions preserve this global recipient order and the same
+dedicated stream. Donors strictly below the Mth squared distance minus the
+boundary width are retained. The remaining donors are uniformly selected
+without replacement from that boundary, with a random draw only when the
+boundary contains more donors than needed. Selected donors are ordered by
+squared distance and original row. Public edges retain the usual query order
+and report Euclidean distance (the square root of that squared distance).
+Squared-distance overflow is rejected; supply a declared fixed rescaling.
+Rescaling may change the positive-tolerance policy because of its absolute
+\code{max(1, ...)} floor.
+
+This optional policy supplies point calculations and, for self-normalized
+matching, empirical fixed-reuse replication through \code{\link{wm_bootstrap_refit}}, with explicit unsupported
+sampling-inference scope. It does not extend the continuous-score theorem
+to discrete ties or positive boundary widths. Contribution, reciprocal and
+fitted-score sampling inference retain their existing graph-policy guards.
 
 For the self-normalized method, a selected donor receives fraction
 \eqn{W_j/\sum_{k\in J(i)} W_k}. A missing outcome is its supplied query mean
@@ -127,7 +168,9 @@ field determining the graphs and weights, together with the appropriate
 prediction-rate and identification conditions. Weighted score centering alone
 does not suffice. Stabilized PATT has a separate finite-moment result under
 weighted score centering. The implemented stabilized PATE variance is the
-reviewed common-score, bounded-outcome row-plus-unordered-edge formula. A
+reviewed common-score, bounded-outcome row-plus-unordered-edge formula. With
+distinct supplied maps, request \code{variance = FALSE} and use the separate
+\code{\link{wm_reciprocal_inference}} contract for reciprocal correction. A
 diagonal-only squared-row variance is not substituted for it. Supplied
 predictions and influences are reported as a user-supplied nuisance contract;
 their numerical validity does not establish these statistical assumptions.
@@ -179,6 +222,9 @@ An object of class \code{wm_match} containing:
     outcome_share; per-query neighbors; unordered linked pairs with both
     direction indicators for stabilized PATE; cell/fold/stratum labels;
     supplied score matrices; and transformation and tie-rule records.
+    The \code{"source_random"} graph additionally contains
+    \code{tie_diagnostics} with the policy, seed, tolerance, stream order,
+    fixed-original-graph flag and per-arm boundary/tie/reuse counts.
     share is the within-set weight fraction or 1/M. outcome_share multiplies
     the donor outcome directly and includes W/rho for stabilized matching.}
   \item{info}{Inference status, mathematical contract and weight-unit metadata.}

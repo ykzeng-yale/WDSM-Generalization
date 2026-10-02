@@ -1,4 +1,11 @@
-# Validated aggregate results
+# Historical synthetic validation results
+
+The current WM framework takes supplied, known probability weights and studies
+estimated scores, coordinate scales and outcome corrections. The optional
+estimated-weight branch in this earlier archive is outside that scope. Its
+records are preserved for reproducibility; their counts and numerical agreement
+do not establish current WM theory or contribute to current-paper validation
+totals. The fitted-weight branch's historical results are labelled below.
 
 This export contains the completed primary, supplemental and first-stage synthetic studies, their exact configurations and numerical geometry inputs. Independent automated audits reproduced the retained records, sampling summaries and variance benchmarks before this aggregate export. These checks do not certify proofs or uniform finite-sample calibration.
 
@@ -43,14 +50,14 @@ At n=2,000, coverage ranges across each branch's estimands and matching settings
 |---|---:|---:|---:|
 | Same-sample scores, d=2,3,5 | 0.977–0.985 | 0.951–0.959 | 0.9985–1.0278 |
 | Independent score training | 0.900–0.926 | 0.931–0.955 | 1.0001–1.0281 |
-| Estimated individual weights | 0.951–0.977 | 0.944–0.964 | 0.9945–1.0091 |
+| Historical estimated individual weights (outside current WM scope) | 0.951–0.977 | 0.944–0.964 | 0.9945–1.0091 |
 | Qualified Gaussian scalar scores | 0.966–0.974 | 0.934–0.956 | 0.9962–0.9983 |
 
 These descriptive ranges are not simultaneous uncertainty intervals. The paired comparisons retain the sign of the first-stage effect: covariance can reduce variance for same-sample fitting, whereas independent training adds a separate variance component. The naive fitted estimator's sampling variance and its reported-variance limit are different quantities; both appear in the joined table.
 
 There are material finite-sample departures. For independent training with d=5, M=3, n=2,000, adjusted PATE coverage is 0.931, with exact pointwise 95% interval [0.91348, 0.94592]. Empirical variance is 1.10422 times its asymptotic benchmark, while mean reported variance is 0.92123 times empirical variance. Gaussian scalar PATT with M=3 and n=2,000 has coverage 0.934 [0.91679, 0.94859]. These outcomes remain reported; the experiment does not establish their mechanism or justify calling every departure simulation noise. Cells share paired estimators and numerical geometry, and the many pointwise intervals are not a joint test.
 
-Seven estimated-weight datasets at n=200 reached the declared logistic parameter boundary: three in d=2, three in d=3 and one in d=5. Their 28 fitted-comparison failures remain, together with the valid known-first-stage rows. There are 233,972 successful records in total. Sampling summaries condition on successful fits and expose the requested, successful and failed denominators; no failed dataset was replaced.
+In the historical estimated-weight branch, seven datasets at n=200 reached the declared logistic parameter boundary: three in d=2, three in d=3 and one in d=5. Their 28 fitted-comparison failures remain, together with the valid known-first-stage rows. There are 233,972 successful records across the complete historical archive, including that out-of-scope branch. Sampling summaries condition on successful fits and expose the requested, successful and failed denominators; no failed dataset was replaced.
 
 Recovery preserved 222,813 original rows exactly, replaced only 327 eligible Gaussian assertion-error rows, and completed 1,810 missing dataset IDs (10,860 records) using unchanged configurations and seeds. The Gaussian harness had compared machine-scale distance differences from equivalent OLS calculations too strictly. Its corrected assertion retains exact donor identity and fractions, and bounds distance differences by the actual coordinate perturbation. Estimator formulas were unchanged. Full six-row replay blocks checked successful siblings; only the declared failed rows entered the derived results. The original 355 failure records remain in the private audit history, including all 28 genuine fit failures. A narrowly declared parameter-pairing allowance applies only to 11 cross-platform Gaussian replay keys; it checks machine-scale coefficient differences without altering any record. Separate recovery/export script corrections affected execution and metadata handling only. Aggregate recovery counts and both scientific source maps are in `first_stage/`.
 
@@ -72,4 +79,12 @@ Simulation and geometry streams are independent. Their MCSEs are stored separate
 - `provenance.json`, `provenance/` and `artifact_hashes.csv`: source snapshot fingerprints, transformation notes and public-file hashes. Snapshot IDs identify execution freezes, not Git commits or the current source tree.
 - [REPRODUCE.md](REPRODUCE.md): repeat the aggregate joins and figures from a fresh source checkout, or run explicitly selected synthetic replications. The aggregate check uses no random draws.
 
-No individual-subject data, per-replication estimator records, manuscripts, proofs, private execution metadata or internal reviews are included. The aggregate-only export reproduces benchmark joins and figures; reproducing sampling summaries requires regenerating the declared synthetic replications.
+The initial primary, supplemental and first-stage aggregate exports include no individual-subject data or per-replication estimator records. They reproduce benchmark joins and figures; reproducing their sampling summaries requires regenerating the declared synthetic replications. Manuscripts, proofs, private execution metadata and internal reviews are excluded from this public tree. The subsequent bounded study includes compact estimator records, as described below.
+
+## Bounded freely fitted WDSM calibration
+
+The subsequent study completed 2,000 bounded iid selection datasets with the original fitted PS/arm-specific PG/pooled-scale/quadratic-correction pipeline, known treatment-dependent weights, CorCor/MisCor, PATE/PATT, M=1/3 and n=500/2000. Its 60,000 expanded records and 4,000 prescribed count sets retain no recorded failures. This changed bounded experiment is distinct from the historical dependent survey experiment.
+
+Actual fitted analytic variance ratios are 0.9167–0.9822 at n=500 and 0.9821–1.0347 at n=2000; coverage ranges are 0.933–0.948 and 0.948–0.961. Refit comparisons use the predetermined same-250 subset at each n. Comparing its headline ratio with the analytic all-1,000 ratio would conflate subset and method differences. Small-sample variance deficits, residual signed bias and finite refit/one-step differences remain visible. No PSM-relative efficiency comparator was allocated.
+
+The [complete compact export](bounded_wdsm/README.md) includes preserved estimator records, count-set moments and all summaries. Its separate replay reconstructs outer summaries deterministically; raw draws are not part of the compact export. The initial production outer monitor has no completion receipt; terminal controller, all twenty successful child supervisors and raw archives were separately reconciled, and final aggregation completed under a new supervisor. Outer exit status and aggregate peak resources remain unverified. No scientific reruns repaired that missing evidence.

@@ -1,0 +1,81 @@
+{
+  "study": "bounded_source_form_fitted_WDSM",
+  "historical_config": "simulations/config/bounded_wdsm_calibration_sharded.json",
+  "historical_config_sha256": "4e577017722c701844817f33e2c899c00c7e3b57bd8de58ede4097302812540f",
+  "completed_datasets": 2000,
+  "original_requests": 40000,
+  "expanded_records": 60000,
+  "prescribed_count_sets": 4000,
+  "prescribed_draws": 1596000,
+  "summary_cells": 72,
+  "count_comparison_cells": 16,
+  "recorded_failures": 0,
+  "final_aggregation_manifest_sha256": "9331235cfb441e8b59cd49404c7c75761ab5742e350d3852f90e2a05005cfcf7",
+  "summary_helper": "simulations/summarize_bounded_wdsm_calibration.R",
+  "summary_helper_sha256": "4230c05c6adbe81f0a4c67d3227c3f8fc3fc88d730a1c051e2f1e449952189cc",
+  "independent_audit": "218 direct statistical calculations plus complete ownership and accounting assertions; separate AI-agent review, not human peer review.",
+  "execution_limitation": "Original outer monitor has no completion receipt: its exit status, disappearance cause and peak aggregate resources are unverified. Reviewed reconciliation verified terminal controller, all 20 successful child supervisors and archived data. Final aggregation completed under a new supervisor. No scientific reruns.",
+  "export_scope": "Synthetic estimator records, count-set diagnostics and final summaries. Raw subjects, individual count draws and private execution archives are not included; replay reconstructs outer summaries from preserved records, not raw refits or raw-draw moments.",
+  "artifacts": [
+    {
+      "file": "record_rows.csv.gz",
+      "source_sha256": "96a482d69cab991355560548ab84d39b45ab69206e7d069cb1ea6c8803bcd9aa",
+      "export_sha256": "434f57732d56cbabd7465dc1e6509c193bc52663cdb602bee8ddba995be134d3",
+      "bytes": 3434067
+    },
+    {
+      "file": "requested_grid.csv.gz",
+      "source_sha256": "34057f192ca7683779fc5f29cdb1f6872da35c317553af2753f6a92b1154872b",
+      "export_sha256": "3996b43456da37a8813c969575617dd8cafb4e5b56b80487e914f81dcb46f074",
+      "bytes": 125388
+    },
+    {
+      "file": "membership.csv.gz",
+      "source_sha256": "3e5a36e81b463652c72d11fe57c62cfa992d85ba49da76412154a2bc62e1fadf",
+      "export_sha256": "2a5a5cb355d06ac72222944ed60593f8d4792b1d05891ae403c5d8a2c01346bf",
+      "bytes": 183367
+    },
+    {
+      "file": "paired_membership.csv.gz",
+      "source_sha256": "eda410a58f22a166d60843efdb5e27f9636b6686a1ad02172bd2951e1acd76eb",
+      "export_sha256": "2a61061ad0a4164e3a9148c21818860477ba41a56164ecc46cf49a928c6cb73c",
+      "bytes": 50132
+    },
+    {
+      "file": "count_summaries.csv",
+      "source_sha256": "5d2f5090f95853cd44de09804bc80a3980ddd0611a8f67cb8edba88683089811",
+      "export_sha256": "5d2f5090f95853cd44de09804bc80a3980ddd0611a8f67cb8edba88683089811",
+      "bytes": 1446093
+    },
+    {
+      "file": "dataset_execution.csv",
+      "source_sha256": "a2c6c925f2a00077214437b316afdce6afd4490e6ea5ad6ea5f2e61a8b683504",
+      "export_sha256": "a2c6c925f2a00077214437b316afdce6afd4490e6ea5ad6ea5f2e61a8b683504",
+      "bytes": 83039
+    },
+    {
+      "file": "summary.csv",
+      "source_sha256": "d5168e013232d69976785d927196580cef158d9a6688f0f2640e954be85cec51",
+      "export_sha256": "d5168e013232d69976785d927196580cef158d9a6688f0f2640e954be85cec51",
+      "bytes": 49432
+    },
+    {
+      "file": "paired_comparisons.csv",
+      "source_sha256": "65561d2ddf2b2b168301527ce5414796b454be7ece499e830639267c1d800729",
+      "export_sha256": "65561d2ddf2b2b168301527ce5414796b454be7ece499e830639267c1d800729",
+      "bytes": 14930
+    },
+    {
+      "file": "count_pair_summary.csv",
+      "source_sha256": "0b0835c062b82c051e511dcff8092f1ece3616dadf0ad817bcffd09aa6ca53e0",
+      "export_sha256": "0b0835c062b82c051e511dcff8092f1ece3616dadf0ad817bcffd09aa6ca53e0",
+      "bytes": 2248
+    },
+    {
+      "file": "failures.csv",
+      "source_sha256": "19831ca7634d17098a4f1db3c5ddf3c76f81c3168c6943dc5678d5ddb7c63770",
+      "export_sha256": "19831ca7634d17098a4f1db3c5ddf3c76f81c3168c6943dc5678d5ddb7c63770",
+      "bytes": 66
+    }
+  ]
+}

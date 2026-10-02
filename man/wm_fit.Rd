@@ -10,7 +10,9 @@ wm_fit(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   moment_order = NULL, support0 = NULL, support1 = NULL,
   rho_bounds = NULL, fold_id = NULL, strata = NULL,
   variance = TRUE, max_basis = 10000L,
-  max_basis_elements = 1e7, qr_tol = 1e-10)
+  max_basis_elements = 1e7, qr_tol = 1e-10,
+  tie_rule = c("row_order", "source_random"),
+  tie_seed = NULL, tie_tolerance = 64 * .Machine$double.eps)
 }
 \arguments{
   \item{Y}{Finite numeric outcome vector.}
@@ -21,7 +23,9 @@ wm_fit(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   accepted for a scalar map.}
   \item{scores1}{Treated-direction coordinates for PATE. If \code{NULL},
   use \code{scores0}. Different dimensions are allowed for self-normalized
-  PATE. Stabilized PATE requires identical coordinate values in both arms.
+  PATE. Stabilized PATE with its row/edge variance requires identical coordinates;
+  use \code{variance = FALSE} for a distinct-map point calculation and the
+  separate \code{\link{wm_reciprocal_inference}} contract for inference.
   Omit this argument for PATT.}
   \item{M}{Positive integer number of distinct donors per query. Donors may
   be reused by different queries.}
@@ -29,6 +33,13 @@ wm_fit(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   and, for stabilized matching, the control conditional-weight mean.}
   \item{method}{Self-normalized donor fractions or stabilized residual
   imputation; see \code{\link{wm_match}}.}
+  \item{tie_rule, tie_seed, tie_tolerance}{Matching policy forwarded to
+  \code{\link{wm_match}}. The default preserves exact distance/row-order
+  matching without RNG use. \code{"source_random"} requires an explicit
+  nonnegative integer seed and \code{variance = FALSE}; it has no supported
+  sampling-inference theorem. The tolerance is a nonnegative finite
+  squared-distance boundary multiplier, defaulting to 64 times machine epsilon.
+  The dedicated RNG stream is restored; external Box--Muller RNG is unsupported.}
   \item{regression}{Complete finite polynomial or tensor-product B-spline.}
   \item{degree}{Nonnegative total polynomial degree, including all
   interactions through that degree and an intercept. Supply one number for

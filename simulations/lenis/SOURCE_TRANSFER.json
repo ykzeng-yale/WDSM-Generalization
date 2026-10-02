@@ -1,0 +1,104 @@
+{
+  "status": "candidate_saved_reporting_checked_pending_independent_export_review",
+  "source_tree_paths_are_relative": true,
+  "functions": [
+    {
+      "source_path": "research/experiments/lenis_comparison_engine.R",
+      "source_sha256": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2",
+      "export_path": "simulations/lenis/lenis_comparison_engine.R",
+      "export_sha256": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2",
+      "transfer": "byte_identical"
+    },
+    {
+      "source_path": "research/experiments/lenis_comparison_batch.R",
+      "source_sha256": "1a87677dcffdd5486a4e085e03bcd8ba765c9219edbce9ae55493aa06cd24baa",
+      "export_path": "simulations/lenis/lenis_comparison_batch.R",
+      "export_sha256": "1a87677dcffdd5486a4e085e03bcd8ba765c9219edbce9ae55493aa06cd24baa",
+      "transfer": "byte_identical"
+    },
+    {
+      "source_path": "research/experiments/lenis_reporting.R",
+      "source_sha256": "05a27325fb492e8c1ae255507b266df414447770f836719af28212d85de74463",
+      "export_path": "simulations/lenis/lenis_reporting.R",
+      "export_sha256": "05a27325fb492e8c1ae255507b266df414447770f836719af28212d85de74463",
+      "transfer": "byte_identical"
+    },
+    {
+      "source_path": "research/experiments/lenis_canonical_counts.R",
+      "source_sha256": "21c6e5673a9ed33fc5fb11858ff19d08b3fcad2735977d94234d1e94fcc89dd3",
+      "export_path": "simulations/lenis/lenis_canonical_counts.R",
+      "export_sha256": "21c6e5673a9ed33fc5fb11858ff19d08b3fcad2735977d94234d1e94fcc89dd3",
+      "transfer": "byte_identical"
+    },
+    {
+      "source_path": "research/experiments/cache_lenis_populations.R",
+      "source_sha256": "ef30112ffa96704bf6a751b2c87f024df09e8182db0f68141dfe7f7f17d48958",
+      "transfer": "generator evaluation/truth/cache block AST preserved (source lines 24:41 and 46:70); prior private truth/sample comparison omitted; new direct path setup and receipt",
+      "export_path": "simulations/lenis/generate.R",
+      "export_sha256": "befc866d5c20da25a2897606ff5eb46ec1deb0d3a04815d7d9b842e57486ba96"
+    },
+    {
+      "source_path": "research/experiments/run_lenis_comparison_shard.R",
+      "source_sha256": "f9e1ea8d033a5ba42403bd94106d9f04e54fe051a955f4f45e8c288aa4aae3e7",
+      "transfer": "statistical record/loop/output block from source lines 84:267 preserved except explicit user source path and named-file path integrity check; original runtime/controller/compatibility admission omitted; installed wdsmatch namespace supplied",
+      "export_path": "simulations/lenis/run.R",
+      "export_sha256": "489696c66625d437387427e911692642195c601e9d762155dc84d5622a431e74"
+    },
+    {
+      "source_path": "research/experiments/collect_lenis_formal_local.R",
+      "source_sha256": "f046994d66b63dc6511c5277c3ba54e5399af2a428308b8bda51939d82b6fd66",
+      "transfer": "existing saved adapter plus existing paired metrics retained; private controller/admission/recovery/archive shell omitted",
+      "export_path": "simulations/lenis/report.R",
+      "export_sha256": "a6625a1e05795db0a6c46d06674ae726085dffc9c64b3376a5057d190ad50edb"
+    },
+    {
+      "source_path": "research/execution/lenis_comparison_plan_20260930.json",
+      "source_sha256": "67541c7b173b9080c574129441ff4a565ce9601ced9088e294b5ea924aef8043",
+      "export_path": "simulations/lenis/design.json",
+      "export_sha256": "3dae0a6a531a4b5cb168cf73b9b8dac3f7867423c5939d126e4b54ef9e241ea5",
+      "transfer": "JSON-equivalent after removal of private population_cache path; all scientific and numerical fields retained"
+    },
+    {
+      "source_path": "simulations/paired_comparison_metrics.R",
+      "source_sha256": "64ad13c0eb380850e79f5f2ae0562f568b571916e2aef5f3d2c58c43513f4586",
+      "transfer": "existing sibling function loaded unchanged; no copied alternate metric implementation"
+    }
+  ],
+  "retained_helper_default": "lenis_source_sample retains its historical relative source default byte-for-byte; public wrapper always supplies a pinned user path",
+  "external_sources": "Only hashes/citation in external_sources.json; no raw supplement or source manifest copied",
+  "namespace": "Public run uses asNamespace(\"wdsmatch\"); internal stack helpers are checked at load",
+  "validation_scope": "Exact transfer, parse/load, source/cache/path preflight, installed/current definition identity and actual saved-record reporting checks; no generator/sampler/count/fit/scientific-run execution or Monte Carlo reproduction claim",
+  "excluded": "Original private controller, admissions, recovery, execution hosts/accounts and artifacts; all scientific computation remains explicit user action",
+  "candidate_file_sha256": {
+    "README.md": "ac0aace54fd0c519d6861d7c218c910e343f6d97fdb9733948307d24529602d2",
+    "design.json": "3dae0a6a531a4b5cb168cf73b9b8dac3f7867423c5939d126e4b54ef9e241ea5",
+    "entrypoint.R": "17fe9a5b44963aa99c96c3be0fc8c98225ccea87fa38ef62e63c478e6560e42d",
+    "external_sources.json": "406c7f929fe96c1d25186860dd9bb02a5cd6f406957faa47928a0b15f9a72e4f",
+    "generate.R": "befc866d5c20da25a2897606ff5eb46ec1deb0d3a04815d7d9b842e57486ba96",
+    "job.example.json": "e87330eba8db63dfdb1722b39c288518fc88269398088886150918dc0cd5ab39",
+    "lenis_canonical_counts.R": "21c6e5673a9ed33fc5fb11858ff19d08b3fcad2735977d94234d1e94fcc89dd3",
+    "lenis_comparison_batch.R": "1a87677dcffdd5486a4e085e03bcd8ba765c9219edbce9ae55493aa06cd24baa",
+    "lenis_comparison_engine.R": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2",
+    "lenis_reporting.R": "05a27325fb492e8c1ae255507b266df414447770f836719af28212d85de74463",
+    "report.R": "a6625a1e05795db0a6c46d06674ae726085dffc9c64b3376a5057d190ad50edb",
+    "run.R": "489696c66625d437387427e911692642195c601e9d762155dc84d5622a431e74"
+  },
+  "saved_reporting_scope": {
+    "fixture_metadata": "Private temporary new-wrapper layout projection, explicitly not original execution/generation evidence",
+    "original_replicate_ids_preserved": [
+      1,
+      2
+    ],
+    "unchanged_actual_records": 3600,
+    "planned_cells": 1800,
+    "subset_requested_per_cell": 2,
+    "subset_report_exact_private_function_identity": true,
+    "incomplete_1000_request_diagnostics_retained": true,
+    "duplicate_paths_and_record_identities_rejected": true,
+    "actual_failure_original_replicate": 367,
+    "actual_point_and_interval_failure_records_retained": 24,
+    "installed_source_function_bodies_and_formals_identical": 127,
+    "original_inputs_and_RNG_state_kind_unchanged": true,
+    "full_formal_scientific_acceptance": false
+  }
+}

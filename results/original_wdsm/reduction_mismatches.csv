@@ -1,0 +1,1 @@
+"job_id","overlap","sampling_design","replicate","estimand","scenario","M","original_point_status","modern_point_status","original_interval_status","modern_interval_status","donor_sets_identical","raw_point_max_abs","point_max_abs","paired_draws","draw_availability_mismatches","draw_max_abs","draws_exceeding_tolerance","variance_max_abs","ci_max_abs","tolerance","result"

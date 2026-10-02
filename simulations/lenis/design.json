@@ -1,0 +1,100 @@
+{
+  "status": "source_specification_comparison_predeclared_local_pilot_pending",
+  "scope": "External empirical comparison; no change to main WM assumptions",
+  "core_weights": "Probability weights W(X) or W(Z,X); X may include observed response and selection features beyond matching coordinates",
+  "unmeasured_confounding_scenarios": false,
+  "cluster_stratum_variance_theorem_claimed": false,
+  "population_scenarios": [
+    1,
+    2,
+    3
+  ],
+  "effect_multipliers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "response_models": [
+    "No",
+    "MAR",
+    "MARX",
+    "MART"
+  ],
+  "population_N": 1000000,
+  "selected_n": 5000,
+  "target": "Finite source-population PATT, separately computed for all 18 populations",
+  "formal_requested_R": 1000,
+  "sample_seeds": "replicate IDs 1:1000; reconstruction choice because historical replicate list is unavailable",
+  "local_pilot_replicates": [
+    1,
+    2
+  ],
+  "local_pilot_purpose": "Validate complete run/failure/output contract and measure runtime/storage; no precision claims about bias or coverage",
+  "M": [
+    1,
+    3,
+    5
+  ],
+  "B": 200,
+  "bootstrap_count_seed": "805000000 + 100000*population_scenario + 10*replicate + response_index (No=1, MAR=2, MARX=3, MART=4)",
+  "bootstrap_RNG": [
+    "Mersenne-Twister",
+    "Inversion",
+    "Rounding"
+  ],
+  "native_methods": {
+    "PS_and_weight_transfer": [
+      "U_PS_U_OM_OW",
+      "U_PS_W_OM_WT",
+      "U_PS_W_OM_OW",
+      "W_PS_W_OM_WT",
+      "W_PS_W_OM_OW",
+      "C_PS_W_OM_WT",
+      "C_PS_W_OM_OW"
+    ],
+    "outcome_adjustments": [
+      "A",
+      "U"
+    ],
+    "matching": "Original probability PS, nearest neighbor, ratio 1, without replacement",
+    "interval": "Original survey outcome-regression SE and estimate +/- 1.96 SE; preserve source strict coverage indicator",
+    "response_weights": "Original fitted response probability from complete selected sample; sampling weight divided by that probability"
+  },
+  "adapted_matchit_methods": {
+    "names": [
+      "MatchIt_quick_weighted_PS",
+      "MatchIt_quick_unit_PS"
+    ],
+    "matching": "Official vignette generalized full ATT with final probability weight included as a PS covariate",
+    "outcome": "Treatment-by-X interaction regression; matching times sampling/response weights used once; treated target contrast uses probability weights",
+    "interval": "Subclass HC1 sandwich with qnorm(.975); empirical comparator, not a new survey-design theorem"
+  },
+  "WM_methods": {
+    "families": [
+      "PS",
+      "DSM",
+      "X6"
+    ],
+    "matching": "Fixed M with replacement, Euclidean supplied coordinates, exact distance then row-index ties, self-normalized donor fractions",
+    "PS": "Probability-weighted logistic PS on X1:X6, scalar affine standardization; weighted full-X linear control correction",
+    "DSM": "Own-arm double score for PATT: weighted PS, ordinary control PG, source weighted quadratic double-score correction",
+    "X6": "Pooled divisor-n standardized six covariates; weighted full-X linear control correction",
+    "interval": "Original fixed-reuse count bootstrap with refitted prediction stack, divisor B and qnorm(.975); supplied fitted response weights frozen",
+    "inference_claim": "Empirical external-design coverage evaluation only; does not claim to account for response-estimation or cluster/stratum design uncertainty"
+  },
+  "batching": "Six multipliers share source covariates/Z/response/control outcomes; common graphs and WM control refits. Native and quick outcome regressions/SEs still evaluated separately. First-outcome failure never automatically fails later outcomes.",
+  "failure_policy": "Retain each prescribed dataset, method, outcome and count. No reseeding, replacement counts, changing B, or successful-draw-only variance. Keep finite point estimates when intervals fail. Preserve nonfinite native results and warnings as diagnostic records; do not numerically regularize the source comparator.",
+  "formal_metrics": {
+    "bias": "mean(estimates)-population PATT; source absolute bias is its absolute value",
+    "signed_relative_bias_percent": "100*bias/abs(population PATT)",
+    "RMSE": "sqrt(mean((estimate-target)^2))",
+    "relative_efficiency": "empirical variance of Lenis_U_PS_U_OM_OW_U divided by method empirical variance, within same population scenario/multiplier/response",
+    "coverage": "Report valid interval rate and operational coverage over all prescribed replicates; separately label any conditional-on-success diagnostic",
+    "MCSE": "Use paired replicate identities for method differences and variance-ratio delta MCSE; do not treat six multipliers as independent replications"
+  },
+  "publication_population_identity": "Unresolved: supplied source populations differ from printed Table 1. No historical numerical-identity claim or seed hunting.",
+  "publication_boundary": "Code only after independent validation; paper, private source files, caches and notes remain local"
+}

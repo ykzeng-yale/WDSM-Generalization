@@ -1,6 +1,6 @@
 \name{wm_logistic_weights}
 \alias{wm_logistic_weights}
-\title{Logistic Target Weights with Derivatives and Influence Estimates}
+\title{Historical Optional Logistic Weight-Fitting Helper}
 \usage{
 wm_logistic_weights(Z, design, pi = 0.5, parameter_bound,
   maxit = 100L, tolerance = 1e-8, qr_tol = 1e-10)
@@ -23,6 +23,8 @@ wm_logistic_weights(Z, design, pi = 0.5, parameter_bound,
   \item{qr_tol}{Positive rank-checking tolerance below one.}
 }
 \description{
+This compatibility helper is outside the current supplied-weight WM
+framework and is not part of the paper's inference contract.
 Fits a logistic treatment model on an explicitly bounded parameter
 domain. Returns individual target weights, their analytic derivatives,
 and same-sample logistic influence estimates for use with

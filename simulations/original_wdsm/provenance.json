@@ -1,0 +1,132 @@
+{
+  "study": "original_WDSM_source_design_comparison",
+  "statistical_modules": [
+    {
+      "file": "original_survey_weighted_batch.R",
+      "sha256": "91301fd3300c3fe4e2d1ed400a28ea2a80e14b6545cbdf2ff8bb920615fd1f0a",
+      "bytes": 11505,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "original_survey_native_adapter.R",
+      "sha256": "0347b95b343c67ee3b01eaf87fe220d2537e569a81cd7ee266f95e3a1ba85fe0",
+      "bytes": 9964,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "original_survey_analytic_adapter.R",
+      "sha256": "e7a5cf3d92b795bef6e4a09496c278f73fcc949815007f561201aabfd4ffed49",
+      "bytes": 4356,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "original_survey_reporting.R",
+      "sha256": "774e657263d23bedce30808004c6cd26204efec648f3ee1620b81089589f3cbd",
+      "bytes": 8709,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "original_survey_lossless_storage.R",
+      "sha256": "22ac24acdf0012d6735e30c07f4080aa401e7c01d40822083c2c2c06123ac218",
+      "bytes": 3297,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "original_survey_execution_io.R",
+      "sha256": "8304cf8a333acc51f5fd3351d5bd1c362844c8703ffa3bd8b38af6ba7e6fb9c9",
+      "bytes": 7303,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "original_survey_sample_engine.R",
+      "sha256": "1b561a52ccb94dd0059cb303f8e67e1a066bce3973030b8536d03a70d222adb8",
+      "bytes": 12237,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "generators/GoodOverlap.R",
+      "sha256": "8ee8accb56911964c535d49a409607c14132fc685857887f1a07304fc7613955",
+      "bytes": 3639,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "generators/PoorOverlap.R",
+      "sha256": "beccd37262a80670a7ba5dbe3bde91f13f8bfbfcd294b366ce2a2cdaef7dee81",
+      "bytes": 3637,
+      "transfer": "byte_identical"
+    },
+    {
+      "file": "sampler.R",
+      "sha256": "a955b73849b430d62e51bd67886f18e27c79486a52908aaa01821ccf2b61a906",
+      "bytes": 1434,
+      "transfer": "byte_identical"
+    }
+  ],
+  "frozen_numeric_design": {
+    "requested_R": 1000,
+    "nominal_n": 5000,
+    "B": 200,
+    "M": [
+      1,
+      3,
+      5
+    ],
+    "alpha": 0.05,
+    "designs": [
+      "retrospective",
+      "prospective"
+    ],
+    "overlap": [
+      "GoodOverlap",
+      "PoorOverlap"
+    ],
+    "estimands": [
+      "PATE",
+      "PATT"
+    ],
+    "scenarios": [
+      "CorCor",
+      "CorMis",
+      "MisCor",
+      "MisMis"
+    ]
+  },
+  "upstream_comparator_checkout": "upstream_source_pins.json",
+  "source_transfer_scope": "Existing frozen statistical implementation and evaluated generators/verbatim sampler; no algorithm, model recipe, count law, comparator or failure-policy change. Historical draft-status fields in source outputs are preserved as generation-stage metadata.",
+  "wrapper_scope": "Public paths and sequential user-selected replicate IDs only; new generator/run/report entrypoint execution is not established by source transfer/parse/load checks. No historical bitwise-population identity or scientific calibration claim.",
+  "private_material_excluded": [
+    "raw populations and samples",
+    "individual count draws",
+    "private execution plans and resources",
+    "source caches",
+    "receipts",
+    "manuscripts",
+    "proofs and reviews"
+  ],
+  "dependent_design_scope": "Empirical source-design comparison. No cluster/stratum variance theorem or unmeasured-confounding case is introduced. Correct target PS alone is not asserted sufficient for fixed-M self-normalized donor centering; full-X adjustment choices are explicit.",
+  "statistical_acceptance": "Full saved-artifact collection and scientific assessment pending.",
+  "software_validation_scope": {
+    "exact_statistical_source_transfers": 10,
+    "R_files_parsed": 14,
+    "source_and_path_preflight": "PASS without scientific branch execution",
+    "installed_package_source_definition_identity": {
+      "functions": 127,
+      "bodies_and_formals_identical": true,
+      "estimator_calls": 0
+    },
+    "saved_reporting": {
+      "actual_pilot_records": 38,
+      "actual_original_replicate": 1,
+      "setting_cells_present": 2,
+      "planned_cells": 608,
+      "requested_per_cell": 1000,
+      "records_complete": false,
+      "output_identical_to_unchanged_private_reporting": true,
+      "duplicate_input_rejected": true
+    },
+    "RNG_state_and_kind_unchanged": true,
+    "generation_and_scientific_run_branches_executed": false,
+    "independent_export_review": "pending",
+    "scope": "Software source/path/definition/reporting checks only; not complete-grid statistical or execution acceptance"
+  }
+}

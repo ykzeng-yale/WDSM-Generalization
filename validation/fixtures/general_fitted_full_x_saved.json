@@ -1,0 +1,122 @@
+{
+  "schema": "wm_saved_full_x_provenance_v1",
+  "fixture_file": "general_fitted_full_x_saved.rds",
+  "fixture_sha256": "a489cf308c5ff509dcb956a58c95c7b94ce3e35f8150b2d64330d8fd05594ec0",
+  "fixture_bytes": 10265860,
+  "synthetic": true,
+  "origin": "Additive curation of the six previously saved full-covariate d6 matching objects and six actual scalar propensity-score matching objects with full-X correction, on the same two synthetic analysis samples; no regeneration.",
+  "construction": "Preserves both original public d6 cases exactly. Adds literal scalar PS graphs, stored full-X coefficients/predictions, complete joint PS/prediction/scale influence and derivative arrays, nine variance/slope fields and the original 200 full-n count columns per analysis sample. Only deterministic coefficient/basis/influence algebra and saved-array copying; no fits, matching, random draws or new subjects.",
+  "cases": [
+    {
+      "label": "synthetic_full_x_pate",
+      "n": 4884,
+      "estimand": "PATE",
+      "matching_dimension_per_arm": 6,
+      "M": [
+        1,
+        3,
+        5
+      ],
+      "joint_parameter_count": 56,
+      "public_covariance_scope": "full_x"
+    },
+    {
+      "label": "synthetic_full_x_patt",
+      "n": 5000,
+      "estimand": "PATT",
+      "matching_dimension_control": 6,
+      "M": [
+        1,
+        3,
+        5
+      ],
+      "joint_parameter_count": 28,
+      "public_covariance_scope": "patt",
+      "transport0_declaration": "zero, current_centering"
+    }
+  ],
+  "included_data_columns": [
+    "X1",
+    "X2",
+    "X3",
+    "X4",
+    "X5",
+    "X6",
+    "A",
+    "Y",
+    "survey_weight"
+  ],
+  "excluded_source_columns": [
+    "Y_0",
+    "Y_1",
+    "Y_obs",
+    "Cluster",
+    "Strata",
+    "S",
+    "id"
+  ],
+  "model": "Existing d6: complete quadratic full-X predictions and full joint arm-prediction influence. Added d1: stored scalar logistic propensity graphs, eight-term full-X predictions on (1,X1,...,X6,X1*X2), and complete same-stack PS/prediction/PS-center-scale influence. Supplied observation weights are known and may vary across individuals.",
+  "source_binding": "All twelve matching fits are literal saved objects. The previous two d6 payloads and all prior checks are preserved; added six scalar fits and complete arrays match the reviewed saved-array source/installed records exactly. Private source locations, source sample names and individual identifiers are excluded.",
+  "validation": "check_general_fitted_bootstrap.R preserves every146 previous named d6 check and appends scalar common-API row/slope/C/Sigma/variance, original200 count roots, full-n normalization, point/graph identity and unsupported/stale-input guards. This candidate awaits independent review before public adoption.",
+  "limits": [
+    "Actual d6 full-covariate matching and d1 scalar propensity graphs with full-X correction are represented; no DSM d2/d3, distinct-arm scalar maps, successful distinct_rarity/common_field or nonzero graph transport is exercised.",
+    "Supplied saved count columns support exact arithmetic checks; their matrix values alone do not verify independent multinomial draws. No random counts are generated.",
+    "Finite-array parity cannot verify causal identification, true full-X means, iid sampling, bounded population outcomes/influences/weights, design-only graph fitting, chart density/derivative premises, statistical-root regularity, coverage, original-refit validity or nonlinear growing-B moments.",
+    "Full observed n and original observation order are retained because donor graphs and PATT target normalization depend on them. Literal unrestricted graph bookkeeping labels are required API metadata, not raw sampling cluster/strata variables. No full raw population/potential-outcome data, model closures or new simulation study is included.",
+    "The main WM scope uses supplied/known probability weights; estimated-weight inference is excluded."
+  ],
+  "preserved_d6_fixture_sha256": "fd1f1e0943ee1f131e6beb2f277356a285d9a83aca4989e1dac213a508e36418",
+  "scalar_design_extension": "wm_saved_scalar_design_full_x_v1",
+  "scalar_design_cases": [
+    {
+      "label": "synthetic_scalar_ps_full_x_pate",
+      "n": 4884,
+      "estimand": "PATE",
+      "used_matching_dimensions": [
+        1,
+        1
+      ],
+      "M": [
+        1,
+        3,
+        5
+      ],
+      "joint_parameter_count": 26,
+      "public_covariance_scope": "full_x",
+      "transport0_declaration": "automatic zero full_x",
+      "original_count_columns": 200,
+      "ps_estimation_weight_rule": "supplied_weights"
+    },
+    {
+      "label": "synthetic_scalar_ps_full_x_patt",
+      "n": 5000,
+      "estimand": "PATT",
+      "used_matching_dimensions": [
+        1
+      ],
+      "M": [
+        1,
+        3,
+        5
+      ],
+      "joint_parameter_count": 17,
+      "public_covariance_scope": "patt",
+      "transport0_declaration": "zero, current_centering",
+      "original_count_columns": 200,
+      "ps_estimation_weight_rule": "unit"
+    }
+  ],
+  "adoption_status": {
+    "status": "ADOPTED_LOCALLY_AFTER_INDEPENDENT_PORTABILITY_REVIEW",
+    "timestamp_utc": "2026-09-30T22:38:29.249714+00:00",
+    "fixture_sha256": "a489cf308c5ff509dcb956a58c95c7b94ce3e35f8150b2d64330d8fd05594ec0",
+    "independent_review_sha256": "ce64f105849e7b6bee0bb02e770757ed8f356e0c36197155f8eae2f6c211572b",
+    "source_checks": 324,
+    "installed_checks": 326,
+    "independent_saved_object_privacy_assertions": 61,
+    "source_installed_objects_identical": 12,
+    "scope": "Software portability and saved-array arithmetic only; no population-premise, original-refit or coverage certification. Generation-stage metadata is preserved as historical provenance.",
+    "generation_stage_validation_text_preserved": true,
+    "published": false
+  }
+}

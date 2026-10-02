@@ -1,0 +1,204 @@
+[
+  {
+    "diagnostic": "ridageyr",
+    "source_variable": "ridageyr",
+    "kind": "continuous",
+    "label": "Age in years"
+  },
+  {
+    "diagnostic": "indfmpir",
+    "source_variable": "indfmpir",
+    "kind": "continuous",
+    "label": "Family income to poverty ratio"
+  },
+  {
+    "diagnostic": "bmxbmi",
+    "source_variable": "bmxbmi",
+    "kind": "continuous",
+    "label": "Body mass index"
+  },
+  {
+    "diagnostic": "riagendr__1",
+    "source_variable": "riagendr",
+    "kind": "binary_indicator",
+    "category": 1,
+    "allowed_codes": [
+      1,
+      2
+    ],
+    "label": "Male"
+  },
+  {
+    "diagnostic": "riagendr__2",
+    "source_variable": "riagendr",
+    "kind": "binary_indicator",
+    "category": 2,
+    "allowed_codes": [
+      1,
+      2
+    ],
+    "label": "Female"
+  },
+  {
+    "diagnostic": "ridreth1__1",
+    "source_variable": "ridreth1",
+    "kind": "binary_indicator",
+    "category": 1,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Mexican American"
+  },
+  {
+    "diagnostic": "ridreth1__2",
+    "source_variable": "ridreth1",
+    "kind": "binary_indicator",
+    "category": 2,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Other Hispanic"
+  },
+  {
+    "diagnostic": "ridreth1__3",
+    "source_variable": "ridreth1",
+    "kind": "binary_indicator",
+    "category": 3,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Non-Hispanic White"
+  },
+  {
+    "diagnostic": "ridreth1__4",
+    "source_variable": "ridreth1",
+    "kind": "binary_indicator",
+    "category": 4,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Non-Hispanic Black"
+  },
+  {
+    "diagnostic": "ridreth1__5",
+    "source_variable": "ridreth1",
+    "kind": "binary_indicator",
+    "category": 5,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Other race including multiracial and non-Hispanic Asian"
+  },
+  {
+    "diagnostic": "dmdeduc2__1",
+    "source_variable": "dmdeduc2",
+    "kind": "binary_indicator",
+    "category": 1,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Less than9th grade"
+  },
+  {
+    "diagnostic": "dmdeduc2__2",
+    "source_variable": "dmdeduc2",
+    "kind": "binary_indicator",
+    "category": 2,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "9th-11th grade including12th without diploma"
+  },
+  {
+    "diagnostic": "dmdeduc2__3",
+    "source_variable": "dmdeduc2",
+    "kind": "binary_indicator",
+    "category": 3,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "High school graduate or GED"
+  },
+  {
+    "diagnostic": "dmdeduc2__4",
+    "source_variable": "dmdeduc2",
+    "kind": "binary_indicator",
+    "category": 4,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "Some college or AA degree"
+  },
+  {
+    "diagnostic": "dmdeduc2__5",
+    "source_variable": "dmdeduc2",
+    "kind": "binary_indicator",
+    "category": 5,
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "label": "College graduate or above"
+  },
+  {
+    "diagnostic": "smq020__1",
+    "source_variable": "smq020",
+    "kind": "binary_indicator",
+    "category": 1,
+    "allowed_codes": [
+      1,
+      2
+    ],
+    "label": "Smoked at least100 cigarettes in life"
+  },
+  {
+    "diagnostic": "smq020__2",
+    "source_variable": "smq020",
+    "kind": "binary_indicator",
+    "category": 2,
+    "allowed_codes": [
+      1,
+      2
+    ],
+    "label": "Did not smoke at least100 cigarettes in life"
+  }
+]

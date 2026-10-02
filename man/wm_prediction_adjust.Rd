@@ -31,9 +31,11 @@ wm_prediction_adjust(fit, nuisance_influence,
   and then \code{potential1}. Fixed maps may have any positive dimension;
   changing maps must have dimension at least two.}
   \item{weight_derivative}{Optional finite numeric \eqn{n} by \eqn{p}
-  derivative matrix for the original unnormalized individual weights
-  with respect to the same parameter. \code{NULL} means fixed known
-  weights. It is rejected if any changing map is two dimensional.
+  derivative matrix retained for compatibility with the historical
+  optional weight-adjustment route. Use \code{NULL} for the current
+  supplied-weight WM framework. Nonzero derivatives invoke an excluded
+  historical route and do not have the current paper's inference guarantee.
+  The historical route rejects this argument if any changing map is two dimensional.
   All named derivative and influence matrices must have identical,
   nonempty, unique column names in the same order. Unnamed columns are
   matched by position.}
@@ -41,10 +43,15 @@ wm_prediction_adjust(fit, nuisance_influence,
 \description{
 Computes prediction-imbalance sensitivity on the realized matching graph
 and adds its joint first-stage influence to the normalized contribution
-rows. Optionally combines estimated-weight sensitivity in the same
-correction. The point estimate and graph are preserved.
+rows with supplied known weights. The point estimate and graph are preserved.
 }
 \details{
+The current WM framework estimates scores, scales and predictions while
+treating the supplied weights as known functions of treatment and covariates.
+This helper retains a historical optional estimated-weight calculation for
+compatibility; that route is outside the current paper and is not a supported
+extension of its identification, variance or bootstrap results.
+
 For direction \eqn{z}, let \eqn{D_z(i)} be the supplied prediction
 derivative, \eqn{\lambda_{ij}} the self-normalized donor weight, and
 \eqn{d_n} the estimator's outer weight sum. The unsigned imbalance is
@@ -55,7 +62,7 @@ For PATE the prediction sensitivity is \eqn{\widehat b_1-\widehat b_0}
 and \eqn{d_n=\sum_i W_i}. For PATT it is \eqn{-\widehat b_0} and
 \eqn{d_n=\sum_i Z_i W_i}. PATT needs only control predictions.
 
-If weight derivatives are supplied, the exact finite-graph derivative
+In the excluded historical route, if weight derivatives are supplied, the exact finite-graph derivative
 \eqn{\widehat G} from \code{\link{wm_weight_adjust}} is computed with
 means held fixed. It includes all donor-weight fraction derivatives and
 the random outer denominator. The single combined sensitivity is
@@ -96,8 +103,9 @@ squared-distance comparisons in the fixed-dimensional parameter,
 including any fitted metric. Ties follow the fixed row-index rule.
 Matching directly on logistic probabilities together with other
 coordinates does not automatically satisfy the polynomial condition.
-When weights are also estimated, their first two parameter derivatives
-are uniformly bounded and weights remain bounded and positive nearby.
+The excluded historical weight-adjustment route additionally requires smooth
+weight paths with uniformly bounded first two parameter derivatives and
+weights bounded and positive nearby.
 
 Changing two-dimensional maps use the separate planar
 \emph{distributional} transfer theorem with known weights: uniform

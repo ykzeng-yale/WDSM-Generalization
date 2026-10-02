@@ -1,6 +1,6 @@
 \name{wm_weight_adjust}
 \alias{wm_weight_adjust}
-\title{Account for Estimated Individual Weights on a Fixed Matching Graph}
+\title{Historical Optional Weight Adjustment on a Fixed Matching Graph}
 \usage{
 wm_weight_adjust(fit, weight_derivative, nuisance_influence)
 }
@@ -20,6 +20,8 @@ wm_weight_adjust(fit, weight_derivative, nuisance_influence)
   If both matrices have column names, their names and order must agree.}
 }
 \description{
+This compatibility helper is outside the current supplied-weight WM
+framework and is not part of the paper's inference contract.
 Differentiates the exact realized self-normalized matching estimator with
 respect to individual weights, holding the matching graph and fitted
 mean predictions fixed. Adds the resulting first-stage influence to the

@@ -74,6 +74,65 @@
   selected[order(distance[selected], donors[selected], method = "radix")]
 }
 
+.wm_tie_options <- function(tie_rule, tie_seed, tie_tolerance) {
+  tie_rule <- match.arg(tie_rule, c("row_order", "source_random"))
+  if (!is.null(tie_seed) &&
+      (!is.numeric(tie_seed) || is.complex(tie_seed) || !is.null(dim(tie_seed)) ||
+       length(tie_seed) != 1L || !is.finite(tie_seed) || tie_seed < 0 ||
+       tie_seed > .Machine$integer.max || tie_seed != floor(tie_seed))) {
+    stop("tie_seed must be NULL or a nonnegative representable integer.", call. = FALSE)
+  }
+  if (!is.numeric(tie_tolerance) || is.complex(tie_tolerance) ||
+      !is.null(dim(tie_tolerance)) || length(tie_tolerance) != 1L ||
+      !is.finite(tie_tolerance) || tie_tolerance < 0) {
+    stop("tie_tolerance must be one finite nonnegative number.", call. = FALSE)
+  }
+  if (tie_rule == "source_random" && is.null(tie_seed)) {
+    stop("source_random requires an explicit tie_seed.", call. = FALSE)
+  }
+  list(rule = tie_rule, seed = if (is.null(tie_seed)) NULL else as.integer(tie_seed),
+       tolerance = tie_tolerance)
+}
+
+.wm_squared_distances <- function(scores, query, donors) {
+  # Retain the source's literal d=2 arithmetic; add coordinates in their
+  # supplied order for other fixed dimensions, without norm rescaling.
+  distance <- (scores[donors, 1L] - scores[query, 1L])^2
+  if (ncol(scores) > 1L) {
+    for (column in 2:ncol(scores)) {
+      distance <- distance + (scores[donors, column] - scores[query, column])^2
+    }
+  }
+  if (any(!is.finite(distance))) {
+    stop("Squared distances exceed numerical range; supply a fixed rescaling.",
+         call. = FALSE)
+  }
+  distance
+}
+
+.wm_source_nearest_positions <- function(distance, M, tie_tolerance) {
+  ordering <- order(distance, method = "radix")
+  cutoff <- distance[ordering[M]]
+  tolerance <- tie_tolerance * max(1, abs(cutoff))
+  if (!is.finite(tolerance)) {
+    stop("Boundary tolerance exceeds numerical range; reduce tie_tolerance or rescale scores.",
+         call. = FALSE)
+  }
+  closer <- which(distance < cutoff - tolerance)
+  tied <- which(abs(distance - cutoff) <= tolerance)
+  needed <- M - length(closer)
+  if (needed < 1L || length(tied) < needed) {
+    stop("Squared-distance boundary selection failed numerically.", call. = FALSE)
+  }
+  randomized <- length(tied) > needed
+  selected <- if (randomized) tied[sample.int(length(tied), needed, replace = FALSE)] else tied
+  positions <- c(closer, selected)
+  list(positions = positions[order(distance[positions], positions, method = "radix")],
+       boundary_tie = randomized,
+       exact_boundary_tie = sum(distance == cutoff) > M - sum(distance < cutoff),
+       randomized = randomized, boundary_group = length(tied))
+}
+
 #' Weighted matching with supplied scores and nuisance predictions
 #'
 #' @details
@@ -100,12 +159,14 @@
 #' contribution rows and the stated nuisance rates. Positive limiting variance
 #' is required for nondegenerate Wald inference. Finite input values and
 #' successful numerical fitting do not verify these population conditions.
-#' Full-sample stabilized PATE additionally requires the bounded-outcome and
-#' common-score assumptions stated below; finite moments alone do not replace
-#' them. Unknown fitted maps or weights require a separately justified
-#' nuisance correction.
+#' The row/edge variance for full-sample stabilized PATE additionally requires
+#' bounded outcomes and a common score. Its point calculation permits distinct
+#' maps with \code{variance = FALSE}. The separate
+#' \code{wm_reciprocal_inference()} API uses complete rows and reciprocal pairs
+#' under its bounded fixed-map theorem, allowing distinct arm maps. Unknown
+#' fitted maps or weights require a separately justified nuisance correction.
 #'
-#' For original PATE, residuals must be centered conditional on treatment,
+#' For this function's original PATE row variance, residuals must be centered conditional on treatment,
 #' both matching maps and the individual weight. For original PATT, control
 #' residuals around the control reduced mean must be centered conditional on
 #' treatment, the control matching map and weight. The treated-side
@@ -123,15 +184,32 @@
 #' complex-survey variance estimator. Growing dimension, growing M and
 #' unrestricted discrete ties are outside these inference claims.
 #'
+#' The default \code{tie_rule = "row_order"} preserves exact Euclidean-distance
+#' ties resolved by original row. Opt-in \code{"source_random"} reproduces the
+#' original WDSM squared-distance boundary policy in any fixed dimension,
+#' with donor arm 0 before arm 1 and ascending recipient/donor rows. It requires
+#' an explicit \code{tie_seed} and \code{variance = FALSE}. Its dedicated
+#' Mersenne-Twister/Inversion/Rejection stream is restored on every exit;
+#' external Box-Muller RNG is rejected because its hidden cache is not restorable.
+#' The boundary width is \code{tie_tolerance * max(1, Mth squared distance)}.
+#' A positive tolerance can change the neighborhood geometry. This policy
+#' supplies point estimates and, for self-normalized matching, empirical
+#' fixed-reuse replication only; it
+#' does not inherit any continuous-score or discrete-tie sampling theorem.
+#'
 #' @export
 wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
                      estimand = c("PATE", "PATT"),
                      method = c("self_normalized", "stabilized"),
                      mean0 = NULL, mean1 = NULL, rho0 = NULL, rho1 = NULL,
                      fold_id = NULL, strata = NULL, variance = TRUE,
-                     nuisance_influence = NULL, sensitivity = NULL) {
+                     nuisance_influence = NULL, sensitivity = NULL,
+                     tie_rule = c("row_order", "source_random"),
+                     tie_seed = NULL, tie_tolerance = 64 * .Machine$double.eps) {
   estimand <- match.arg(estimand)
   method <- match.arg(method)
+  ties <- .wm_tie_options(tie_rule, tie_seed, tie_tolerance)
+  source_random <- identical(ties$rule, "source_random")
   if (!is.numeric(Y) || is.complex(Y) || !is.null(dim(Y)) || length(Y) < 2L) {
     stop("Y must be a finite numeric vector with at least two rows.", call. = FALSE)
   }
@@ -153,15 +231,20 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   if (!is.logical(variance) || length(variance) != 1L || is.na(variance)) {
     stop("variance must be TRUE or FALSE.", call. = FALSE)
   }
+  if (source_random && variance) {
+    stop("source_random is point-only; use variance = FALSE. Sampling inference is unsupported.",
+         call. = FALSE)
+  }
   scores0 <- .wm_score_matrix(scores0, n, "scores0")
   if (estimand == "PATT" &&
       (!is.null(scores1) || !is.null(mean1) || !is.null(rho1))) {
     stop("PATT uses only scores0, mean0 and rho0; omit arm-1 inputs.", call. = FALSE)
   }
   scores1 <- if (is.null(scores1)) scores0 else .wm_score_matrix(scores1, n, "scores1")
-  if (method == "stabilized" && estimand == "PATE" &&
+  if (variance && method == "stabilized" && estimand == "PATE" &&
       !identical(scores0, scores1)) {
-    stop("Stabilized PATE requires the same supplied score matrix in both arms.",
+    stop(paste("The row/edge variance for stabilized PATE requires the same supplied score matrix in both arms;",
+               "use variance = FALSE and wm_reciprocal_inference() for its fixed-map reciprocal variance contract."),
          call. = FALSE)
   }
   corrected <- !is.null(mean0)
@@ -226,8 +309,30 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   donor_key <- 2 * (cell - 1) + Z + 1
   donor_cache <- split(seq_len(n), donor_key)
   edge_count <- as.double(length(query_rows)) * M
-  for (k in seq_along(query_rows)) {
-    i <- query_rows[k]
+  matching_rows <- query_rows
+  tie_diagnostics <- NULL
+  if (source_random) {
+    rng_kind <- RNGkind()
+    if (identical(rng_kind[2L], "Box-Muller")) {
+      stop("source_random cannot preserve the Box-Muller cache; select another normal RNG before matching.",
+           call. = FALSE)
+    }
+    had_seed <- exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    saved_seed <- if (had_seed) get(".Random.seed", envir = .GlobalEnv, inherits = FALSE) else NULL
+    on.exit({
+      do.call(RNGkind, as.list(rng_kind))
+      if (had_seed) assign(".Random.seed", saved_seed, envir = .GlobalEnv)
+      else if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        rm(".Random.seed", envir = .GlobalEnv)
+    }, add = TRUE)
+    RNGkind("Mersenne-Twister", "Inversion", "Rejection")
+    set.seed(ties$seed)
+    matching_rows <- if (estimand == "PATE") c(which(Z == 1L), which(Z == 0L)) else query_rows
+    query_position <- match(seq_len(n), query_rows)
+    diagnostic_rows <- matrix(0L, n, 4L)
+  }
+  for (k in seq_along(matching_rows)) {
+    i <- matching_rows[k]
     arm <- 1L - Z[i]
     donors <- donor_cache[[as.character(2 * (cell[i] - 1) + arm + 1)]]
     if (length(donors) < M) {
@@ -236,8 +341,17 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
            " donors but M = ", M, ".", call. = FALSE)
     }
     score <- if (arm == 0L) scores0 else scores1
-    distance <- .wm_distances(score, i, donors)
-    selected <- .wm_nearest_positions(distance, donors, M)
+    if (source_random) {
+      squared_distance <- .wm_squared_distances(score, i, donors)
+      boundary <- .wm_source_nearest_positions(squared_distance, M, ties$tolerance)
+      selected <- boundary$positions
+      distance <- sqrt(squared_distance)
+      diagnostic_rows[i, ] <- c(boundary$boundary_tie, boundary$exact_boundary_tie,
+                                boundary$randomized, boundary$boundary_group)
+    } else {
+      distance <- .wm_distances(score, i, donors)
+      selected <- .wm_nearest_positions(distance, donors, M)
+    }
     j <- donors[selected]
     neighbors[[i]] <- j
     share <- if (method == "self_normalized") w[j] / sum(w[j]) else rep(1 / M, M)
@@ -251,7 +365,8 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
       edge_distance <- edge_share <- edge_outcome_share <- numeric(edge_count)
       block_offset <- seq_len(M)
     }
-    block <- (as.double(k) - 1) * M + block_offset
+    position <- if (source_random) query_position[i] else k
+    block <- (as.double(position) - 1) * M + block_offset
     edge_donor[block] <- j
     edge_distance[block] <- distance[selected]
     edge_share[block] <- share
@@ -261,6 +376,29 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
                       distance = edge_distance, share = edge_share,
                       outcome_share = edge_outcome_share)
   rownames(edges) <- NULL
+  if (source_random) {
+    diagnostics <- list()
+    for (arm in if (estimand == "PATE") 0:1 else 0L) {
+      recipients <- which(Z != arm)
+      donors <- which(Z == arm)
+      usage <- tabulate(edges$donor[edges$arm == arm], nbins = n)
+      diagnostics[[as.character(arm)]] <- list(donor_arm = arm,
+        recipients = length(recipients),
+        boundary_tie_recipients = as.integer(sum(diagnostic_rows[recipients, 1L])),
+        exact_boundary_tie_recipients = as.integer(sum(diagnostic_rows[recipients, 2L])),
+        randomized_recipients = as.integer(sum(diagnostic_rows[recipients, 3L])),
+        maximum_boundary_group = max(1L, diagnostic_rows[recipients, 4L]),
+        donors_used = sum(usage[donors] > 0L), maximum_donor_reuse_count = max(usage[donors]),
+        total_selected_pairs = sum(usage))
+    }
+    tie_diagnostics <- list(rule = ties$rule, seed = ties$seed,
+      tolerance = ties$tolerance, tolerance_scale = "max(1, Mth squared distance)",
+      independent_recipient_selection = TRUE,
+      original_match_sets_fixed_in_replication = TRUE, arms = diagnostics,
+      stream_order = "Donor arm 0 then 1; ascending original recipient and eligible donor rows",
+      RNGkind = c("Mersenne-Twister", "Inversion", "Rejection"),
+      sampling_inference_supported = FALSE)
+  }
   if (any(!is.finite(edges$outcome_share))) {
     stop("Donor outcome coefficients exceed numerical range.", call. = FALSE)
   }
@@ -358,12 +496,21 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
                    row_edge_sum = sum(row_numerator) + sum(edge_numerator))
   contract <- if (method == "self_normalized") {
     "Original donor normalization: identification and strong graph-field residual centering; supplied means and any nuisance correction need their separate rate/influence contract."
+  } else if (estimand == "PATE" && !variance) {
+    "Stabilized PATE point calculation: supplied arm maps may differ; no sampling inference is asserted by this fit."
   } else if (estimand == "PATE") {
     "Common-score stabilized PATE: weighted centering, bounded-outcome theorem and the supplied mean/rho nuisance-rate contract; row-plus-edge variance."
   } else {
     "Stabilized PATT: weighted centering, finite-moment theorem and the supplied mean/rho nuisance-rate contract."
   }
-  structure(list(estimate = estimate, raw_estimate = raw_estimate,
+  if (source_random) {
+    contract <- paste("Source-compatible randomized squared-distance boundary policy:",
+      "point calculation only; sampling inference is unsupported.",
+      "Self-normalized matching also supports empirical fixed-reuse replicate algebra.",
+      "Positive tie_tolerance may change geometry; unrestricted discrete ties and",
+      "dependent survey sampling do not inherit the continuous-score theorem.")
+  }
+  result <- structure(list(estimate = estimate, raw_estimate = raw_estimate,
                  correction = estimate - raw_estimate, n = n, M = M,
                  estimand = estimand, method = method,
                  root_n_variance = root_n_variance, variance = root_n_variance / n,
@@ -382,11 +529,15 @@ wm_match <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
                               cell = cell, fold_id = folds, strata = restrictions,
                               scores0 = scores0, scores1 = if (estimand == "PATE") scores1 else NULL,
                               transform = "Supplied coordinates; no automatic scaling",
-                              tie_rule = "Exact distance, then original row index"),
+                              tie_rule = if (source_random)
+                                "Source-compatible random squared-distance boundary" else
+                                "Exact distance, then original row index"),
                  info = list(inference_status = if (variance) "user_supplied_nuisance_contract" else "point_estimate_only",
                              contract = contract, corrected = corrected,
                              nuisance_correction = has_influence,
                              weight_units = "Denominator, incoming loads, rho predictions and numerator identities use weights / weight_scale.",
                              restriction = "fold_id and strata restrict donor graphs; strata is not a survey-design variance specification.")),
             class = c("wm_match", "list"))
+  if (source_random) result$graph$tie_diagnostics <- tie_diagnostics
+  result
 }

@@ -1,0 +1,86 @@
+[
+  {
+    "diagnostic": "male",
+    "source_variable": "male",
+    "kind": "binary_numeric",
+    "label": "male"
+  },
+  {
+    "diagnostic": "white",
+    "source_variable": "white",
+    "kind": "binary_numeric",
+    "label": "white"
+  },
+  {
+    "diagnostic": "black",
+    "source_variable": "black",
+    "kind": "binary_numeric",
+    "label": "black"
+  },
+  {
+    "diagnostic": "hispanic",
+    "source_variable": "hispanic",
+    "kind": "binary_numeric",
+    "label": "hispanic"
+  },
+  {
+    "diagnostic": "income_low",
+    "source_variable": "income_low",
+    "kind": "binary_numeric",
+    "label": "income_low"
+  },
+  {
+    "diagnostic": "income_medium",
+    "source_variable": "income_medium",
+    "kind": "binary_numeric",
+    "label": "income_medium"
+  },
+  {
+    "diagnostic": "income_high",
+    "source_variable": "income_high",
+    "kind": "binary_numeric",
+    "label": "income_high"
+  },
+  {
+    "diagnostic": "large_metro",
+    "source_variable": "large_metro",
+    "kind": "binary_numeric",
+    "label": "large_metro"
+  },
+  {
+    "diagnostic": "small_metro",
+    "source_variable": "small_metro",
+    "kind": "binary_numeric",
+    "label": "small_metro"
+  },
+  {
+    "diagnostic": "early_alcohol",
+    "source_variable": "early_alcohol",
+    "kind": "binary_numeric",
+    "label": "early_alcohol"
+  },
+  {
+    "diagnostic": "ever_cigarette",
+    "source_variable": "ever_cigarette",
+    "kind": "binary_numeric",
+    "label": "ever_cigarette"
+  },
+  {
+    "diagnostic": "age_21_23",
+    "source_variable": "age_21_23",
+    "kind": "binary_numeric",
+    "label": "age_21_23"
+  },
+  {
+    "diagnostic": "age_24_25",
+    "source_variable": "age_24_25",
+    "kind": "binary_numeric",
+    "label": "age_24_25"
+  },
+  {
+    "diagnostic": "age_26_29",
+    "source_variable": "age_26_29",
+    "kind": "binary_numeric",
+    "label": "age_26_29"
+  }
+]

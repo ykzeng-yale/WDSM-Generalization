@@ -258,6 +258,10 @@
 #' outcomes. Score maps, weights and target identification obey the fixed-map
 #' contract in \code{\link{wm_match}}.
 #'
+#' Matching tie options are forwarded to \code{wm_match()};
+#' \code{tie_rule = "source_random"} requires an explicit \code{tie_seed}
+#' and \code{variance = FALSE}, and supports point/replicate algebra only.
+#'
 #' @export
 wm_fit <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
                    estimand = c("PATE", "PATT"),
@@ -267,11 +271,18 @@ wm_fit <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
                    moment_order = NULL, support0 = NULL, support1 = NULL,
                    rho_bounds = NULL, fold_id = NULL, strata = NULL,
                    variance = TRUE, max_basis = 10000L,
-                   max_basis_elements = 1e7, qr_tol = 1e-10) {
+                   max_basis_elements = 1e7, qr_tol = 1e-10,
+                   tie_rule = c("row_order", "source_random"),
+                   tie_seed = NULL, tie_tolerance = 64 * .Machine$double.eps) {
   fit_call <- match.call()
   estimand <- match.arg(estimand)
   method <- match.arg(method)
   regression <- match.arg(regression)
+  ties <- .wm_tie_options(tie_rule, tie_seed, tie_tolerance)
+  if (ties$rule == "source_random" && isTRUE(variance)) {
+    stop("source_random is point-only; use variance = FALSE. Sampling inference is unsupported.",
+         call. = FALSE)
+  }
   if (!is.numeric(Y) || is.complex(Y) || !is.null(dim(Y)) ||
       length(Y) < 2L) {
     stop("Y must be a finite numeric vector with at least two rows.",
@@ -320,8 +331,9 @@ wm_fit <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   same_maps <- estimand == "PATE" &&
     identical(dim(scores0), dim(scores1)) &&
     isTRUE(all(scores0 == scores1))
-  if (method == "stabilized" && estimand == "PATE" && !same_maps) {
-    stop("Stabilized PATE requires the same supplied score matrix in both arms.",
+  if (variance && method == "stabilized" && estimand == "PATE" && !same_maps) {
+    stop(paste("The row/edge variance for stabilized PATE requires the same supplied score matrix in both arms;",
+               "use variance = FALSE and the separate wm_reciprocal_inference() contract."),
          call. = FALSE)
   }
   folds <- if (is.null(fold_id)) rep("all", n) else
@@ -475,7 +487,8 @@ wm_fit <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
     mean0 = means[[1L]], mean1 = if (estimand == "PATE") means[[2L]] else NULL,
     rho0 = if (method == "stabilized") rhos[[1L]] else NULL,
     rho1 = if (method == "stabilized" && estimand == "PATE") rhos[[2L]] else NULL,
-    fold_id = fold_id, strata = strata, variance = variance)
+    fold_id = fold_id, strata = strata, variance = variance,
+    tie_rule = ties$rule, tie_seed = ties$seed, tie_tolerance = ties$tolerance)
   result$fit_call <- fit_call
   result$nuisance <- list(
     regression = regression, models = models,
@@ -517,6 +530,10 @@ wm_fit <- function(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
               "spline arms use one common declared rectangle across strata,",
               "with positive donor density throughout that rectangle in each stratum")
         else NULL))
+  if (ties$rule == "source_random") {
+    result$nuisance$inference_contract$tie_policy <-
+      "Source-compatible random boundary policy: point/replicate algebra only; no sampling inference theorem."
+  }
   class(result) <- c("wm_fit", class(result))
   result
 }

@@ -1,0 +1,15 @@
+{
+  "citation": "Lenis D, Nguyen TQ, Dong N, Stuart EA (2019). It\u2019s all about balance: propensity score matching in the context of complex survey data. Biostatistics 20(1):147\u2013163.",
+  "doi": "10.1093/biostatistics/kxx063",
+  "redistribution": "External supplement is not included. User supplies these files under its applicable terms.",
+  "files": {
+    "biosts-17039-File013.R": {
+      "sha256": "13f61c9890030f0a0aae435139a4136450b383e2694a7d5738487d010239e6b5",
+      "bytes": 14246
+    },
+    "biosts-17039-File015.R": {
+      "sha256": "f1e1c43a9d45ae9d09d8d47731056a093b0995812e85e7100c1e74d72c6d3448",
+      "bytes": 19120
+    }
+  }
+}

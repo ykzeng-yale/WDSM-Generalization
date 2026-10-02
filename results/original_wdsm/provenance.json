@@ -1,0 +1,62 @@
+{
+  "schema": "complete_original_WDSM_compact_aggregate_provenance_v1",
+  "source_recipe": "simulations/original_wdsm/design.json",
+  "source_code": "simulations/original_wdsm/provenance.json",
+  "total_cells": 608,
+  "replicates_requested_per_cell": 1000,
+  "selected_samples": 4000,
+  "sample_case_evaluations": 32000,
+  "estimator_records_assessed": 608000,
+  "source_reduction_rows_assessed": 96000,
+  "record_level_inputs_included": false,
+  "complete_aggregate_reports_included": true,
+  "copied_payloads": [
+    {
+      "path": "metrics.csv",
+      "bytes": 423524,
+      "sha256": "4d3bc54156c6a2fcd09ee1c91b8ff8a5ece1fc7ea279d7f09685ff4373542d35"
+    },
+    {
+      "path": "audit.csv",
+      "bytes": 94998,
+      "sha256": "00a53a9678758f1b97437eed85a429df6b8955fee839ef8b37d5d779dcb51a65"
+    },
+    {
+      "path": "point_success_diagnostics.csv",
+      "bytes": 208796,
+      "sha256": "3b0c8664defff9dc5e9cf489d1dbfc3da534c50b7076567069c2e91f3c1d2373"
+    },
+    {
+      "path": "method_failures.csv",
+      "bytes": 302,
+      "sha256": "eaefe0b563562d32d07c35172d528ac955337ac71f0569ceeb2fdf083a10ea6b"
+    },
+    {
+      "path": "reduction_mismatches.csv",
+      "bytes": 374,
+      "sha256": "abe55c79d97fa57008a049a6dfa91298b76bde5872896da82e6f7069963f8ac5"
+    },
+    {
+      "path": "main_comparison.csv",
+      "bytes": 60982,
+      "sha256": "921d2bf6d264cd0c19215ba80d211a93ee4f5e5c341de65ac95eddbececda236"
+    },
+    {
+      "path": "all_cells.csv",
+      "bytes": 586519,
+      "sha256": "291de55dce6fe0f5a29842c8afd1bb26447db1c4d376a5b7a11a77399d6a4e97"
+    }
+  ],
+  "native_frozen_saved_reporting": {
+    "maximum_numeric_difference": 2.66453525910038e-14
+  },
+  "native_public_saved_reporting": {
+    "maximum_numeric_difference": 2.19380069665931e-13,
+    "category_status_denominators_exact": true,
+    "graph_point_draw_variance_interval_scaled_tolerance": 1e-10,
+    "method_failure_rows": 0,
+    "reduction_mismatch_rows": 0
+  },
+  "qualification": "Original source-design empirical study; preserve adverse findings and separate known-map, fitted and refit variance. No all-cell nominal inference, iid design/centering/model or causal certification.",
+  "raw_subjects_counts_fits_private_controllers_manuscript_or_reviews_included": false
+}

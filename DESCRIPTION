@@ -1,6 +1,6 @@
 Package: wdsmatch
 Type: Package
-Title: Individually Weighted Matching for Causal Inference
+Title: Weighted Matching for Causal Inference
 Version: 0.3.0.9000
 Authors@R: c(
     person("Yukang", "Zeng", email = "ykzeng2019@gmail.com", role = c("aut", "cre")),
@@ -29,6 +29,8 @@ Imports:
     stats,
     splines
 Suggests:
+    gmp (>= 0.7-5.1),
+    Rmpfr (>= 1.1-2),
     testthat (>= 3.0.0),
     knitr,
     rmarkdown

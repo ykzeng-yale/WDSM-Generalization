@@ -1,5 +1,71 @@
 # wdsmatch 0.3.0.9000
 
+* Add the common prepared-input, supplied-refit and WM application driver,
+  deterministic selected39 ECLS decoding/construction and three case schemas.
+  Complete saved-bundle reproduction retains all72 rows,12600 available draws
+  and all nine unavailable ECLS PATE intervals; no participant/count/fitted
+  objects are distributed. Add compact complete original-study reports with
+  all608 cells, requested denominators, source reductions and adverse findings.
+
+* Add the unchanged saved-graph application balance helper and explicit
+  target-specific diagnostic documentation; no participant inputs or new
+  package API are exported. Record the later focused source-tie validation
+  separately from historical package checks and qualified formal results.
+* Restrict the current Weighted Matching framework to supplied, known
+  probability weights. Only scores, coordinate scales and outcome corrections
+  are estimated. Earlier optional estimated-weight APIs and study artifacts
+  are historical compatibility material, outside the current WM theory.
+
+* Add `wm_scalar_replication()` for full-slope current-graph contribution
+  variance and supplied-count/multiplier algebra under the qualified scalar
+  model. It preserves raw points and full matching/nuisance covariance, uses
+  total observed n for both targets, and generates no random draws or refits.
+  Scalar fit objects now retain their original design for input binding.
+  The row and explicit moment variances need not agree in finite samples.
+* Add optional `wm_scalar_root_certificate()` for verified finite-data
+  logistic-root containment, donor-set identity and point-arithmetic bounds.
+  It leaves the fit unchanged and makes no asymptotic certification-success,
+  variance-arithmetic or bootstrap claim. Exact rational enclosures use the
+  optional `gmp` and `Rmpfr` dependencies.
+* Add `wm_scalar_logistic_match()` for raw fitted-propensity matching and a
+  separate explicit scalar variance under known smooth score-dependent weights
+  and the documented bounded outcome/design model. Both arms' mean variation,
+  finite-M drift and full covariance matrices are retained. Numerical-root
+  certification and original-refit bootstrap validity are not supplied.
+  Deterministic validation is available in `validation/check_scalar_logistic_match.R`.
+* Add `wm_graph_transport()` and `wm_fitted_inference()` for the documented
+  transport calculation and complete fitted variance in the qualified
+  higher-dimensional branches. They preserve explicit application assumptions,
+  quadrature-only error reporting, covariance blocks and unavailable intervals.
+* Add the completed bounded iid WDSM calibration records and deterministic
+  summary replay, retaining paired subset comparisons, Monte Carlo errors,
+  small-sample departures and the historical outer-monitor receipt limitation.
+  A separately labelled forward-replay configuration preserves frozen source
+  pins after the fitted interface additions.
+* Add `wm_wdsm_fit()` for the original fitted arm-specific double-score
+  pipeline with arbitrary fixed M, known probability weights, and PATE/PATT.
+  Point estimation is the default; explicit `inference = "full_x"` includes
+  the complete fitted-pipeline correction under its documented conditions.
+  PATT fits only the control prognostic model. This interface does not provide
+  generic learned-score, estimated-weight or dependent-design inference.
+* Add explicit `ps_weighting = "probability"` or `"unit"` to the fitted
+  double-score interface, preserving the original retrospective/prospective
+  PS-fitting conventions and their complete estimating equations. Paired
+  original-source checks cover 96 point configurations across both designs;
+  eight CorCor/M3 pairings also reproduce 64 same-count refit draws. This is
+  implementation verification, not a simulation performance claim.
+* Add separate fixed-map reciprocal variance and Gaussian replication APIs.
+  These retain signed reciprocal covariance for distinct arm maps, preserve
+  point estimates, and explicitly report unavailable or floored variances.
+  Stabilized distinct-map PATE point calculations are available with
+  `variance = FALSE`; the existing row/edge variance still requires a common map.
+* Add `wm_bootstrap_refit()` for exact fixed-reuse multinomial replication
+  with supplied counts and optional nuisance-prediction refitting, preserving
+  the original WDSM normalization and variance convention. This procedure is
+  separate from fixed-prediction Gaussian multipliers.
+* Add independent original-survey WDSM and unit-weight matching reduction
+  checks. Document that point-estimator reductions do not remove the
+  joined-score centering or fitted-score inference requirements.
 * Add `wm_match()` and `wm_fit()` for fixed-count matching on supplied
   Euclidean coordinates of any fixed dimension, with PATE and PATT targets,
   self-normalized donor fractions and polynomial or tensor-spline correction.
@@ -7,7 +73,8 @@
   single potential means and independently split PATE estimation. Each option
   records its own identification, centering and nuisance-rate requirements.
 * Add fixed-contribution Gaussian multipliers and qualified corrections for
-  parametric prediction, estimated weights and independent training. The
+  known-weight parametric prediction and independent training. Historical
+  estimated-weight helpers are retained separately for compatibility. The
   Gaussian linear-model constructor permits actual fitted scalar coordinates
   under its explicit full-covariate and geometry assumptions.
 * Add exact one-dimensional overlap constants and separate numerical

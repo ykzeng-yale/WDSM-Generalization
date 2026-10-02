@@ -1,0 +1,199 @@
+{
+  "schema": "bounded_wdsm_current_source_admission_v1",
+  "admission_id": "supplied-weight-current-source-20261001-v1",
+  "purpose": "Current-source forward preparation only; not evidence of historical execution or statistical calibration",
+  "scope": "Supplied known weights; estimated score/prediction/standardization branches retain their documented premises. The qualified all-used-scalar design-fitted full-X branch admits PATE full_x or control-only PATT patt with zero current-centering transport; no mixed-dimensional, nonzero-transport, common-field or estimated-weight widening. Historical estimated-weight helper APIs are not endorsed.",
+  "historical_config": {
+    "path": "simulations/config/bounded_wdsm_calibration_sharded.json",
+    "sha256": "4e577017722c701844817f33e2c899c00c7e3b57bd8de58ede4097302812540f"
+  },
+  "package_version": "0.3.0.9000",
+  "source_sha256": {
+    "simulations/bounded_wdsm_design_reference.R": "f671749529198df2e6821aa440277b0a6572d53e3075bf1cf93cb4f214def58a",
+    "simulations/wdsm_nuisance_stack_reference.R": "88ef7f11079605e50c395964347e2ad2d78a82c50ac5da5f012a0c7fdce4e65c",
+    "simulations/fitted_wm_components.R": "84f106202539be24d9211f296454ea099b230f503bb1f056887a2b6b2f7201bc",
+    "simulations/wdsm_fitted_pipeline_reference.R": "0319e408e88f5984084bd132acd86b6499cb37352042268058e99b9a053ffdc3",
+    "simulations/wdsm_calibration_prediction_stack.R": "f547ce5a1fc207f5bc861894082927a50ecd377b4e2612bc50a493d369d1ae74",
+    "simulations/bounded_wdsm_calibration.R": "c4d8d84ff1cb6722f632955c0e91fcb50c33ae7e310513ad03f90934b0dc2ac6",
+    "simulations/run_bounded_wdsm_calibration.R": "4ea4cd3d5cefd5e11eae3e5421e118e98e08a8b9fedb598060f524e372005194"
+  },
+  "package_metadata_sha256": {
+    "DESCRIPTION": "fa972e9ccca2b127189bc8b1690a4adde531985713826f83a4964c1ba4dcf441",
+    "NAMESPACE": "bca8864888cec7a8ee1390e0c4ae35d6651cb4c6e478c1ea8404dc2ab76a0c8a"
+  },
+  "package_source_sha256": {
+    "R/bootstrap.R": "727c8ff634d249bf0af393a70ae30681c1da74a49363ebb0112085936e26e63b",
+    "R/data.R": "c67f7cb44d1e3754eff7006779fb48edfb3bfe2603300b89df745d1bafea8e75",
+    "R/estimate_scores.R": "88d52a08b6c75b19a1f76b868875df4ede2bd33ff710e92ad60478084172486f",
+    "R/matching.R": "1c6def53ec840d880005bf2f170b0caff30f5f56f2d3affd6c10f1d3959b752c",
+    "R/print.R": "2af9593de3464d4813476167c443c5a209a580be3f22bfc399e04f8e1e5f4729",
+    "R/utils.R": "f32553b93fab0b17779c7ad428dd9c1ec326f4aea44d7f12827383bdb42d01e0",
+    "R/wdsm.R": "96e918bfcd0588d3b4aa83f7b71b23925adafa8bed973706dfcd074b717db863",
+    "R/wdsm_ties.R": "a59bb584a41d7e1c7aa604b8800eb985ce8719378bb718f224dad5d3d2dee348",
+    "R/wdsmatchATE.R": "29d597800a5b824ec5196534292fabcc2db401e6de8125a7299c5c975cf3bfe3",
+    "R/wdsmatchATT.R": "e0ccf24ae63ed2e6329c93307152c07ee93fcdff9908d685ff9d0e0c2dc8d533",
+    "R/wm_bootstrap.R": "04f22c5ec348801752b86a7ec5e83232611ea89adf44620d062c755e321eac1a",
+    "R/wm_bootstrap_refit.R": "c5aeb7c833af649269f819ef9f3fd872b1550079e4950784d0fda018b48758f4",
+    "R/wm_core.R": "58fbfe3c2ed8df078af41d560acb7d40a9040b48c2f6d92f7b5e234a731ab544",
+    "R/wm_fitted_inference.R": "a56c42aef6872f0b118a3c5dcba382a5dd491bf296917b816786c1e6bdb0f4e4",
+    "R/wm_gaussian.R": "01a94f25e5fceaef4a0c8b4e62d8a57b73192a28202a8d7ce419d45f154dbd5f",
+    "R/wm_geometry.R": "d8653bb84e3f294f810797b1727d0415dc3de6165e928f50c7cbef06f9875c49",
+    "R/wm_geometry_alpha.R": "f74e262a126d13b41c98b0f977c27ed8fb3a8ea78952a37085d8dfcdf3b07284",
+    "R/wm_geometry_overlap.R": "e1b827f7383ddb0d189fb6a83aaafa8575569e0e0b97156450ec66066e47b0e3",
+    "R/wm_graph_transport.R": "0c5a3f87e0203ad7250fd63e2d845173812c88969c2b254bbfe140e74d42a8aa",
+    "R/wm_nuisance.R": "681150b9219119b02684c02cf7cc736a6a625fd16eda0d96dfdb3b4f27be3750",
+    "R/wm_potential.R": "72cb1d6187f6c37f4d8295466a2d22cd46b9ba2ae49d021551d02c84530b4880",
+    "R/wm_prediction.R": "635021b5351a7008ab26f9244acaa2c88bc3bf2b1008afe1a64c56f1516d2f83",
+    "R/wm_reciprocal.R": "0ae3e66754e97185666e4ed75c8be5b793606b50b3312175e8989c2e28e32fd9",
+    "R/wm_reciprocal_bootstrap.R": "587623740527189149d7887c20b68a79664fe23f2b4408344b7bc9cdd20a24e8",
+    "R/wm_scalar_logistic_match.R": "a06b6255f363dd7ea506e726ce518750491e794ae1360ca4db02acdaf7d0ab92",
+    "R/wm_scalar_psm_inference.R": "1965f248d512a2875ee4726c2bf2d2b96cd7bba350667a4359ef28ba761048c5",
+    "R/wm_scalar_replication.R": "dc96e4d80d27f14f75296f6dace86f524f3c195a9782b5c34246cce99064ebb6",
+    "R/wm_scalar_root_certificate.R": "4762e0b16b3cf8c09b636653bc4c6cc515c7b55151046b883c4f6d69f1720d6a",
+    "R/wm_training.R": "b260f7ce5de1fdfc22ec0663c642505824252aa4c9d928be8cd6595c6b76da1c",
+    "R/wm_wdsm_components.R": "051696bf071c9e2d784b49a76a2ac7ea87d23b5b6ad7fd169052ea8dd10d456c",
+    "R/wm_wdsm_fit.R": "10a5494cf6343181e21c2449149f4e6ed47dbeba053ab52ed1f77f75a3ba5301",
+    "R/wm_wdsm_nuisance.R": "a7861521435739161bc712973116742d4d738ab0be8f6663af8a3c4d995c2343",
+    "R/wm_wdsm_pipeline.R": "86f1bc290a41204256951d203fabea8519219acea589181ac6a515e93d632613",
+    "R/wm_wdsm_prediction.R": "5d28b83c3cb02ae04296817279b746b04169cf9b8addb087d6e8f92d3434833d",
+    "R/wm_weights.R": "0b7f888116ca55a59f7329aae3e56ce66437318dc8c162be724afb29260b50d2"
+  },
+  "compatibility": {
+    "unchanged_historical_package_sources": {
+      "R/bootstrap.R": "727c8ff634d249bf0af393a70ae30681c1da74a49363ebb0112085936e26e63b",
+      "R/data.R": "c67f7cb44d1e3754eff7006779fb48edfb3bfe2603300b89df745d1bafea8e75",
+      "R/estimate_scores.R": "88d52a08b6c75b19a1f76b868875df4ede2bd33ff710e92ad60478084172486f",
+      "R/matching.R": "1c6def53ec840d880005bf2f170b0caff30f5f56f2d3affd6c10f1d3959b752c",
+      "R/print.R": "2af9593de3464d4813476167c443c5a209a580be3f22bfc399e04f8e1e5f4729",
+      "R/utils.R": "f32553b93fab0b17779c7ad428dd9c1ec326f4aea44d7f12827383bdb42d01e0",
+      "R/wdsm_ties.R": "a59bb584a41d7e1c7aa604b8800eb985ce8719378bb718f224dad5d3d2dee348",
+      "R/wdsm.R": "96e918bfcd0588d3b4aa83f7b71b23925adafa8bed973706dfcd074b717db863",
+      "R/wdsmatchATE.R": "29d597800a5b824ec5196534292fabcc2db401e6de8125a7299c5c975cf3bfe3",
+      "R/wdsmatchATT.R": "e0ccf24ae63ed2e6329c93307152c07ee93fcdff9908d685ff9d0e0c2dc8d533",
+      "R/wm_core.R": "58fbfe3c2ed8df078af41d560acb7d40a9040b48c2f6d92f7b5e234a731ab544",
+      "R/wm_gaussian.R": "01a94f25e5fceaef4a0c8b4e62d8a57b73192a28202a8d7ce419d45f154dbd5f",
+      "R/wm_geometry_alpha.R": "f74e262a126d13b41c98b0f977c27ed8fb3a8ea78952a37085d8dfcdf3b07284",
+      "R/wm_geometry_overlap.R": "e1b827f7383ddb0d189fb6a83aaafa8575569e0e0b97156450ec66066e47b0e3",
+      "R/wm_geometry.R": "d8653bb84e3f294f810797b1727d0415dc3de6165e928f50c7cbef06f9875c49",
+      "R/wm_nuisance.R": "681150b9219119b02684c02cf7cc736a6a625fd16eda0d96dfdb3b4f27be3750",
+      "R/wm_potential.R": "72cb1d6187f6c37f4d8295466a2d22cd46b9ba2ae49d021551d02c84530b4880",
+      "R/wm_prediction.R": "635021b5351a7008ab26f9244acaa2c88bc3bf2b1008afe1a64c56f1516d2f83",
+      "R/wm_reciprocal_bootstrap.R": "587623740527189149d7887c20b68a79664fe23f2b4408344b7bc9cdd20a24e8",
+      "R/wm_training.R": "b260f7ce5de1fdfc22ec0663c642505824252aa4c9d928be8cd6595c6b76da1c",
+      "R/wm_weights.R": "0b7f888116ca55a59f7329aae3e56ce66437318dc8c162be724afb29260b50d2"
+    },
+    "changed_historical_package_sources": {
+      "R/wm_bootstrap.R": {
+        "historical_sha256": "ae766512c3214da3b097407550afcf868ca1cdb1b28133cff9484049897e6c1a",
+        "current_sha256": "04f22c5ec348801752b86a7ec5e83232611ea89adf44620d062c755e321eac1a"
+      },
+      "R/wm_reciprocal.R": {
+        "historical_sha256": "a2f01b76e0429c5033cd1c95a75a03448eb7eda976d9e3a7eb0777411993e165",
+        "current_sha256": "0ae3e66754e97185666e4ed75c8be5b793606b50b3312175e8989c2e28e32fd9"
+      },
+      "R/wm_bootstrap_refit.R": {
+        "historical_sha256": "2e8ae2277db461d23d915dc4e776e627d98a54c9cff2d133e9d441b80f3e9e7c",
+        "current_sha256": "c5aeb7c833af649269f819ef9f3fd872b1550079e4950784d0fda018b48758f4"
+      }
+    },
+    "added_package_sources": {
+      "R/wm_fitted_inference.R": "a56c42aef6872f0b118a3c5dcba382a5dd491bf296917b816786c1e6bdb0f4e4",
+      "R/wm_graph_transport.R": "0c5a3f87e0203ad7250fd63e2d845173812c88969c2b254bbfe140e74d42a8aa",
+      "R/wm_scalar_logistic_match.R": "a06b6255f363dd7ea506e726ce518750491e794ae1360ca4db02acdaf7d0ab92",
+      "R/wm_scalar_psm_inference.R": "1965f248d512a2875ee4726c2bf2d2b96cd7bba350667a4359ef28ba761048c5",
+      "R/wm_scalar_replication.R": "dc96e4d80d27f14f75296f6dace86f524f3c195a9782b5c34246cce99064ebb6",
+      "R/wm_scalar_root_certificate.R": "4762e0b16b3cf8c09b636653bc4c6cc515c7b55151046b883c4f6d69f1720d6a",
+      "R/wm_wdsm_components.R": "051696bf071c9e2d784b49a76a2ac7ea87d23b5b6ad7fd169052ea8dd10d456c",
+      "R/wm_wdsm_fit.R": "10a5494cf6343181e21c2449149f4e6ed47dbeba053ab52ed1f77f75a3ba5301",
+      "R/wm_wdsm_nuisance.R": "a7861521435739161bc712973116742d4d738ab0be8f6663af8a3c4d995c2343",
+      "R/wm_wdsm_pipeline.R": "86f1bc290a41204256951d203fabea8519219acea589181ac6a515e93d632613",
+      "R/wm_wdsm_prediction.R": "5d28b83c3cb02ae04296817279b746b04169cf9b8addb087d6e8f92d3434833d"
+    },
+    "changed_function_scope": {
+      "wm_bootstrap": "Appended common dispatch/count/refit inputs and fitted contribution helpers; the current generic fitted-row binder additionally recognizes only the source-bound qualified scalar full-X branch. Original ordinary-wm_match Gaussian calculation, RNG ordering and original fixed-reuse implementation remain unchanged.",
+      "wm_reciprocal_inference": "Finite data/graph/point validation extracted into internal state helper; reciprocal variance calculation retained unchanged.",
+      "wm_fitted_inference": "Restricted all-used-scalar full-X current-centering admission with supplied known W; existing higher-dimensional and raw scalar_psm routes retain their own conditions and guards. Original formals and numerical assembly are unchanged.",
+      "wm_wdsm_components": "Internal complete-row variance gate recognizes the same restricted scalar full-X branch. The WDSM double-score pipeline contract and calculation are not widened."
+    },
+    "scientific_sources_changed": false,
+    "design_seeds_methods_and_allocation_changed": false,
+    "numerical_parity_or_coverage_certified_by_preparation": false,
+    "changed_since_superseded_admission": {
+      "R/wm_bootstrap.R": {
+        "superseded_sha256": "8c3df844226371517dc1ae0109f3d6ffdda06f515cb94e52d8acf5e467fcc6eb",
+        "current_sha256": "04f22c5ec348801752b86a7ec5e83232611ea89adf44620d062c755e321eac1a"
+      },
+      "R/wm_bootstrap_refit.R": {
+        "superseded_sha256": "2e8ae2277db461d23d915dc4e776e627d98a54c9cff2d133e9d441b80f3e9e7c",
+        "current_sha256": "c5aeb7c833af649269f819ef9f3fd872b1550079e4950784d0fda018b48758f4"
+      },
+      "R/wm_fitted_inference.R": {
+        "superseded_sha256": "ffd2738f820e88870ac31e69081e4fa005ce9aa7a3a498008a809d8e1bf5c8a0",
+        "current_sha256": "a56c42aef6872f0b118a3c5dcba382a5dd491bf296917b816786c1e6bdb0f4e4"
+      },
+      "R/wm_wdsm_components.R": {
+        "superseded_sha256": "651946940c46d8c0b42176a42ec73171160c627e68a9e51fb96c20c9a591dfbd",
+        "current_sha256": "051696bf071c9e2d784b49a76a2ac7ea87d23b5b6ad7fd169052ea8dd10d456c"
+      },
+      "R/wm_wdsm_pipeline.R": {
+        "superseded_sha256": "026b754173c6f7dd5a4ab972b82dce2842679f464abb0c54acc109c2b83aa11d",
+        "current_sha256": "86f1bc290a41204256951d203fabea8519219acea589181ac6a515e93d632613"
+      }
+    },
+    "unchanged_since_superseded_package_source_count": 30,
+    "scalar_api_validation_evidence": {
+      "kind": "Previously reviewed bounded saved-array and source-installed identity checks; not a new calibration study",
+      "source_saved_array_checks": 213,
+      "installed_saved_array_checks": 224,
+      "independent_saved_array_checks": 46,
+      "final_source_namespace_functions": 127,
+      "independent_review_sha256": "590b814b901ca89f3e4b99fcf12851df563b1c9d0162c2ba12568edb4874b727",
+      "scope": "Known-W corrected scalar full-X PATE/PATT gates, derivative/row/count algebra, source-bound bootstrap integration, preserved previous branches and explicit rejected cases. Population assumptions remain unverified.",
+      "new_fits": 0,
+      "new_graphs": 0,
+      "rng_draws": 0,
+      "repeated_sampling_calibration_certified": false
+    },
+    "text_contract_refresh": {
+      "date": "2026-10-01",
+      "kind": "Five R comment/returned-contract text changes after the preceding admission; estimator arithmetic, formals, guard behavior, counts, RNG ordering and dispatch are unchanged",
+      "files": [
+        "R/wm_bootstrap.R",
+        "R/wm_bootstrap_refit.R",
+        "R/wm_fitted_inference.R",
+        "R/wm_wdsm_components.R",
+        "R/wm_wdsm_pipeline.R"
+      ],
+      "scientific_scope": "Records qualified fitted-law and compatible prediction-only replication conditions; does not certify their population premises or widen the bounded study design, methods, known-weight scope or statistical acceptance",
+      "package_check": {
+        "R": "4.4.2",
+        "R_source_files_parsed": 35,
+        "Rd_files_checked": 27,
+        "status": "OK",
+        "errors": 0,
+        "warnings": 0,
+        "notes": 0,
+        "tests": "SKIPPED",
+        "examples": "SKIPPED",
+        "manual": "NOT_BUILT",
+        "check_log_sha256": "b44f473f0c60c929d9e099390716f1c115e035b341c60fad1b5a41f6e930a85b",
+        "archive_sha256": "6bf765fef9906887895a5658fa4593b0d8ce62f4ac627d66c22084d2f09d288c"
+      },
+      "nontext_preservation_evidence_sha256": "43325c11e38e19ef475eb3bcfb4117ea861d6d4864c5515e33b800682e9b44e0",
+      "protected_code_preservation_evidence_sha256": "51831018adb8a1c3006cc64db33e475f604697bbbdacec2762624d7381dbc5be",
+      "fits_or_rng_or_simulations_run_for_refresh": false,
+      "repeated_sampling_calibration_certified": false
+    }
+  },
+  "tooling_dependencies": [
+    "jsonlite",
+    "digest",
+    "installed wdsmatch matching these exact source functions and metadata"
+  ],
+  "supersedes": {
+    "path": "simulations/config/bounded_wdsm_current_source_admission_20260930_v2.json",
+    "sha256": "a2bba1758e579ff8b8405faf67f8bfd43c0b77f050d49d3094815172a993299b",
+    "admission_id": "supplied-weight-current-source-20260930-v2",
+    "scope": "Forward current-source preparation only; preceding admissions and historical execution/configuration artifacts remain unchanged."
+  }
+}

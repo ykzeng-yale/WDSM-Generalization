@@ -1,0 +1,21 @@
+{
+  "repository": "https://github.com/ykzeng-yale/SW_DSM",
+  "commit": "e96dcc82baa9f8f8e50c2c5d56dadaa756cf6731",
+  "files": {
+    "R/wdsm_core_final.R": "d72416c8b0c2e821ae29c040dd3b2beb245cfc1db917b021c47c6a061ab11f1a",
+    "R/comparators_final.R": "e0c592acf777bd0395e49ebc501ae1c91e953782cfd3f54d604dbbec287a64ef",
+    "R/wdsm_ties.R": "a59bb584a41d7e1c7aa604b8800eb985ce8719378bb718f224dad5d3d2dee348",
+    "R/dsmatch/is.lp.R": "cbc2bfb35177c72f531ab08326ec5be7aeebdf9bcdddf14812208801f3078e5c",
+    "R/dsmatch/is.ps.R": "30f0c04361b7f76b933b0e8ef080d4c98954dce702db6f7fdbffd1b7a7ef352b",
+    "R/dsmatch/is.pg.R": "94f95bc7785baaf720e62e5fec6664dd69233683cd6f935cdbb811d434f41e78",
+    "R/dsmatch/dsmatchATE.R": "7f4464f46278c32295a1b153f59bc00a0650a61025a9eb3da9ac7b904d84ee69",
+    "R/dsmatch/dsmatchATT.R": "b998ad49b2c6dd0d613c51b7a4aa33eee38c02a34bf2a3d612936ddd3e09ac1b",
+    "R/dsmatch/estforboot_dsATE.R": "335730c63139be63131a6d67b63cee0294a897d84cd849f5449bdb3f35d0729b",
+    "R/dsmatch/estforboot_psATE.R": "8151e21cc7fca7fe68c0c4e1dfa6b935bdfa83234f8b78a80004bf061758fd5c",
+    "R/dsmatch/estforboot_pgATE.R": "303feac69dc80c077c758dbe0caaa92f4c61a0a548c8a91b54ec0a51648bd2bb",
+    "R/dsmatch/estforboot_dsATT.R": "f2151c9e85b7246277dc6fbc007395ae82b60f6439a962d645646b886ab1df59",
+    "R/dsmatch/estforboot_psATT.R": "5421277f6b96648b655a04c9290a1d632f137e8683bb100ab9f10a9bb4549f06",
+    "R/dsmatch/estforboot_pgATT.R": "50d1047768a76575b6a1dd69ff77648be54a0b34de25044ece844b4551f594c9"
+  },
+  "redistributed": false
+}

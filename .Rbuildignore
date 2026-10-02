@@ -2,6 +2,7 @@
 ^\.gitignore$
 ^SOURCE_PROVENANCE\.json$
 ^simulations$
+^applications$
 ^validation$
 ^results$
 ^logs$

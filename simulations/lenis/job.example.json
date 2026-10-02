@@ -1,0 +1,13 @@
+{
+  "kind": "formal",
+  "population_scenarios": [
+    1,
+    2,
+    3
+  ],
+  "replicates": [
+    1,
+    2
+  ],
+  "max_seconds": 7200
+}

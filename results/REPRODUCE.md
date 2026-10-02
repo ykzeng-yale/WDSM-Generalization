@@ -1,5 +1,11 @@
 # Reproducing the aggregate results
 
+These commands reproduce preserved historical archives. The optional
+estimated-weight cells in `first_stage/` are outside the current supplied-weight
+WM framework; reproducing their arithmetic is not validation of that framework
+and those cells are excluded from the current paper. No new estimated-weight
+study is needed for the active research goal.
+
 Run the commands below from the repository root, where `DESCRIPTION`, `R/`, `simulations/` and `results/` reside. R is required; the deterministic aggregate check uses only base/recommended R packages and does not require package installation. Results and simulation scripts belong to the source checkout and are excluded from the installed package.
 
 ## Saved aggregates, benchmarks and figures
@@ -7,11 +13,14 @@ Run the commands below from the repository root, where `DESCRIPTION`, `R/`, `sim
 ```sh
 Rscript --vanilla results/reproduce_benchmarks.R
 Rscript --vanilla results/reproduce_first_stage.R
+Rscript --vanilla results/reproduce_bounded_wdsm.R
 ```
 
 This checks the public artifact MD5/size manifest, reconstructs the saved beta vectors and covariance matrices from CSV, checks their moment identities, and repeats both benchmark joins. It compares every column of all 576 primary and 54 supplemental rows with the saved tables at a tolerance allowing CSV rounding. It performs no estimator fitting or random-number generation. SHA256 fingerprints are also provided in `results/artifact_hashes.csv` for independent verification. The retained R 4.4.2 check passed; its output is in `results/provenance/aggregate_check_v2.log`.
 
-The second command additionally reconstructs all 234 first-stage benchmark rows, their shared numerical-geometry covariance, and aggregate recovery accounting. It selects the declared first-stage geometry without replacing the primary/supplemental inputs. Both commands use saved aggregate data; reproducing sampling summaries requires regenerating the synthetic replications.
+The second command additionally reconstructs all 234 first-stage benchmark rows, their shared numerical-geometry covariance, and aggregate recovery accounting. It selects the declared first-stage geometry without replacing the primary/supplemental inputs. Those first two commands use saved aggregate data; reproducing their sampling summaries requires regenerating the synthetic replications.
+
+The third command reconstructs the bounded fitted-WDSM outer sampling summaries directly from 60,000 preserved synthetic estimator records and 4,000 count-set diagnostics. It checks all 72 summary cells, 32 paired comparisons, 16 count-comparison cells and complete memberships, without generating data, refitting models or changing RNG state. It does not rederive individual count-draw moments or repeat the raw archive audit. See [bounded_wdsm/README.md](bounded_wdsm/README.md) for the qualified results, paired-subset requirement and missing outer-monitor receipt. Its separate artifact manifest verifies the exported files and pinned helper.
 
 Optionally save the reconstructed geometry object and repeated joins to a **new** directory:
 

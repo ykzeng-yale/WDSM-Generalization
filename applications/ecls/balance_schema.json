@@ -1,0 +1,646 @@
+[
+  {
+    "diagnostic": "FEMALE",
+    "source_variable": "FEMALE",
+    "kind": "binary_numeric",
+    "label": "Female source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "WHITE",
+    "source_variable": "WHITE",
+    "kind": "binary_numeric",
+    "label": "White source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "WKSESL",
+    "source_variable": "WKSESL",
+    "kind": "continuous",
+    "label": "Retained socioeconomic scale",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "C1R4RSCL",
+    "source_variable": "C1R4RSCL",
+    "kind": "continuous",
+    "label": "Kindergarten reading IRT scale score",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "C1R4MSCL",
+    "source_variable": "C1R4MSCL",
+    "kind": "continuous",
+    "label": "Kindergarten mathematics IRT scale score",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "S2KPUPRI",
+    "source_variable": "S2KPUPRI",
+    "kind": "binary_numeric",
+    "label": "Public-school source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1ELHS",
+    "source_variable": "P1ELHS",
+    "kind": "binary_numeric",
+    "label": "Parental expectation: less than high school",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1EHS",
+    "source_variable": "P1EHS",
+    "kind": "binary_numeric",
+    "label": "Parental expectation: high school",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1ESC",
+    "source_variable": "P1ESC",
+    "kind": "binary_numeric",
+    "label": "Parental expectation: some college",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1EC",
+    "source_variable": "P1EC",
+    "kind": "binary_numeric",
+    "label": "Parental expectation: college",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1EMS",
+    "source_variable": "P1EMS",
+    "kind": "binary_numeric",
+    "label": "Parental expectation: masters",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1EPHD",
+    "source_variable": "P1EPHD",
+    "kind": "binary_numeric",
+    "label": "Parental expectation: doctorate",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1FIRKDG",
+    "source_variable": "P1FIRKDG",
+    "kind": "binary_numeric",
+    "label": "First-kindergarten source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1AGEENT",
+    "source_variable": "P1AGEENT",
+    "kind": "continuous",
+    "label": "Age at kindergarten entry: source scale",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "T1LEARN",
+    "source_variable": "T1LEARN",
+    "kind": "continuous",
+    "label": "Approaches-to-learning composite rating",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1HSEVER",
+    "source_variable": "P1HSEVER",
+    "kind": "binary_numeric",
+    "label": "Head-start source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "FKCHGSCH",
+    "source_variable": "FKCHGSCH",
+    "kind": "binary_numeric",
+    "label": "Within-kindergarten R1-to-R2 school-change indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "S2KMINOR",
+    "source_variable": "S2KMINOR",
+    "kind": "continuous",
+    "label": "School minority-composition raw1-5 category code",
+    "measurement_class": "ordered_numeric_code",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1FSTAMP",
+    "source_variable": "P1FSTAMP",
+    "kind": "binary_numeric",
+    "label": "Food-stamps source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "SGLPAR",
+    "source_variable": "SGLPAR",
+    "kind": "binary_numeric",
+    "label": "Single-parent source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "TWOPAR",
+    "source_variable": "TWOPAR",
+    "kind": "binary_numeric",
+    "label": "Two-parent source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1NUMSIB",
+    "source_variable": "P1NUMSIB",
+    "kind": "continuous",
+    "label": "Number of siblings: retained count",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1HMAFB",
+    "source_variable": "P1HMAFB",
+    "kind": "continuous",
+    "label": "Mother age at first birth: source scale",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "WKCAREPK",
+    "source_variable": "WKCAREPK",
+    "kind": "binary_numeric",
+    "label": "Nonparental-care source indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "PRETERM_GT2WK",
+    "source_variable": "PRETERM_GT2WK",
+    "kind": "binary_numeric",
+    "label": "Reported birth more than two weeks early: known lead indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "BIRTH_TOTAL_OZ",
+    "source_variable": "BIRTH_TOTAL_OZ",
+    "kind": "continuous",
+    "label": "Birth total ounces:16*pounds+ounces",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "C1FMOTOR",
+    "source_variable": "C1FMOTOR",
+    "kind": "continuous",
+    "label": "Fine-motor source scale",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "C1GMOTOR",
+    "source_variable": "C1GMOTOR",
+    "kind": "continuous",
+    "label": "Gross-motor source scale",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1HSCALE",
+    "source_variable": "P1HSCALE",
+    "kind": "continuous",
+    "label": "Overall-health ordinal source scale",
+    "measurement_class": "ordered_numeric_code",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1SADLON",
+    "source_variable": "P1SADLON",
+    "kind": "continuous",
+    "label": "Sad/lonely composite source rating",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1IMPULS",
+    "source_variable": "P1IMPULS",
+    "kind": "continuous",
+    "label": "Impulsivity composite source rating",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1ATTENI",
+    "source_variable": "P1ATTENI",
+    "kind": "continuous",
+    "label": "Attention ordinal source rating",
+    "measurement_class": "ordered_numeric_code",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1SOLVE",
+    "source_variable": "P1SOLVE",
+    "kind": "continuous",
+    "label": "Problem-solving ordinal source rating",
+    "measurement_class": "ordered_numeric_code",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "P1PRONOU",
+    "source_variable": "P1PRONOU",
+    "kind": "continuous",
+    "label": "Verbal-communication ordinal source rating",
+    "measurement_class": "ordered_numeric_code",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "DISABILITY_REVISED",
+    "source_variable": "DISABILITY_REVISED",
+    "kind": "binary_numeric",
+    "label": "Official revised parent-reported disability indicator",
+    "measurement_class": "actual_0_1_indicator",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "AVG_C1READ_CONTEXT",
+    "source_variable": "AVG_C1READ_CONTEXT",
+    "kind": "continuous",
+    "label": "Pre-eligibility observed fall-K reading school context mean",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "AVG_C1MATH_CONTEXT",
+    "source_variable": "AVG_C1MATH_CONTEXT",
+    "kind": "continuous",
+    "label": "Pre-eligibility observed fall-K mathematics school context mean",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "AVG_SES_CONTEXT",
+    "source_variable": "AVG_SES_CONTEXT",
+    "kind": "continuous",
+    "label": "Pre-eligibility observed fall-K SES school context mean",
+    "measurement_class": "numeric_coordinate",
+    "diagnostic_family": "original_matching_coordinate"
+  },
+  {
+    "diagnostic": "S2KMINOR_category_1",
+    "source_variable": "S2KMINOR",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 1,
+    "label": "S2KMINOR: category1 (<10%)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "S2KMINOR_category_2",
+    "source_variable": "S2KMINOR",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 2,
+    "label": "S2KMINOR: category2 (10\u2013<25%)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "S2KMINOR_category_3",
+    "source_variable": "S2KMINOR",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 3,
+    "label": "S2KMINOR: category3 (25\u2013<50%)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "S2KMINOR_category_4",
+    "source_variable": "S2KMINOR",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 4,
+    "label": "S2KMINOR: category4 (50\u2013<75%)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "S2KMINOR_category_5",
+    "source_variable": "S2KMINOR",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 5,
+    "label": "S2KMINOR: category5 (\u226575%)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1HSCALE_category_1",
+    "source_variable": "P1HSCALE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 1,
+    "label": "P1HSCALE: category1 (excellent)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1HSCALE_category_2",
+    "source_variable": "P1HSCALE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 2,
+    "label": "P1HSCALE: category2 (very good)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1HSCALE_category_3",
+    "source_variable": "P1HSCALE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 3,
+    "label": "P1HSCALE: category3 (good)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1HSCALE_category_4",
+    "source_variable": "P1HSCALE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 4,
+    "label": "P1HSCALE: category4 (fair)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1HSCALE_category_5",
+    "source_variable": "P1HSCALE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "category": 5,
+    "label": "P1HSCALE: category5 (poor)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1ATTENI_category_1",
+    "source_variable": "P1ATTENI",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 1,
+    "label": "P1ATTENI: category1 (better)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1ATTENI_category_2",
+    "source_variable": "P1ATTENI",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 2,
+    "label": "P1ATTENI: category2 (as well)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1ATTENI_category_3",
+    "source_variable": "P1ATTENI",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 3,
+    "label": "P1ATTENI: category3 (slightly less)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1ATTENI_category_4",
+    "source_variable": "P1ATTENI",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 4,
+    "label": "P1ATTENI: category4 (much less)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1SOLVE_category_1",
+    "source_variable": "P1SOLVE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 1,
+    "label": "P1SOLVE: category1 (better)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1SOLVE_category_2",
+    "source_variable": "P1SOLVE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 2,
+    "label": "P1SOLVE: category2 (as well)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1SOLVE_category_3",
+    "source_variable": "P1SOLVE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 3,
+    "label": "P1SOLVE: category3 (slightly less)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1SOLVE_category_4",
+    "source_variable": "P1SOLVE",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 4,
+    "label": "P1SOLVE: category4 (much less)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1PRONOU_category_1",
+    "source_variable": "P1PRONOU",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 1,
+    "label": "P1PRONOU: category1 (better)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1PRONOU_category_2",
+    "source_variable": "P1PRONOU",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 2,
+    "label": "P1PRONOU: category2 (as well)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1PRONOU_category_3",
+    "source_variable": "P1PRONOU",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 3,
+    "label": "P1PRONOU: category3 (slightly less)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  },
+  {
+    "diagnostic": "P1PRONOU_category_4",
+    "source_variable": "P1PRONOU",
+    "kind": "binary_indicator",
+    "allowed_codes": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "category": 4,
+    "label": "P1PRONOU: category4 (much less)",
+    "measurement_class": "declared_ordinal_category_indicator",
+    "diagnostic_family": "ordinal_category_proportion"
+  }
+]

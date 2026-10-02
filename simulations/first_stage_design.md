@@ -1,5 +1,12 @@
 # Pre-specified first-stage validation extension
 
+**Historical design, outside-scope branch retained:** the current WM framework
+uses supplied, known probability weights and studies estimated scores,
+coordinate scales and outcome corrections. The estimated-weight section below
+records an earlier optional development experiment; it is not part of current
+WM theory or its required validation. Preserve its original configurations,
+seeds, failures and results without starting new runs for this branch.
+
 2026-09-28. This design is fixed before inspecting first-stage simulation
 performance. It supplements the primary design without changing its
 scripts or result schema. The experiments use synthetic iid data and

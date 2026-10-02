@@ -1,4 +1,11 @@
-# Pre-specified validation design
+# Historical pre-specified validation design
+
+**Scope amendment, 2026-09-30:** The current WM framework uses supplied known
+probability weights and studies estimated scores, coordinate scales and outcome
+corrections. The estimated-weight part of question 5 and Section C below is an
+excluded historical extension, not a current theory or validation requirement.
+The original plan and archived configurations/results are retained for provenance;
+this amendment does not authorize a new run or change a frozen study.
 
 This plan is written before estimator-performance results are inspected. The software checks are separate from these experiments. The statistical target is the positive-weight tilted iid law; the designs do not assert validity for dependent survey samples.
 

@@ -1,0 +1,29 @@
+Schema_Version: 1
+Case_ID: ECLS_P2SPECND_Kyear_C6R4MSCL_corrected_observed_v1
+Scope: DATA_CONSTRUCTION_ONLY_NO_MODELS_MATCHES_RNG_EFFECTS
+Status: SCIENTIFIC_DATA_POLICY_REVIEW_REQUIRED
+Notation: observed Q; target P_S = W*S*Q/E_Q(W*S)
+Notation_Map: scientific review observed P -> Q; scientific review target Q_S -> P_S; functional unchanged
+Primary_Functional: E_P_S[m1(X)-m0(X)|Z=1], m_z=E_P_S[Y|Z=z,X=x]; observed recipient standardization only
+Secondary_Functional: E_P_S[m1(X)-m0(X)]; observed all-record standardization only
+Identification: No causal, national-cohort, WM consistency, bootstrap or complex-design validity certification
+Treatment: valid P2SPECND 1->1, 2->0; parent-reported kindergarten-school-year services
+Outcome: C6R4MSCL spring-fifth-grade mathematics IRT scale score
+Weight: unchanged supplied C1_6FC0; finite positive eligibility; no additional multiplier or estimation
+Input_Rows: 21409
+ID_Classes: CHILDID,S1_ID,S2_ID character; no numeric conversion
+Context_Cohort: all adopted rows with valid S2_ID and respective observed fall-K reading/math/SES, before final eligibility; unweighted; index child included
+Context_Contributor_Counts: separate per-field counts, including singleton groups
+Birth: valid adopted birth_weight_total_ounces; 16*pounds+ounces; missing component is not zero
+Prematurity: valid P1PREMAT 1->PRETERM_GT2WK=1, 2->0, unknown->missing; reported threshold only; quantities/units/flags descriptive
+Disability: RP1DISAB_official_revised 1->1, 2->0; unknown/unmatched missing; no original-field fallback
+Expectation: observed valid P1EXPECT1..6 required; all six matching indicators retained; missing excluded, no imputation
+Required_Raw_Predictors: GENDER,WKWHITE,WKSESL,C1R4RSCL,C1R4MSCL,S2KPUPRI,P1EXPECT,P1FIRKDG,P1AGEENT,T1LEARN,P1HSEVER,FKCHGSCH,S2KMINOR,P1FSTAMP,P1HFAMIL,P1NUMSIB,P1HMAFB,WKCAREPK,P1PREMAT,P1WEIGHP,P1WEIGHO,C1FMOTOR,C1GMOTOR,P1HSCALE,P1SADLON,P1IMPULS,P1ATTENI,P1SOLVE,P1PRONOU
+Not_Eligibility_Requirements: S1_ID,P1HPARNT,P1DISABL,P1EARLY,P1EARDAY,exact_days,consistency_flags
+Feature_Order: FEMALE,WHITE,WKSESL,C1R4RSCL,C1R4MSCL,S2KPUPRI,P1ELHS,P1EHS,P1ESC,P1EC,P1EMS,P1EPHD,P1FIRKDG,P1AGEENT,T1LEARN,P1HSEVER,FKCHGSCH,S2KMINOR,P1FSTAMP,SGLPAR,TWOPAR,P1NUMSIB,P1HMAFB,WKCAREPK,PRETERM_GT2WK,BIRTH_TOTAL_OZ,C1FMOTOR,C1GMOTOR,P1HSCALE,P1SADLON,P1IMPULS,P1ATTENI,P1SOLVE,P1PRONOU,DISABILITY_REVISED,AVG_C1READ_CONTEXT,AVG_C1MATH_CONTEXT,AVG_SES_CONTEXT
+Binary_Features: FEMALE,WHITE,S2KPUPRI,P1ELHS,P1EHS,P1ESC,P1EC,P1EMS,P1EPHD,P1FIRKDG,P1HSEVER,FKCHGSCH,P1FSTAMP,SGLPAR,TWOPAR,WKCAREPK,PRETERM_GT2WK,DISABILITY_REVISED
+Ordered_Numeric_Features: S2KMINOR,P1HSCALE,P1ATTENI,P1SOLVE,P1PRONOU
+Standardization: pooled selected-record unit mean and RMS, divisor n; all38 retained; zero RMS => explicit defect, no coordinate deletion
+Nuisance_Reference: intercept; omit P1ELHS; omit TWOPAR only if 1=SGLPAR+TWOPAR exactly globally; matching unchanged
+Rank_Diagnostics: base QR tol1e-10 on raw covariate designs globally and by Z arm; no Y/W regression, no ridge/pseudoinverse/drop
+Eligibility: valid Z,Y,W>0,S2_ID,all actual required predictors/derived38; no all39 complete-case rule or target-size/overlap filter
