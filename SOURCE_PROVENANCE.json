@@ -207,8 +207,8 @@
       "tests": "RUN",
       "examples": "RUN",
       "manual": "NOT_BUILT",
-      "check_log_sha256": "4b81f1cd70a4af067fcdd668df47fae8f33e03780570f0f2d4391ee90dd714f3",
-      "archive_sha256": "2375ccdede7d581beb3a5a524a95ae1685eb423537eb0e6e465a3ae5002a0823",
+      "check_log_sha256": "206fdce749c3bab19b0bbc65536af7b372df58636ae872092d3d04d87786674e",
+      "archive_sha256": "eb0484b20c0870b76d88bdd6fb7f6ac3346d2f97f3ec336d664d26dfbf074307",
       "checked_source_sha256": {
         ".Rbuildignore": "1bba810bba4b0cec463c8d35d27ce9c5d2ddd3eb6bc936bb73794e2fc3b6939b",
         "COPYING": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
@@ -225,10 +225,11 @@
         "R/wdsm_ties.R": "a59bb584a41d7e1c7aa604b8800eb985ce8719378bb718f224dad5d3d2dee348",
         "R/wdsmatchATE.R": "29d597800a5b824ec5196534292fabcc2db401e6de8125a7299c5c975cf3bfe3",
         "R/wdsmatchATT.R": "e0ccf24ae63ed2e6329c93307152c07ee93fcdff9908d685ff9d0e0c2dc8d533",
-        "R/wm_bootstrap.R": "839b05252811feb738d1029264183c630316c2dfbc11ad206931777f819203fb",
+        "R/wm_bootstrap.R": "0bb5e6faa19b5243be9513dc45a781c48b9a3d5de3af4ee4692157b96ff63b16",
         "R/wm_bootstrap_refit.R": "f6f95645fd8b59be524e6426ebeddb12305b7043c5445a72ad0bea5bd18c826c",
         "R/wm_core.R": "da3b57da3853e74dbac6a0f2ec30adaa5f1ae2c33f6a6aaf0c35e3e835998098",
-        "R/wm_fitted_inference.R": "d9978255a74907a543f642f930ef5492e1daafa9c5d6a7b980ffbbc3f00070a1",
+        "R/wm_critical_planar.R": "6777dd4ca8172ee8597d3a09fd6801624bbf792cbba8fbf8bcbe186dd38e0895",
+        "R/wm_fitted_inference.R": "9d2971638e4adef39354fa8f1f8013366123f8433e6b5dffd2f6fd8a1769a1ee",
         "R/wm_gaussian.R": "01a94f25e5fceaef4a0c8b4e62d8a57b73192a28202a8d7ce419d45f154dbd5f",
         "R/wm_geometry.R": "d8653bb84e3f294f810797b1727d0415dc3de6165e928f50c7cbef06f9875c49",
         "R/wm_geometry_alpha.R": "f74e262a126d13b41c98b0f977c27ed8fb3a8ea78952a37085d8dfcdf3b07284",
@@ -244,7 +245,7 @@
         "R/wm_scalar_replication.R": "dc96e4d80d27f14f75296f6dace86f524f3c195a9782b5c34246cce99064ebb6",
         "R/wm_scalar_root_certificate.R": "4762e0b16b3cf8c09b636653bc4c6cc515c7b55151046b883c4f6d69f1720d6a",
         "R/wm_training.R": "b260f7ce5de1fdfc22ec0663c642505824252aa4c9d928be8cd6595c6b76da1c",
-        "R/wm_wdsm_components.R": "3170c1c462e40e04bf6a394d6681449780d56907200499b4153bc711bd13918d",
+        "R/wm_wdsm_components.R": "85b3e68ea0a8d418974c76fd1b39de62a17e8dac28c767a4ba6c86ddb68c8518",
         "R/wm_wdsm_fit.R": "61b20da64adc8acf88682bc04c5b97a2afca57378c0045ea6da4d5bffdb3ce8a",
         "R/wm_wdsm_nuisance.R": "a7861521435739161bc712973116742d4d738ab0be8f6663af8a3c4d995c2343",
         "R/wm_wdsm_pipeline.R": "e59566fba9992132ff310f3d1582d6f2c31621649158cc11312fb562a019ea65",
@@ -256,10 +257,10 @@
         "man/survey_obs.Rd": "08f7961759e34c4963b08eccf506969d5eb7cee698cd4a415e37e3cfe6bdbb55",
         "man/wdsmatchATE.Rd": "b9fc177d56935ec0895c8f3d426770c7d99687029cd7832695be5a4105e89e6d",
         "man/wdsmatchATT.Rd": "85d8f7564c9b000db56e9ebd07cb7be3c0aa0f3f746c7279e8792f16a11ac581",
-        "man/wm_bootstrap.Rd": "e2f14027ad4d997f6e8705303e7798a51c13a8007718c4763d1e9eed45d160cd",
+        "man/wm_bootstrap.Rd": "22a544fbd3e4d44dd268c88a666ba7816c638df4c1a1cff9aa95459a1a139b1d",
         "man/wm_bootstrap_refit.Rd": "ec7195c40c92ade53d9e07e3c302d2d770f48a9c1e98c8114aa526c78edaad2d",
         "man/wm_fit.Rd": "b7e84a9dbd9abd6856bca70fc1615e39fb45b1a41b07aa0d62452f831afb12d6",
-        "man/wm_fitted_inference.Rd": "dddf013f4db38029086fc09463f6e1439ca30478a8694efff0c0d9babff8e73c",
+        "man/wm_fitted_inference.Rd": "448aed46e4d0a41ff8474429afd1f9dc711672d573ac7b81f54961e26a702050",
         "man/wm_gaussian_match.Rd": "ede88213f044d845d8c684f1db51ba73fe51356cbf8d144f6c06c1206dad333f",
         "man/wm_geometry.Rd": "ae396b4a9d015a3502d37ac42154637a1ded6a3962173610f16abdc881683b75",
         "man/wm_geometry_alpha.Rd": "090b34de696fd7352762d8a572d312e36321f372d72d7ce3d0ab7fe928054155",
@@ -288,6 +289,7 @@
         "tests/testthat/test-wm-bootstrap-refit.R": "892b09b1e5251ecd651f191a118aae66d587d5e226f703e2425ee0fdbe0c1456",
         "tests/testthat/test-wm-bootstrap.R": "bc32d8c8a9fe109c4920918c9f1a9ff83ac81aa2101c99514f01c3367241e0d6",
         "tests/testthat/test-wm-core.R": "a6c8ee3db99a06ff3dfa2c9ebabd5f0a38b220b5d6fb79dded0b0661dfe863bd",
+        "tests/testthat/test-wm-critical-planar.R": "b0e2b542c50f110d78f434cd89aeff115c193f098865d5cc6c4b9678f32e73ad",
         "tests/testthat/test-wm-fitted-reciprocal.R": "cbbbcd873906ff4b93d3814762473ef20d278f4fea5471419ebe63c1cd44926d",
         "tests/testthat/test-wm-gaussian.R": "14e60d1dcfa179b8b72ae5738addc74e9f7cefe8bb38653294d97a6ba48f30c2",
         "tests/testthat/test-wm-geometry-alpha.R": "a7ef199d4bc6058e8fb65c2ba10648747cdb1c39e72e784a486ca68b90fed242",
@@ -303,7 +305,7 @@
         "tests/testthat/test-wm-weights.R": "f9d6cb26fe82dfe6bcf30f7bfa2326ebd8b853bcfa01639cc10bcc4234a9f648"
       },
       "test_expectations": {
-        "PASS": 3245,
+        "PASS": 3542,
         "FAIL": 0,
         "WARN": 0,
         "SKIP": 0
@@ -315,17 +317,20 @@
         "status": "OK"
       },
       "incidental_dependency_build_version_notice": "testthat built under R4.4.3 startup notice retained outside formal check/test warning counters",
-      "scope": "Current integrated standard package build/check, loading, help, examples and unit tests including source-tie support and qualified regular_joint_d_gt2 fitted PATE inference. Complete signed reciprocal covariance and full nuisance terms feed corrected-variance marginal Gaussian replication. Known-weight equal-d>2 bounded regular-baseline-sheet sampling and feasible plug-in assumptions remain caller premises, not software-certified.",
+      "scope": "Source-bound standard build/check, loading, help, examples and unit tests including qualified critical_planar PATE whole-function covariance construction and nuisance/Schur-mixture replication. Source-identical paired evidence is reused separately; no paired fixture is reconstructed for the final check. Finite-array checks do not certify population geometry, fitted-root/plug-in/smooth-stack assumptions, quantile validity, coverage, original refit bootstrap validity or a repeated-sampling variance limit.",
       "standalone_application_and_result_dirs_excluded_from_package_tarball": true,
       "application_saved_bundle_reproduction_is_separate": true,
       "new_scientific_simulations_or_application_refits_run": false,
       "public_generation_and_scientific_run_branches_verified": false,
       "population_causal_design_inference_or_coverage_certified": false,
       "paired_preservation": {
-        "comparisons": 112,
-        "all_exact_equal": true,
-        "source_fits_shared_between_old_and_new": true,
-        "source_point_constructions": 36,
+        "comparisons": 120,
+        "component_flags": 2320,
+        "all_keyed_exact_equal": true,
+        "literal_source_point_constructions": 36,
+        "literal_graph_edges": 720,
+        "execution_in_final_check_run": false,
+        "reuse": "Source-identical accepted paired outputs; all source, runtime and evidence bindings checked before/after build and check",
         "estimands": [
           "PATE",
           "PATT"
@@ -343,20 +348,43 @@
           "unit",
           "nonconstant"
         ],
-        "existing_zero_reciprocal_constructor_count_and_seeded_Gaussian_outputs_preserved": true,
-        "fixed_map_reciprocal_outputs_preserved": true,
-        "result_sha256": "806c1259beae16bd73f41f095ab1362a4b70ba2dec73b21f81b451990a4f3cfa",
-        "scope": "Finite-data source-bound exact old/new software preservation; no population-geometry, fitted-root, coverage or scientific-simulation certification."
+        "result_sha256": "527980f2c6ad16339d5014ba9a475ab1497c5157aa30213eb538f4e935642c5f",
+        "keyed_components_sha256": "39e9c0b2e802978910e08de3949178fc976eb088972a1c1b5b2178424e0a8e70",
+        "literal_graph_sha256": "eef4f8fa6b373bd5cbd88607c0aa640bf37cef054d8aec178ddbea9e8b515a75",
+        "complete_objects_graphs_weights_RNG_draws_counts_preserved": true,
+        "scope": "Finite-array exact old/new software preservation only; no sampling-law, population or coverage certification."
       },
-      "package_archive_regular_source_members": 90,
+      "package_archive_regular_source_members": 92,
       "archive_transformed_source_sha256": {
-        "DESCRIPTION": "9d059304ce380615de08911d57bc6126559f1ac0b859160517bb8fe49859b24f"
+        "DESCRIPTION": "cfcda7f0cf51bf1414365bb7c96606870d56062c0d7650dabb43a88f863a9c6c"
       },
       "archive_transformation_note": "R CMD build normalizes DESCRIPTION formatting and adds standard package metadata; its archive hash is recorded separately from the raw checked input.",
       "build_only_source_inputs": [
         ".Rbuildignore"
       ],
-      "README_excluded_from_package_archive": true
+      "README_excluded_from_package_archive": true,
+      "actual_resources": {
+        "supervised_elapsed_seconds": 19.95480325,
+        "sampled_peak_total_RSS_bytes": 582008832,
+        "output_bytes": 23217389,
+        "cleanup_diagnostics": []
+      },
+      "preceding_candidate_check": {
+        "status": "FAILED_RETAINED",
+        "paired_exit_code": 0,
+        "build_exit_code": 0,
+        "check_exit_code": 1,
+        "test_expectations": {
+          "PASS": 3541,
+          "FAIL": 1,
+          "WARN": 0,
+          "SKIP": 0
+        },
+        "failure": "The critical-planar test compared a 2-by-1 matrix to a named vector. The final test applies drop() while retaining names and its original 1e-12 tolerance; no estimator arithmetic changed.",
+        "check_log_sha256": "b3445dfe5fd15ec6f2c692e6b9862601cc43ae2ec37161b86c77e7edb64fc332",
+        "test_output_sha256": "1325bf98fd9d8edd54d274e26fa5944994709fb75806c452a6f669e384bb1e16",
+        "paired_evidence_acceptance_is_separate": true
+      }
     },
     "historical_full_package_checks": [
       {
@@ -486,6 +514,168 @@
           "public_generation_and_scientific_run_branches_verified": false,
           "population_causal_design_inference_or_coverage_certified": false
         }
+      },
+      {
+        "date": "2026-10-02",
+        "package_version": "0.3.0.9000",
+        "R": "4.4.2",
+        "platform": "aarch64-apple-darwin20",
+        "R_CMD_check": "--no-manual; Status OK; examples and tests run",
+        "build_exit_code": 0,
+        "check_exit_code": 0,
+        "tests": "RUN",
+        "examples": "RUN",
+        "manual": "NOT_BUILT",
+        "check_log_sha256": "4b81f1cd70a4af067fcdd668df47fae8f33e03780570f0f2d4391ee90dd714f3",
+        "archive_sha256": "2375ccdede7d581beb3a5a524a95ae1685eb423537eb0e6e465a3ae5002a0823",
+        "checked_source_sha256": {
+          ".Rbuildignore": "1bba810bba4b0cec463c8d35d27ce9c5d2ddd3eb6bc936bb73794e2fc3b6939b",
+          "COPYING": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+          "DESCRIPTION": "fa972e9ccca2b127189bc8b1690a4adde531985713826f83a4964c1ba4dcf441",
+          "NAMESPACE": "bca8864888cec7a8ee1390e0c4ae35d6651cb4c6e478c1ea8404dc2ab76a0c8a",
+          "NEWS.md": "1fe760260f902586511e0b3e48078b897849cfd9c57035e1bcb3809be5995b69",
+          "R/bootstrap.R": "727c8ff634d249bf0af393a70ae30681c1da74a49363ebb0112085936e26e63b",
+          "R/data.R": "c67f7cb44d1e3754eff7006779fb48edfb3bfe2603300b89df745d1bafea8e75",
+          "R/estimate_scores.R": "88d52a08b6c75b19a1f76b868875df4ede2bd33ff710e92ad60478084172486f",
+          "R/matching.R": "1c6def53ec840d880005bf2f170b0caff30f5f56f2d3affd6c10f1d3959b752c",
+          "R/print.R": "2af9593de3464d4813476167c443c5a209a580be3f22bfc399e04f8e1e5f4729",
+          "R/utils.R": "f32553b93fab0b17779c7ad428dd9c1ec326f4aea44d7f12827383bdb42d01e0",
+          "R/wdsm.R": "96e918bfcd0588d3b4aa83f7b71b23925adafa8bed973706dfcd074b717db863",
+          "R/wdsm_ties.R": "a59bb584a41d7e1c7aa604b8800eb985ce8719378bb718f224dad5d3d2dee348",
+          "R/wdsmatchATE.R": "29d597800a5b824ec5196534292fabcc2db401e6de8125a7299c5c975cf3bfe3",
+          "R/wdsmatchATT.R": "e0ccf24ae63ed2e6329c93307152c07ee93fcdff9908d685ff9d0e0c2dc8d533",
+          "R/wm_bootstrap.R": "839b05252811feb738d1029264183c630316c2dfbc11ad206931777f819203fb",
+          "R/wm_bootstrap_refit.R": "f6f95645fd8b59be524e6426ebeddb12305b7043c5445a72ad0bea5bd18c826c",
+          "R/wm_core.R": "da3b57da3853e74dbac6a0f2ec30adaa5f1ae2c33f6a6aaf0c35e3e835998098",
+          "R/wm_fitted_inference.R": "d9978255a74907a543f642f930ef5492e1daafa9c5d6a7b980ffbbc3f00070a1",
+          "R/wm_gaussian.R": "01a94f25e5fceaef4a0c8b4e62d8a57b73192a28202a8d7ce419d45f154dbd5f",
+          "R/wm_geometry.R": "d8653bb84e3f294f810797b1727d0415dc3de6165e928f50c7cbef06f9875c49",
+          "R/wm_geometry_alpha.R": "f74e262a126d13b41c98b0f977c27ed8fb3a8ea78952a37085d8dfcdf3b07284",
+          "R/wm_geometry_overlap.R": "e1b827f7383ddb0d189fb6a83aaafa8575569e0e0b97156450ec66066e47b0e3",
+          "R/wm_graph_transport.R": "0c5a3f87e0203ad7250fd63e2d845173812c88969c2b254bbfe140e74d42a8aa",
+          "R/wm_nuisance.R": "6b534044d95b3c40435d7ba62ddf1f3d5700cc9e5ef44938e4888f9655b003dc",
+          "R/wm_potential.R": "72cb1d6187f6c37f4d8295466a2d22cd46b9ba2ae49d021551d02c84530b4880",
+          "R/wm_prediction.R": "635021b5351a7008ab26f9244acaa2c88bc3bf2b1008afe1a64c56f1516d2f83",
+          "R/wm_reciprocal.R": "0c57737abc450b66e699c599d906b16e4fca099672df922adf2a666405e3aa9a",
+          "R/wm_reciprocal_bootstrap.R": "587623740527189149d7887c20b68a79664fe23f2b4408344b7bc9cdd20a24e8",
+          "R/wm_scalar_logistic_match.R": "a06b6255f363dd7ea506e726ce518750491e794ae1360ca4db02acdaf7d0ab92",
+          "R/wm_scalar_psm_inference.R": "1965f248d512a2875ee4726c2bf2d2b96cd7bba350667a4359ef28ba761048c5",
+          "R/wm_scalar_replication.R": "dc96e4d80d27f14f75296f6dace86f524f3c195a9782b5c34246cce99064ebb6",
+          "R/wm_scalar_root_certificate.R": "4762e0b16b3cf8c09b636653bc4c6cc515c7b55151046b883c4f6d69f1720d6a",
+          "R/wm_training.R": "b260f7ce5de1fdfc22ec0663c642505824252aa4c9d928be8cd6595c6b76da1c",
+          "R/wm_wdsm_components.R": "3170c1c462e40e04bf6a394d6681449780d56907200499b4153bc711bd13918d",
+          "R/wm_wdsm_fit.R": "61b20da64adc8acf88682bc04c5b97a2afca57378c0045ea6da4d5bffdb3ce8a",
+          "R/wm_wdsm_nuisance.R": "a7861521435739161bc712973116742d4d738ab0be8f6663af8a3c4d995c2343",
+          "R/wm_wdsm_pipeline.R": "e59566fba9992132ff310f3d1582d6f2c31621649158cc11312fb562a019ea65",
+          "R/wm_wdsm_prediction.R": "5d28b83c3cb02ae04296817279b746b04169cf9b8addb087d6e8f92d3434833d",
+          "R/wm_weights.R": "0b7f888116ca55a59f7329aae3e56ce66437318dc8c162be724afb29260b50d2",
+          "data/survey_obs.rda": "fe44f96c93d27cc1f1fb238cac4f6dd9d059c644dc241571fa0843e6dc68946f",
+          "man/print.wdsmatch.Rd": "230989f7f728aaea3b15b8278499013a34ca9377a9ca7c2676778c5232470fe5",
+          "man/summary.wdsmatch.Rd": "28aaff371b01f46cb308863781aac2005c52ce51e799659cc305fff0e52fad10",
+          "man/survey_obs.Rd": "08f7961759e34c4963b08eccf506969d5eb7cee698cd4a415e37e3cfe6bdbb55",
+          "man/wdsmatchATE.Rd": "b9fc177d56935ec0895c8f3d426770c7d99687029cd7832695be5a4105e89e6d",
+          "man/wdsmatchATT.Rd": "85d8f7564c9b000db56e9ebd07cb7be3c0aa0f3f746c7279e8792f16a11ac581",
+          "man/wm_bootstrap.Rd": "e2f14027ad4d997f6e8705303e7798a51c13a8007718c4763d1e9eed45d160cd",
+          "man/wm_bootstrap_refit.Rd": "ec7195c40c92ade53d9e07e3c302d2d770f48a9c1e98c8114aa526c78edaad2d",
+          "man/wm_fit.Rd": "b7e84a9dbd9abd6856bca70fc1615e39fb45b1a41b07aa0d62452f831afb12d6",
+          "man/wm_fitted_inference.Rd": "dddf013f4db38029086fc09463f6e1439ca30478a8694efff0c0d9babff8e73c",
+          "man/wm_gaussian_match.Rd": "ede88213f044d845d8c684f1db51ba73fe51356cbf8d144f6c06c1206dad333f",
+          "man/wm_geometry.Rd": "ae396b4a9d015a3502d37ac42154637a1ded6a3962173610f16abdc881683b75",
+          "man/wm_geometry_alpha.Rd": "090b34de696fd7352762d8a572d312e36321f372d72d7ce3d0ab7fe928054155",
+          "man/wm_geometry_overlap.Rd": "0ed9c6aa32f342dbe1ea789d20bd66b223a31d420a65aa50c8d79f849cc56cb7",
+          "man/wm_graph_transport.Rd": "8252b5b0ecc9247eb7be2008945f83e8e403f0d8f43270420c3c5b1727a6412b",
+          "man/wm_logistic_weights.Rd": "8ea72b6b3f4b91c938502b641a9d93c6cdc3e2de99516d5b8d5e424925e03838",
+          "man/wm_match.Rd": "584f09a415d03f13dcb109b4ca1ff3e758fb28fca57fa32cca318b95b7e39e48",
+          "man/wm_potential.Rd": "bfc05d5cd80ce7a2e83b9aa5807d70ae7144a4b2b557b89a969a9874834a0483",
+          "man/wm_prediction_adjust.Rd": "3be813f8e9167ba606f42975ef8b8bc1b07f31d568d2d2e247037f0cead16620",
+          "man/wm_reciprocal_bootstrap.Rd": "383376b7a73007a9fc25813376acd9524be4000e6d01de551edbbeea820d7436",
+          "man/wm_reciprocal_inference.Rd": "af22c3b59e81848571f1bdc966eb09af822c3cd0e58d465102de05be10c3eac3",
+          "man/wm_scalar_logistic_match.Rd": "e42fc1f06abf8395e376a989591c5e9a6afa3d4921c16332c1c708edd19ec834",
+          "man/wm_scalar_replication.Rd": "3a2440dab9f360ecace8c778194dd3f18ed97f8edaa9da0b45cd31bbfbbbf53e",
+          "man/wm_scalar_root_certificate.Rd": "b981b6a768068daaeecb24941589c2f414011b934aed74b9af5c17c1d98c3f47",
+          "man/wm_split_pate.Rd": "33eebe2f1e8f3ced02b6dd6004b601167fcc89c1a5d275314cd56e82503f910e",
+          "man/wm_training_adjust.Rd": "10f657f27c6a1b91b167d07eeda02a091be75d76b8ee1050bcf4cfb1cd24ded0",
+          "man/wm_wdsm_fit.Rd": "749f2fbc0bd8966bdae3fa5758a5d2883471612cd4cc29b4c039a5a3f50f31f1",
+          "man/wm_weight_adjust.Rd": "13a9e2b72ff16bfffffe3450d9149133b10b5b753e3dce2f6f5f5ab0d188e2e8",
+          "tests/testthat.R": "aabacf30ea92fe183110bd000638ffae4fba561a3c52e2e80cef593f8e63a57c",
+          "tests/testthat/test-corrected-inference.R": "902ef040b3973baa5db672c45f48ee586722ea8179835dd851924ab512f6d7d0",
+          "tests/testthat/test-internals.R": "b9a0001b6c51b82711bb177f146ba95d5bfda975f8fa237f6348f3b580f25c40",
+          "tests/testthat/test-ties.R": "43bd7a238074fb2734de69fbb09e8a511bf29c18d51f23a7108b52f0aa72df1c",
+          "tests/testthat/test-validation.R": "d887f3c62eedd9c98b55da893b8ef65e74cdd3ab47cc9e2ea622382c629882bf",
+          "tests/testthat/test-wdsmatchATE.R": "a73a3df56edcbb9cd7e78589c96479f627569211ca9ca2b5a9745101f152921a",
+          "tests/testthat/test-wdsmatchATT.R": "da82fbbcb792c075934fa81f387a3959af2b2894248378cb38e15fe1dd5df4dd",
+          "tests/testthat/test-wm-bootstrap-refit.R": "892b09b1e5251ecd651f191a118aae66d587d5e226f703e2425ee0fdbe0c1456",
+          "tests/testthat/test-wm-bootstrap.R": "bc32d8c8a9fe109c4920918c9f1a9ff83ac81aa2101c99514f01c3367241e0d6",
+          "tests/testthat/test-wm-core.R": "a6c8ee3db99a06ff3dfa2c9ebabd5f0a38b220b5d6fb79dded0b0661dfe863bd",
+          "tests/testthat/test-wm-fitted-reciprocal.R": "cbbbcd873906ff4b93d3814762473ef20d278f4fea5471419ebe63c1cd44926d",
+          "tests/testthat/test-wm-gaussian.R": "14e60d1dcfa179b8b72ae5738addc74e9f7cefe8bb38653294d97a6ba48f30c2",
+          "tests/testthat/test-wm-geometry-alpha.R": "a7ef199d4bc6058e8fb65c2ba10648747cdb1c39e72e784a486ca68b90fed242",
+          "tests/testthat/test-wm-geometry-overlap.R": "04a8f655a38bd744ca085c297b05d2d5f6c12bf01cca3f0b0ba7cc6782187766",
+          "tests/testthat/test-wm-geometry.R": "0fbe1e6c6c023db86487b69c958932401d44f31af986b1865d403e8cfc0682e9",
+          "tests/testthat/test-wm-nuisance.R": "079a82710b1e32f0abb40ca29be237d2a6d95738517befe7a8b66d6cbd9db1c8",
+          "tests/testthat/test-wm-potential.R": "198f1e86007fc0dd43c860fa71b253d725c329a30008029daf719fe1d0e3299d",
+          "tests/testthat/test-wm-prediction.R": "ee9f3eaa0132a18af2ee5ef70e80a20d7982463f1952e6a95232c2469b714477",
+          "tests/testthat/test-wm-reciprocal.R": "5779398f92dcba0fbabc5a0408c7627738691d5a8ce63f8878606a2bffe8b7d8",
+          "tests/testthat/test-wm-source-ties.R": "0e75a47f12350a3c9665f754fb3c5d08f996bc5db6c3b9e3b5f3e4987e01f856",
+          "tests/testthat/test-wm-training.R": "78062514750991f5f74998e0f21f627d3094bd43b20332b50d8ca2062c36c56d",
+          "tests/testthat/test-wm-wdsm-ps-weighting.R": "9fed204ff9e135e917a4dc7a835b5d4a83c5ef24ad1122517f78525ffab80485",
+          "tests/testthat/test-wm-weights.R": "f9d6cb26fe82dfe6bcf30f7bfa2326ebd8b853bcfa01639cc10bcc4234a9f648"
+        },
+        "test_expectations": {
+          "PASS": 3245,
+          "FAIL": 0,
+          "WARN": 0,
+          "SKIP": 0
+        },
+        "formal_check": {
+          "errors": 0,
+          "warnings": 0,
+          "notes": 0,
+          "status": "OK"
+        },
+        "incidental_dependency_build_version_notice": "testthat built under R4.4.3 startup notice retained outside formal check/test warning counters",
+        "scope": "Current integrated standard package build/check, loading, help, examples and unit tests including source-tie support and qualified regular_joint_d_gt2 fitted PATE inference. Complete signed reciprocal covariance and full nuisance terms feed corrected-variance marginal Gaussian replication. Known-weight equal-d>2 bounded regular-baseline-sheet sampling and feasible plug-in assumptions remain caller premises, not software-certified.",
+        "standalone_application_and_result_dirs_excluded_from_package_tarball": true,
+        "application_saved_bundle_reproduction_is_separate": true,
+        "new_scientific_simulations_or_application_refits_run": false,
+        "public_generation_and_scientific_run_branches_verified": false,
+        "population_causal_design_inference_or_coverage_certified": false,
+        "paired_preservation": {
+          "comparisons": 112,
+          "all_exact_equal": true,
+          "source_fits_shared_between_old_and_new": true,
+          "source_point_constructions": 36,
+          "estimands": [
+            "PATE",
+            "PATT"
+          ],
+          "matching_dimensions": [
+            1,
+            3,
+            6
+          ],
+          "M": [
+            1,
+            3
+          ],
+          "weights": [
+            "unit",
+            "nonconstant"
+          ],
+          "existing_zero_reciprocal_constructor_count_and_seeded_Gaussian_outputs_preserved": true,
+          "fixed_map_reciprocal_outputs_preserved": true,
+          "result_sha256": "806c1259beae16bd73f41f095ab1362a4b70ba2dec73b21f81b451990a4f3cfa",
+          "scope": "Finite-data source-bound exact old/new software preservation; no population-geometry, fitted-root, coverage or scientific-simulation certification."
+        },
+        "package_archive_regular_source_members": 90,
+        "archive_transformed_source_sha256": {
+          "DESCRIPTION": "9d059304ce380615de08911d57bc6126559f1ac0b859160517bb8fe49859b24f"
+        },
+        "archive_transformation_note": "R CMD build normalizes DESCRIPTION formatting and adds standard package metadata; its archive hash is recorded separately from the raw checked input.",
+        "build_only_source_inputs": [
+          ".Rbuildignore"
+        ],
+        "README_excluded_from_package_archive": true
       }
     ],
     "qualified_regular_joint_d_gt2": {
@@ -503,6 +693,24 @@
       "applications": "applications/SOURCE_PROVENANCE.json",
       "scope": "Separate qualified integration, not an all-PASS R-receipt claim: original96 historical intervals unpaired; Lenis repair has separately adopted composed72 validation with failed R receipts retained and saved-only NA semantics reconciled. No postpatch full1800 rerun or whole-RDS identity claim.",
       "one_fixture_integration_not_MC_coverage_or_population_assumption_certification": true
+    },
+    "qualified_critical_planar": {
+      "estimand": "PATE",
+      "matching_dimensions": "Equal fixed actual used d=2; distinct arm maps allowed",
+      "weights": "Supplied known positive probability weights may depend on treatment and covariates; no estimated-weight uncertainty",
+      "sampling_scope": "Bounded iid own-score/weight centering and target identities, complete regular fitted score/prediction/scale stack and F1-F4, finite regular baseline joint sheets, complete sensitivity/plug-in and strict-CDF quantile premises; population validity is not inferred from arrays",
+      "whole_function_estimator": "Deterministic auxiliary/evaluation split, total-auxiliary-size-normalized full arm subdensities, unweighted conditional donor-weight laws, guarded local top-two geometry and both-endpoint ordered treated/control marked pair products",
+      "normalization": "Both full finite-M donor factors; N(N-1)h^2(pi/3) evaluation normalization; 2R(u)/gamma^2 in original fit analysis-weight units; no M^-2 or mean-weight substitute",
+      "numerics": "Exact finite q=2M-1 Hermite polynomial identity in exact arithmetic; controlled donor Laplace integration with propagated bounds; floating roundoff excluded; a vanishing propagated-error sequence remains a statistical premise",
+      "support_and_covariance": "Complete p-dimensional influence/slopes retained; declared smooth-stack covariance-rate premises justify n^-1/3 support threshold and range projection. Raw C/Sigma/eigenvalues and signed reciprocal/raw Schur/cone-adjustment diagnostics retained",
+      "replication": "Same wm_bootstrap contribution interface: full nuisance Gaussian and Schur-mixture draws; critical default basic, or none; explicit Normal/count/refit rejected; all-B failure retention without survivor variance",
+      "scalar_Wald_fields": "NA: scalar Gaussian Wald variance, SE and interval fields are not asserted for the generally non-Gaussian branch",
+      "conditional_variance": "Exact variance is an unevaluated Gaussian expectation and reported NA; root B-1 sample variance and Rao-Blackwell estimate/MCSE are labeled finite-B Monte Carlo summaries; B=1 sample variance/MCSE NA",
+      "direct_analytic_raw_variance_capability": false,
+      "original_point_graph_and_weights_changed": false,
+      "population_assumptions_original_refit_or_coverage_certified_by_tests": false,
+      "independent_review_kind": "Separate AI-agent source/test and saved-output review, not human peer review",
+      "software_source_and_finite_arithmetic_checked": true
     }
   }
 }

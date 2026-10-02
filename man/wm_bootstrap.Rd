@@ -16,6 +16,8 @@ for d>=2, \code{distinct_rarity}, \code{full_x}, \code{common_field} or
 under at least one stated scalar sampling-law alternative.
 PATE \code{regular_joint_d_gt2} fitted inference instead supplies its
 complete corrected marginal Gaussian variance; counts are unsupported in that scope.
+PATE \code{critical_planar} instead supplies a complete nuisance/Schur-mixture
+law through this same contribution interface, with counts unsupported.
 Mixed scalar/higher-dimensional graphs and other generic scalar scopes
 are unsupported.
 For fixed-reuse replication, an ordinary self-normalized \code{wm_match}
@@ -34,7 +36,9 @@ normal generator before calling this function.}
 conditional contribution variance and \code{"basic"} uses empirical root-n draw
 quantiles. For fixed-reuse replication, \code{"normal"} uses the original
 B-divisor replicate variance; \code{"basic"} is unsupported.
-\code{"none"} omits the interval under either method.}
+\code{"none"} omits the interval under either method. For \code{critical_planar},
+an omitted interval selects \code{"basic"}; explicitly requested \code{"normal"}
+is rejected because this law is generally non-Gaussian.}
 \item{chunk_size}{Positive integer maximum number of multiplier values
 generated together for contribution replication. Ignored for fixed-reuse
 replication. For regular_joint_d_gt2 this bounds scalar Gaussian draw generation.
@@ -64,8 +68,26 @@ and nuisance influence corrections remain fixed.
 Successful zero-reciprocal/scalar_psm fitted inference uses complete centered
 augmented rows and also accepts supplied full-n fixed-contribution counts.
 The regular_joint_d_gt2 fitted scope uses corrected-variance Gaussian replication.
+The critical_planar scope uses full nuisance Gaussian draws and an independent
+conditional Schur innovation, retaining the original fit and every B slot.
 }
 \details{
+For \code{critical_planar}, H*=Sigmahat^(1/2)Z* and an independent standard
+Normal innovation generate the root (bhat+Sigmahat^+Chat)'H*+sqrt(Dhat(H*))xi*.
+The full nuisance dimension and raw kernel/Schur/cone diagnostics are retained.
+No participant refitting, rematching, count multipliers or failed-draw filtering
+is performed. Any failed evaluation makes aggregate inference unavailable.
+The exact conditional variance is an unevaluated nuisance-Gaussian expectation;
+\code{conditional_root_n_variance} and \code{conditional_variance} are NA.
+Root-draw sample variances use B-1. The separately labeled Rao--Blackwell Monte
+Carlo estimate is mean(Dhat(H*))+betahat'Sigmahat betahat, with
+MCSE sd(Dhat(H*))/sqrt(B). These are Monte Carlo estimates, not exact finite-B
+conditional variances. B=1 leaves sample variance and MCSE NA.
+An explicit seed preserves its prior value or absence. Within each draw,
+p nuisance normals precede the scalar innovation; chunk size does not change
+this ordering. Complete theorem/input and strict-CDF premises remain unverified.
+
+
 With \code{method = "fixed_reuse"}, supplied counts are passed to the unchanged
 \code{\link{wm_bootstrap_refit}} calculation. Matching maps may be scalar,
 distinct-arm double scores or full covariates. Donor weights and original
@@ -189,12 +211,23 @@ For \code{method = "contribution"},
 A list with \code{root_n_draws}, centered multiplier draws on the root-n scale;
 \code{draws}, equal to the fitted estimate plus those draws divided by
 \code{sqrt(n)}; exact \code{conditional_root_n_variance} and
-\code{conditional_variance}; Monte Carlo sample variances
+\code{conditional_variance} in the supported Gaussian/count branches, and
+NA in \code{critical_planar}, whose exact variance is an unevaluated Gaussian
+expectation; Monte Carlo sample variances
 \code{monte_carlo_root_n_variance} and \code{monte_carlo_variance}; and
 \code{conf.int}, \code{interval}, \code{conf.level}, \code{B}, \code{n},
 \code{seed}, \code{estimate}, and \code{method}. The Monte Carlo variances are
 \code{NA} for B equal to one. The interval is \code{NULL} for
 \code{interval = "none"}.
+For \code{critical_planar}, the result additionally retains full
+\code{nuisance_draws}, every B-slot \code{draw_diagnostics} with raw signed
+kernel/Schur values, cone adjustments, numerical bounds and failure statuses,
+and \code{rao_blackwell_root_n_variance_estimate} with its
+\code{rao_blackwell_root_n_variance_mcse} and estimator-scale counterparts.
+These are finite-B Monte Carlo estimates, not exact conditional variances;
+the MCSE is NA for B=1. Any failed draw makes aggregate variance/intervals
+unavailable without filtering surviving draws. Basic quantiles or no interval
+are supported; an explicitly requested Normal interval is rejected.
 For supported fitted inference the result also preserves \code{source_inference},
 \code{estimand}, \code{covariance_scope} and the explicit
 \code{replication_contract}. Supplied-count results include

@@ -159,7 +159,7 @@
   if (!is.character(covariance_scope) || length(covariance_scope) != 1L ||
       is.na(covariance_scope) ||
       !covariance_scope %in% c("distinct_rarity", "full_x", "common_field", "patt",
-                              "regular_joint_d_gt2")) {
+                              "regular_joint_d_gt2", "critical_planar")) {
     stop("Declare one supported covariance_scope explicitly.")
   }
   reciprocal_scope <- identical(covariance_scope, "regular_joint_d_gt2")
@@ -167,6 +167,10 @@
       any(s$dimensions <= 2L) || s$dimensions[1L] != s$dimensions[2L])) {
     stop("regular_joint_d_gt2 requires PATE with equal used dimensions d > 2.",
          call. = FALSE)
+  }
+  if (covariance_scope == "critical_planar" &&
+      (!s$pATE || !identical(s$dimensions, c(2L, 2L)))) {
+    stop("critical_planar requires PATE with both used dimensions exactly two.", call. = FALSE)
   }
   scalar <- all(s$dimensions == 1L)
   if (!all(s$dimensions >= 2L) &&

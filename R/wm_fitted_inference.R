@@ -133,7 +133,11 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
                                 weight_derivative = NULL,
                                 transport0 = NULL, transport1 = NULL,
                                 covariance_scope, conf.level = 0.95,
-                                scalar_control = NULL) {
+                                scalar_control = NULL, critical_control = NULL) {
+  if (!is.null(critical_control) &&
+      (missing(covariance_scope) || !identical(covariance_scope, "critical_planar"))) {
+    stop("critical_control is only supported with critical_planar.", call. = FALSE)
+  }
   if (!missing(covariance_scope) && identical(covariance_scope, "scalar_psm")) {
     if (!is.null(nuisance_influence) || !is.null(mean_derivative0) ||
         !is.null(mean_derivative1) || !is.null(weight_derivative) ||
@@ -160,9 +164,9 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
   if (missing(covariance_scope) || !is.character(covariance_scope) ||
       length(covariance_scope) != 1L || is.na(covariance_scope) ||
       !covariance_scope %in% c("distinct_rarity", "full_x", "common_field", "patt",
-                               "regular_joint_d_gt2") ||
+                               "regular_joint_d_gt2", "critical_planar") ||
       (pate && covariance_scope == "patt") || (!pate && covariance_scope != "patt")) {
-    stop("Declare PATE distinct_rarity/full_x/common_field/regular_joint_d_gt2, or PATT patt explicitly.",
+    stop("Declare PATE distinct_rarity/full_x/common_field/regular_joint_d_gt2/critical_planar, or PATT patt explicitly.",
          call. = FALSE)
   }
   if (!pate && (!is.null(mean_derivative1) || !is.null(transport1))) {
@@ -193,6 +197,13 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
        dimensions[1L] != dimensions[2L])) {
     stop("regular_joint_d_gt2 requires PATE with equal used dimensions d > 2.",
          call. = FALSE)
+  }
+  if (covariance_scope == "critical_planar" &&
+      (!pate || !identical(unname(dimensions), c(2L, 2L)))) {
+    stop("critical_planar requires corrected PATE with both used dimensions exactly two.", call. = FALSE)
+  }
+  if (covariance_scope == "critical_planar") {
+    critical_control <- .wm_cp_control(critical_control, fit, parameters)
   }
   scalar <- all(dimensions == 1L)
   if (!all(dimensions >= 2L) &&
@@ -386,6 +397,26 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
       "replication; ordinary row/count multipliers and original-refit/rematching validity",
       "are not established. Actual sampling-variance convergence needs separate UI/L2.")
   }
+  if (covariance_scope == "critical_planar") {
+    contract$fitted_law <- paste("Original corrected PATE, equal fixed d=2, iid bounded known-W own-field",
+      "framework, complete F1-F4 and baseline S7 finite regular joint sheets.",
+      "The complete regular root-n stack and same-sample compact-index laws retain all nuisance",
+      "scores, prediction and scaling parameters, covariance and full transport/smooth slope.",
+      "This branch does not inherit the unbounded full-X or Gaussian alternatives.")
+    contract$covariance <- paste("Whole critical reciprocal function estimated by macro-scale",
+      "radial pairing, guarded local rank-two PCA and full marginal donor-weight laws.",
+      "Both endpoint tangents are actual matching-coordinate derivatives.",
+      "Finite valid density/mass/projection/mark guard budgets, a deterministic positive-fraction",
+      "split and h=n^-a, 0<a<1/2, are caller premises. Empty/rejected auxiliary summaries do",
+      "not repair a failed original fit. Numerical error must vanish along the study sequence.")
+    contract$inference <- paste("Generally non-Gaussian complete nuisance/Schur-mixture law.",
+      "The twice-smooth finite-p stack, its derivative envelopes and bounded/fourth-moment",
+      "influence rate justify the disclosed n^-1/3 covariance-support threshold; generic",
+      "empirical-L2 consistency alone does not. The fixed nuisance block/range and raw signed",
+      "kernel/Schur/cone diagnostics are retained. No Normal interval or analytic finite-B",
+      "variance is asserted. Complete-input consistency and strict-CDF quantile premises",
+      "remain; actual sampling-variance convergence requires separate UI.")
+  }
   transports <- list()
   for (direction in names(specs)) {
     spec <- specs[[direction]]
@@ -444,6 +475,19 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
   inference$application_verified <- FALSE
   inference$contract <- contract
   inference$original_refit_limit_agreement_declared <- FALSE
+  if (covariance_scope == "critical_planar") {
+    value <- tryCatch(.wm_cp_complete(inference, critical_control), error = identity)
+    if (inherits(value, "error")) {
+      inference$available <- inference$numerically_available <-
+        inference$conditional_inference_available <- FALSE
+      inference$status <- "critical_kernel_unavailable"
+      inference$failure_stage <- "critical_planar_kernel"
+      inference$unavailable_reason <- conditionMessage(value)
+      inference$root_n_variance <- inference$variance <- inference$se <- NA_real_
+      inference$conf.int <- stats::setNames(rep(NA_real_, 2L), c("lower", "upper"))
+      inference$critical_control <- critical_control
+    } else inference <- value
+  }
   class(inference) <- c("wm_fitted_inference", "list")
   inference
 }

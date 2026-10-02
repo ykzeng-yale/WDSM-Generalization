@@ -126,6 +126,9 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
     stop("refit is supported only with method = 'fixed_reuse'.", call. = FALSE)
   }
   if (inherits(object, "wm_fitted_inference")) {
+    if (identical(object$covariance_scope, "critical_planar")) {
+      return(.wm_cp_bootstrap(object, B, seed, conf.level, interval, chunk_size, counts))
+    }
     if (identical(object$covariance_scope, "scalar_psm")) {
       return(.wm_scalar_fitted_bootstrap(object, B, missing(B), seed, conf.level,
                                          interval, chunk_size, counts))

@@ -5,7 +5,8 @@
 wm_fitted_inference(fit, nuisance_influence = NULL,
   mean_derivative0 = NULL, mean_derivative1 = NULL,
   weight_derivative = NULL, transport0 = NULL, transport1 = NULL,
-  covariance_scope, conf.level = 0.95, scalar_control = NULL)
+  covariance_scope, conf.level = 0.95, scalar_control = NULL,
+  critical_control = NULL)
 }
 \arguments{
   \item{fit}{One unadjusted, bias-corrected, self-normalized
@@ -46,7 +47,7 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   are not accepted.}
   \item{covariance_scope}{Required branch declaration: for PATE exactly
   \code{"distinct_rarity"}, \code{"full_x"}, \code{"common_field"} or
-  \code{"regular_joint_d_gt2"};
+  \code{"regular_joint_d_gt2"} or \code{"critical_planar"};
   for PATT exactly \code{"patt"}. These are unverified population premises,
   not model-selection or goodness-of-fit labels. When every used matching
   dimension is one, only PATE \code{"full_x"} or PATT \code{"patt"} is
@@ -55,7 +56,8 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   \code{"scalar_psm"} branch accepts PATE or PATT and uses the same
   fitted logistic probability in each used direction.
   \code{"regular_joint_d_gt2"} requires PATE and equal used dimensions d>2
-  under the bounded known-weight regular baseline joint-sheet conditions below.}
+  under the bounded known-weight regular baseline joint-sheet conditions below.
+  \code{"critical_planar"} requires corrected PATE and both used dimensions exactly two.}
   \item{conf.level}{Finite confidence level strictly between zero and one.}
   \item{scalar_control}{NULL or a uniquely named list for \code{scalar_psm}
   only. Supported fields are \code{bandwidth_constant} (1),
@@ -69,9 +71,32 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   must be identical to the stored fitting design. A supplied
   \code{\link{wm_scalar_root_certificate}} must bind the exact same
   design, outcomes, treatment, weights, probability and graph.}
+  \item{critical_control}{Required only for \code{critical_planar}; otherwise NULL.
+  A uniquely named list with \code{tangents0}, \code{tangents1} (actual
+  matching-coordinate n-by-2-by-p derivatives, exact complete parameter order),
+  increasing deterministic \code{auxiliary_rows}, \code{bandwidth}, positive
+  increasing \code{density_bounds}, \code{marginal_mass_floor},
+  \code{projection_floor} strictly below one, \code{tangent_cap},
+  \code{residual_cap}, and \code{support = "smooth_stack_threshold"}.
+  Optional tangent row labels are original indices and coordinate labels are
+  NULL or positions 1,2. The complementary evaluation fold needs at least two
+  rows. Complete F1--F4, bounded known-weight own-field and finite regular-sheet
+  conditions, valid finite guards with strict cap slack, positive fold fractions
+  and h=n^(-a), 0<a<1/2, remain population premises.
+  Numerical defaults: \code{quadrature_tolerance = .01/n},
+  \code{kernel_error_tolerance = 1/sqrt(n)}, \code{max_nodes = 131073},
+  \code{chunk_size = 2048}, \code{maximum_distance_evaluations = 5000000},
+  \code{maximum_pairs = 25000}, \code{maximum_pair_entries = 2000000},
+  \code{maximum_laplace_terms = 200000000},
+  \code{maximum_hermite_order = 31},
+  \code{maximum_geometric_evaluations = 20000000},
+  \code{maximum_draw_entries = 2000000}. Positive integer resource caps bound
+  prospective work, retained pair storage and all-B replication. A cap failure
+  never changes participants, M, folds or bandwidth.}
+
 }
 \description{
-Assembles a conditional fitted-map Wald interval using the complete matching
+Assembles conditional fitted-map inference using the complete matching
 rows, joint nuisance influence, the exact fixed-edge smooth derivative and
 the signed incoming graph-transport component. The point estimator is
 unchanged. The separate \code{scalar_psm} branch computes the finite-M integrated score drift
@@ -80,6 +105,29 @@ implements the stated iid fitted-map branches with supplied known weights;
 it does not establish their assumptions for an application.
 }
 \details{
+For \code{critical_planar}, the original fit, graph, raw supplied weights and
+full parameter dimension are retained. A radial macro-pair estimator learns
+an entire critical reciprocal function from guarded local top-two PCA and
+full marginal donor laws. Constant-normalized original analysis weights are
+used consistently for its numerator and denominator; normalized donor
+ratios and the variance subtraction are invariant to common weight rescaling.
+The geometric integral uses exactly (2M-1)^2 physicists' Hermite nodes in
+exact arithmetic. The full finite-M donor functional uses deterministic
+Laplace quadrature with propagated analytic error bounds. Those bounds exclude
+floating-point roundoff; their error must vanish along the study sequence.
+The declared twice-smooth finite-p complete-stack covariance-rate premises
+justify the disclosed n^(-1/3) support threshold. Generic rate-free influence
+consistency alone does not. Raw covariance/eigenvalues, signed R, raw Schur
+negatives and cone adjustments remain available. Empty/rejected auxiliary
+summaries do not rescue an invalid or failed original fit.
+The operative Schur covariance is explicitly projected onto the nonnegative
+scalar cone with the nuisance covariance held fixed. This generally
+non-Gaussian branch does not report an analytic variance, SE or Normal interval.
+Use \code{wm_bootstrap} with basic mixture quantiles or no interval;
+complete-input consistency and strict-CDF quantile conditions remain required.
+Finite numerical inputs do not verify population assumptions or coverage.
+
+
 For \code{scalar_psm}, omit \code{nuisance_influence}, all supplied
 derivatives and both transport specifications. The bound raw scalar object
 must use known positive weights, an unrestricted common probability graph,
@@ -159,7 +207,7 @@ Here \eqn{j_z} uses the original raw weight units returned by
 \code{\link{wm_graph_transport}}. No extra M, n or target-normalizer
 factor is introduced. PATT requires no treated-arm mean or transport.
 
-The variance calculation is
+For the zero-reciprocal corrected branches, the variance calculation is
 \deqn{\widehat V_0=\operatorname{mean}(L_i^2),\quad
   \widehat C=\operatorname{mean}(U_iL_i),\quad
   \widehat\Sigma=\operatorname{mean}(U_iU_i^{\mathsf T}),}
@@ -534,9 +582,14 @@ A separate \code{wm_fitted_inference} list preserving \code{estimate},
   for generic corrected branches. The separate \code{scalar_psm} branch supplies \code{total_sensitivity} directly
   from its integrated residual formula.}
   \item{V0, C, Sigma, cross_term, nuisance_variance}{The complete covariance
-  blocks and their contributions to root-n variance.}
+  blocks and their contributions to root-n variance. In \code{critical_planar},
+  C and Sigma are the disclosed support-projected nuisance block, and V0 is
+  the operative cone-corrected base block evaluated at u=0; it is not the
+  generally non-Gaussian law's marginal variance.}
   \item{root_n_variance, variance, se, conf.int}{Assembled root-n variance,
-  estimator variance and conditional Wald interval.}
+  estimator variance and conditional Wald interval in the supported Gaussian
+  branches. All four fields are NA in \code{critical_planar}; mixture
+  quantiles and Monte Carlo summaries are obtained through \code{wm_bootstrap}.}
   \item{base_rows, augmented_rows, nuisance_influence}{Centered complete
   rows, their joint nuisance augmentation and centered influence.}
   \item{smooth_derivative, graph_transport}{Reviewed finite-edge derivative
@@ -552,10 +605,22 @@ A separate \code{wm_fitted_inference} list preserving \code{estimate},
   \item{numerical_certificate, observed_logistic_check}{Separate \code{scalar_psm} exact
   optional certificate binding and observed score/nearest-donor checks.
   Neither verifies a population premise or asymptotic numerical-root rate.}
-  \item{status, available, conditional_inference_available}{Positive variance
+  \item{status, available, conditional_inference_available}{In the Gaussian branches, positive variance
   gives \code{conditional_<branch>} and available TRUE, strictly under the
   unverified recorded premises. Otherwise the status/reason identifies the
-  numerical failure or nonpositive variance; no interval is available.}
+  numerical failure or nonpositive variance; no interval is available.
+  For \code{critical_planar}, \code{conditional_critical_planar} and TRUE
+  mean that complete numerical mixture inputs are available within the
+  declared analytic error budget, without a scalar variance-positivity gate.
+  An excessive error gives \code{critical_numerical_error_unavailable} and
+  FALSE, retaining the completed raw diagnostics.}
+  \item{critical, critical_control, raw_C, raw_Sigma, diagonal_root_n_variance}{
+  For \code{critical_planar}, the whole reciprocal kernel, guarded local
+  summaries, raw signed pair coefficients and error bounds; the disclosed
+  covariance support and raw eigenvalues; the origin raw Schur value,
+  negative flag and cone adjustment; bound controls and raw diagonal/nuisance
+  inputs. The original point, complete influence axes and full slopes remain
+  unchanged. These diagnostics do not certify population premises.}
   \item{assumptions_verified, application_verified}{Both FALSE, including
   when a conditional interval is returned.}
   \item{contract, dimensions, parameter_names, covariance_scope}{Explicit
