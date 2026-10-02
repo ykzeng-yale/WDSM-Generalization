@@ -121,6 +121,11 @@
 }
 
 #' Qualified known-weight fitted-map inference with complete nuisance slopes
+#'
+#' The PATE regular_joint_d_gt2 scope additionally retains signed reciprocal
+#' covariance under the bounded equal-d>2 regular baseline joint-sheet theorem.
+#' Its common bootstrap dispatch uses corrected-variance Gaussian calibration;
+#' ordinary augmented-row/count multipliers are unsupported for this scope.
 #' @export
 wm_fitted_inference <- function(fit, nuisance_influence = NULL,
                                 mean_derivative0 = NULL,
@@ -154,9 +159,10 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
   pate <- identical(fit$estimand, "PATE")
   if (missing(covariance_scope) || !is.character(covariance_scope) ||
       length(covariance_scope) != 1L || is.na(covariance_scope) ||
-      !covariance_scope %in% c("distinct_rarity", "full_x", "common_field", "patt") ||
+      !covariance_scope %in% c("distinct_rarity", "full_x", "common_field", "patt",
+                               "regular_joint_d_gt2") ||
       (pate && covariance_scope == "patt") || (!pate && covariance_scope != "patt")) {
-    stop("Declare PATE distinct_rarity/full_x/common_field, or PATT patt explicitly.",
+    stop("Declare PATE distinct_rarity/full_x/common_field/regular_joint_d_gt2, or PATT patt explicitly.",
          call. = FALSE)
   }
   if (!pate && (!is.null(mean_derivative1) || !is.null(transport1))) {
@@ -182,6 +188,12 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
   score0 <- .wm_score_matrix(fit$graph$scores0, n, "fit scores0")
   score1 <- if (pate) .wm_score_matrix(fit$graph$scores1, n, "fit scores1") else NULL
   dimensions <- c(potential0 = ncol(score0), if (pate) c(potential1 = ncol(score1)))
+  if (covariance_scope == "regular_joint_d_gt2" &&
+      (!pate || length(dimensions) != 2L || any(dimensions <= 2L) ||
+       dimensions[1L] != dimensions[2L])) {
+    stop("regular_joint_d_gt2 requires PATE with equal used dimensions d > 2.",
+         call. = FALSE)
+  }
   scalar <- all(dimensions == 1L)
   if (!all(dimensions >= 2L) &&
       !(scalar && covariance_scope %in% c("full_x", "patt"))) {
@@ -342,6 +354,37 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
       "scalar graph, an actual full/partial refit callback, growing-B moments or raw",
       "sampling-variance convergence. Outcome-fitted maps outside the declared exact-root",
       "class, dependent designs and unrestricted learners remain unsupported.")
+  }
+  if (covariance_scope == "regular_joint_d_gt2") {
+    contract$fitted_law <- paste("Equal fixed used d>2, original corrected PATE, bounded iid rows,",
+      "known positive bounded W=w_Z(X), baseline target identities and own-score/weight",
+      "residual centering. The complete F1-F4 regular root-n stack includes scores,",
+      "predictions and scales, bounded joint influence, empirical L2 influence consistency,",
+      "bounded smooth prediction derivatives, baseline/current marginal geometry,",
+      "current residual projection/transport, compact-index moment/modulus and actual-fit",
+      "laws. Full sensitivity estimation retains its separate additional conditions.",
+      "This branch does not inherit the unbounded full-X or Gaussian alternatives.")
+    contract$covariance <- paste("Finite compact embedded C2 baseline joint-score sheets with",
+      "piecewise smooth Hausdorff-null boundaries, dimension r>=d and full-rank score",
+      "projections. Retain regular marginal donor/query geometry and full donor",
+      "subdensities h_{z|z} continuous off Lebesgue-null sets; bounded arm sheet",
+      "densities, finite regular atlases with uniformly bounded coordinate Jacobians",
+      "and local inverses, and uniform component small-ball bounds are required.",
+      "Distinct d-sheets have Hausdorff-d-null intersections. Coincident",
+      "positive-measure sheets are merged with their arm measures and root-mark",
+      "mixtures only when a finite smooth decomposition is admissible; other",
+      "positive-measure coincidences are outside this branch. The full marginal",
+      "donor-weight kernel, including every sheet and preimage, retains its stated",
+      "a.e. Wasserstein-1 continuity. Root-n movement is smaller than the neighbor",
+      "scale; current joined sheets need not stay coincident. Finite arrays and",
+      "scope labels do not verify these population conditions.")
+    contract$inference <- paste("Positive complete limiting contrast variance is required.",
+      "Signed actual-graph reciprocal covariance is subtracted from the diagonal base",
+      "block, and full matching/nuisance C and Sigma terms remain. A nonpositive finite",
+      "base block does not gate a positive full contrast. No hidden floor is applied.",
+      "Common bootstrap dispatch uses explicit corrected-variance Gaussian marginal",
+      "replication; ordinary row/count multipliers and original-refit/rematching validity",
+      "are not established. Actual sampling-variance convergence needs separate UI/L2.")
   }
   transports <- list()
   for (direction in names(specs)) {

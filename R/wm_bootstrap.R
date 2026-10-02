@@ -5,7 +5,8 @@
 #'
 #' @param object For contribution replication, a \code{wm_match} result with
 #'   variance estimation enabled or successful \code{wm_fitted_inference} with
-#'   available complete rows in scalar_psm or a qualified zero-reciprocal scope.
+#'   available complete rows in scalar_psm or a qualified zero-reciprocal scope,
+#'   or complete corrected Gaussian variance in regular_joint_d_gt2.
 #'   For fixed_reuse, an ordinary self-normalized \code{wm_match} result.
 #' @param B Positive integer number of draws, at least two for fixed_reuse.
 #'   With supplied counts,
@@ -23,9 +24,11 @@
 #'   the interval under either method.
 #' @param chunk_size Positive integer maximum number of multiplier values
 #'   generated together for contribution replication. Ignored for fixed_reuse.
+#'   For regular_joint_d_gt2 this bounds scalar Gaussian draw generation.
 #'   No contributions-by-B matrix is allocated.
 #' @param counts Required for fixed_reuse; optional for fitted contribution
-#'   replication. Counts are finite nonnegative integers
+#'   replication in zero-reciprocal/scalar_psm scopes; regular_joint_d_gt2 rejects
+#'   them. Counts are finite nonnegative integers
 #'   in original row order, with n rows and each column summing to n.
 #'   Do not supply seed with frozen counts. Their draw law remains unverified.
 #'   Fixed_reuse requires positive multiplicity in both arms in every column.
@@ -82,6 +85,15 @@
 #' and scalar scopes outside these contracts are unsupported.
 #' Source point, graph, dimensions and covariance identities are checked;
 #' population assumptions and empirical row Lindeberg conditions remain required.
+#'
+#' PATE regular_joint_d_gt2 fitted objects instead use direct conditional Gaussian
+#' roots with their complete reciprocal-corrected variance through this same
+#' contribution dispatch. Supplied counts are rejected; augmented-row squares alone
+#' omit the reciprocal term. The qualified bounded known-weight equal-d>2 baseline
+#' regular-sheet sampling and feasible plug-in premises remain required. Finite-B
+#' quantiles and Monte Carlo variances retain simulation error; the normal interval
+#' uses analytic variance and does not depend on B. This path does not reproduce H
+#' jointly, rematch, refit or silently floor the base/contrast covariance.
 #'
 #' With method = "fixed_reuse", supplied counts are passed to the unchanged
 #' wm_bootstrap_refit calculation for supplied matching maps of any dimension.
@@ -420,20 +432,28 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
 # joint covariance blocks. Reconstruct their finite-data identities before
 # treating the augmented rows as bootstrap coefficients; a row-only label is
 # not sufficient provenance. This does not check population assumptions.
-.wm_general_fitted_rows <- function(object) {
+.wm_general_fitted_rows <- function(object, covariance_state = FALSE) {
+  if (!is.logical(covariance_state) || length(covariance_state) != 1L ||
+      is.na(covariance_state)) stop("Invalid covariance-state request.", call. = FALSE)
   scope <- object$covariance_scope
+  reciprocal_scope <- identical(scope, "regular_joint_d_gt2")
   if (!is.list(object) || anyDuplicated(names(object)) ||
       !is.character(scope) || length(scope) != 1L || is.na(scope) ||
-      !scope %in% c("distinct_rarity", "full_x", "common_field", "patt") ||
+      !scope %in% c("distinct_rarity", "full_x", "common_field", "patt",
+                    "regular_joint_d_gt2") ||
       !identical(object$status, paste0("conditional_", scope)) ||
       !isTRUE(object$available) || !isTRUE(object$numerically_available) ||
       !isTRUE(object$conditional_inference_available) ||
       !is.numeric(object$reciprocal_subtraction) ||
-      !identical(as.vector(object$reciprocal_subtraction), 0) ||
+      (!reciprocal_scope && !identical(as.vector(object$reciprocal_subtraction), 0)) ||
       !is.list(object$contract) ||
       !all(c("target", "fitted_law", "covariance", "transport", "derivatives",
              "smooth_weights", "inference") %in% names(object$contract))) {
-    stop("Require successful qualified zero-reciprocal public wm_fitted_inference.",
+    stop("Require successful qualified public wm_fitted_inference.",
+         call. = FALSE)
+  }
+  if (reciprocal_scope && !covariance_state) {
+    stop("regular_joint_d_gt2 requires corrected-covariance Gaussian replication, not row/count multipliers.",
          call. = FALSE)
   }
   state <- .wm_fv_state(object$fit)
@@ -451,7 +471,9 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
   if (!identical(object$dimensions, dimensions) ||
       (!all(dimensions >= 2L) && !(scalar && scope %in% c("full_x", "patt"))) ||
       (state$pATE && scope == "patt") || (!state$pATE && scope != "patt") ||
-      (scope == "common_field" && dimensions[1L] != dimensions[2L])) {
+      (scope == "common_field" && dimensions[1L] != dimensions[2L]) ||
+      (reciprocal_scope && (!state$pATE || length(dimensions) != 2L ||
+        any(dimensions <= 2L) || dimensions[1L] != dimensions[2L]))) {
     stop("Fitted contribution scope and used matching dimensions disagree with the source fit.",
          call. = FALSE)
   }
@@ -486,6 +508,11 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
     "Complete smooth derivative")
   if (scalar && any(named(derivative$weight_sensitivity, "weight sensitivity") != 0)) {
     stop("Scalar full-X fitted contributions require supplied known weights and zero weight sensitivity.",
+         call. = FALSE)
+  }
+  if (reciprocal_scope &&
+      any(named(derivative$weight_sensitivity, "weight sensitivity") != 0)) {
+    stop("regular_joint_d_gt2 requires supplied known weights and zero weight sensitivity.",
          call. = FALSE)
   }
   .wm_reciprocal_agree(total, smooth + graph, "Complete fitted slope")
@@ -556,17 +583,51 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
   }
   .wm_reciprocal_agree(object$Sigma, expected$Sigma, "Complete joint covariance")
   .wm_reciprocal_agree(influence, expected$nuisance_influence, "Centered joint influence")
+  if (reciprocal_scope) {
+    for (field in c("reciprocal_subtraction", "reciprocal_numerator",
+                    "diagonal_root_n_variance", "augmented_row_root_n_variance",
+                    "unregularized_root_n_variance", "unregularized_variance",
+                    "analysis_target_weight_mean", "weight_scale")) {
+      value <- .wm_fv_number(object[[field]], 1L, field)
+      .wm_reciprocal_agree(value, expected[[field]], paste("Corrected fitted", field))
+    }
+    pairs <- object$reciprocal_pairs
+    if (!is.data.frame(pairs) || !identical(names(pairs), names(expected$reciprocal_pairs)) ||
+        nrow(pairs) != nrow(expected$reciprocal_pairs)) {
+      stop("Stored reciprocal pair structure is inconsistent with the source graph.", call. = FALSE)
+    }
+    for (field in names(pairs)) {
+      .wm_reciprocal_agree(pairs[[field]], expected$reciprocal_pairs[[field]],
+                           paste("Reciprocal pair", field))
+    }
+    if (!identical(object$variance_floor, NULL) || !identical(object$floor_active, FALSE) ||
+        !identical(object$reciprocal_units, expected$reciprocal_units)) {
+      stop("Corrected fitted inference must retain unfloored, declared reciprocal units.", call. = FALSE)
+    }
+  }
   if (!isTRUE(expected$available)) stop("Complete fitted variance is unavailable.", call. = FALSE)
   row <- object$augmented_rows
+  mean_scale <- if (reciprocal_scope) sqrt(expected$augmented_row_root_n_variance) else
+    sqrt(expected$root_n_variance)
   if (abs(mean(row)) > 100 * .Machine$double.eps *
-      max(sqrt(expected$root_n_variance), .Machine$double.xmin)) {
+      max(mean_scale, .Machine$double.xmin)) {
     stop("Augmented rows must already be centered.", call. = FALSE)
   }
+  if (covariance_state) return(list(rows = row - mean(row), inference = expected))
   row - mean(row)
 }
 
 .wm_general_fitted_bootstrap <- function(object, B, B_missing, seed, conf.level,
                                          interval, chunk_size, counts) {
+  if (identical(object$covariance_scope, "regular_joint_d_gt2")) {
+    if (!is.null(counts)) {
+      stop("regular_joint_d_gt2 rejects supplied counts: row/count multipliers omit reciprocal covariance.",
+           call. = FALSE)
+    }
+    state <- .wm_general_fitted_rows(object, covariance_state = TRUE)
+    return(.wm_corrected_fitted_gaussian(object, state$inference, B, seed,
+                                        conf.level, interval, chunk_size))
+  }
   row <- .wm_general_fitted_rows(object)
   n <- object$n
   V <- sum((row / sqrt(n))^2)
@@ -650,4 +711,80 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
     "row variance and Lindeberg conditions. No nuisance refit, rematching or replicate",
     "treated-weight denominator; this does not validate original-refit replication.")
   result
+}
+
+# Direct marginal Gaussian calibration inside the common fitted-object dispatch.
+# Its variance is the full corrected contrast, not an augmented-row square mean.
+.wm_corrected_fitted_gaussian <- function(object, checked, B, seed,
+                                         conf.level, interval, chunk_size) {
+  scalar <- function(x) is.numeric(x) && !is.complex(x) && is.null(dim(x)) &&
+    length(x) == 1L && is.finite(x)
+  positive_integer <- function(x) scalar(x) && x >= 1 &&
+    x <= .Machine$integer.max && x == floor(x)
+  if (!positive_integer(B)) stop("B must be a positive integer.", call. = FALSE)
+  if (!positive_integer(chunk_size)) stop("chunk_size must be a positive integer.", call. = FALSE)
+  if (!scalar(conf.level) || conf.level <= 0 || conf.level >= 1) {
+    stop("conf.level must lie strictly between zero and one.", call. = FALSE)
+  }
+  interval <- match.arg(interval, c("normal", "basic", "none"))
+  if (!is.null(seed) && (!scalar(seed) || seed < 0 ||
+      seed > .Machine$integer.max || seed != floor(seed))) {
+    stop("seed must be NULL or a nonnegative integer.", call. = FALSE)
+  }
+  V <- checked$root_n_variance
+  if (!isTRUE(checked$available) || !scalar(V) || V <= 0) {
+    stop("Complete reciprocal-corrected fitted variance is unavailable.", call. = FALSE)
+  }
+  if (!is.null(seed)) {
+    if (identical(RNGkind()[2L], "Box-Muller")) {
+      stop("An explicit seed cannot preserve the Box-Muller cache; use seed = NULL or another normal RNG.",
+           call. = FALSE)
+    }
+    had_seed <- exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
+    previous_seed <- if (had_seed) get(".Random.seed", envir = .GlobalEnv,
+                                      inherits = FALSE) else NULL
+    on.exit({
+      if (had_seed) assign(".Random.seed", previous_seed, envir = .GlobalEnv)
+      else if (exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE))
+        rm(".Random.seed", envir = .GlobalEnv)
+    }, add = TRUE)
+    set.seed(as.integer(seed))
+  }
+  B <- as.integer(B)
+  roots <- numeric(B)
+  for (start in seq.int(1L, B, by = as.integer(chunk_size))) {
+    index <- seq.int(start, min(B, start + as.double(chunk_size) - 1))
+    roots[index] <- sqrt(V) * stats::rnorm(length(index))
+  }
+  n <- object$n
+  draws <- object$estimate + roots / sqrt(n)
+  mc <- if (B > 1L) stats::var(roots) else NA_real_
+  alpha <- 1 - conf.level
+  ci <- switch(interval,
+    normal = object$estimate + c(-1, 1) *
+      stats::qnorm(alpha / 2, lower.tail = FALSE) * sqrt(V / n),
+    basic = object$estimate - as.numeric(stats::quantile(roots,
+      c(1 - alpha / 2, alpha / 2), names = FALSE)) / sqrt(n),
+    none = NULL)
+  if (any(!is.finite(c(roots, draws, ci))) || (B > 1L && !is.finite(mc))) {
+    stop("Corrected fitted Gaussian arithmetic exceeded numerical range.", call. = FALSE)
+  }
+  if (!is.null(ci)) names(ci) <- c("lower", "upper")
+  list(root_n_draws = roots, draws = draws,
+    conditional_root_n_variance = V, conditional_variance = V / n,
+    monte_carlo_root_n_variance = mc, monte_carlo_variance = mc / n,
+    conf.int = ci, interval = interval, conf.level = conf.level,
+    B = B, n = n, seed = seed, estimate = object$estimate,
+    method = "Gaussian replication with reciprocal-corrected fitted-map variance",
+    draw_input = "generated_gaussian_corrected_variance",
+    supplied_draw_law_verified = NA, estimand = object$estimand,
+    covariance_scope = object$covariance_scope, source_inference = object,
+    population_assumptions_verified = FALSE, original_refit_bootstrap = FALSE,
+    replication_contract = paste("Conditional marginal N(0,Vhat) with the complete",
+      "reciprocal-corrected fitted contrast variance and full observed n. Qualified",
+      "known-W equal-d>2 regular baseline-sheet sampling and feasible plug-in premises",
+      "remain unverified. This is variance-calibrated Gaussian replication, not row/count",
+      "multipliers, rematching or nuisance-refit validity. No joint nuisance draws or",
+      "actual sampling-variance UI claim. Normal intervals use analytic variance; finite-B",
+      "quantiles/sample variances retain Monte Carlo error (sample divisor B-1)."))
 }

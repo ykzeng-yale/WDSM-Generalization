@@ -26,7 +26,8 @@
        mu0 = fit$predictions$mean0, mu1 = fit$predictions$mean1,
        edges = fit$graph$edges, estimand = checked$estimand,
        dimensions = c(ncol(fit$graph$scores0),
-         if (identical(checked$estimand, "PATE")) ncol(fit$graph$scores1)))
+         if (identical(checked$estimand, "PATE")) ncol(fit$graph$scores1)),
+       reciprocal_state = checked)
 }
 
 .wm_fv_matrices <- function(values, n) {
@@ -157,8 +158,15 @@
   if (is.null(nm)) nm <- paste0("parameter", seq_len(p))
   if (!is.character(covariance_scope) || length(covariance_scope) != 1L ||
       is.na(covariance_scope) ||
-      !covariance_scope %in% c("distinct_rarity", "full_x", "common_field", "patt")) {
+      !covariance_scope %in% c("distinct_rarity", "full_x", "common_field", "patt",
+                              "regular_joint_d_gt2")) {
     stop("Declare one supported covariance_scope explicitly.")
+  }
+  reciprocal_scope <- identical(covariance_scope, "regular_joint_d_gt2")
+  if (reciprocal_scope && (!s$pATE || length(s$dimensions) != 2L ||
+      any(s$dimensions <= 2L) || s$dimensions[1L] != s$dimensions[2L])) {
+    stop("regular_joint_d_gt2 requires PATE with equal used dimensions d > 2.",
+         call. = FALSE)
   }
   scalar <- all(s$dimensions == 1L)
   if (!all(s$dimensions >= 2L) &&
@@ -190,6 +198,11 @@
   if (any(!is.finite(c(base, influence, total_sensitivity, V0, C, Sigma,
                        cross, nuisance_variance, root_variance)))) {
     stop("Fitted-variance arithmetic exceeded numerical range.")
+  }
+  if (reciprocal_scope) {
+    return(.wm_regular_joint_fitted_variance(s, base, influence, smooth, graph,
+      total_sensitivity, nm, augmented, V0, C, Sigma, cross,
+      nuisance_variance, root_variance, conf.level))
   }
   discrepancy <- abs(root_variance - (V0 + cross + nuisance_variance))
   if (discrepancy > 1e-10 * max(1, V0, abs(cross), nuisance_variance)) {
@@ -239,11 +252,72 @@
     class = c(".wm_wdsm_fitted_variance", "list"))
 }
 
+# Complete contrast variance for the qualified equal-d>2 baseline-sheet branch.
+# A nonpositive empirical oracle block never gates a positive full contrast.
+.wm_regular_joint_fitted_variance <- function(s, base, influence, smooth, graph,
+    total_sensitivity, nm, augmented, diagonal, C, Sigma, cross,
+    nuisance_variance, augmented_variance, conf.level) {
+  pairs <- .wm_reciprocal_pair_state(s$reciprocal_state)
+  subtraction <- 2 * pairs$reciprocal / s$gamma^2
+  V0 <- diagonal - subtraction
+  raw_root <- augmented_variance - subtraction
+  raw_variance <- raw_root / s$n
+  if (any(!is.finite(c(subtraction, V0, raw_root, raw_variance)))) {
+    stop("Reciprocal fitted-variance arithmetic exceeded numerical range.",
+         call. = FALSE)
+  }
+  discrepancy <- abs(raw_root - (V0 + cross + nuisance_variance))
+  if (discrepancy > 1e-10 * max(1, diagonal, abs(V0), abs(subtraction),
+                                abs(cross), nuisance_variance)) {
+    stop("Corrected variance disagrees with its complete covariance blocks.",
+         call. = FALSE)
+  }
+  available <- raw_root > 0 && raw_variance > 0
+  root_variance <- if (available) raw_root else NA_real_
+  variance <- if (available) raw_variance else NA_real_
+  se <- if (available) sqrt(variance) else NA_real_
+  ci <- if (available) s$estimate + c(-1, 1) *
+    stats::qnorm((1 - conf.level) / 2, lower.tail = FALSE) * se else rep(NA_real_, 2L)
+  if (available && any(!is.finite(c(root_variance, variance, se, ci)))) {
+    stop("Reciprocal fitted confidence interval exceeded numerical range.", call. = FALSE)
+  }
+  names(ci) <- c("lower", "upper")
+  names(C) <- nm
+  dimnames(Sigma) <- list(nm, nm)
+  structure(list(estimate = s$estimate, n = s$n, estimand = s$estimand,
+    smooth_sensitivity = smooth, graph_sensitivity = graph,
+    total_sensitivity = total_sensitivity, parameter_names = nm,
+    V0 = V0, C = C, Sigma = Sigma, cross_term = cross,
+    nuisance_variance = nuisance_variance, root_n_variance = root_variance,
+    variance = variance, se = se, conf.int = ci, conf.level = conf.level,
+    available = available, base_rows = base, augmented_rows = augmented,
+    nuisance_influence = influence, covariance_scope = "regular_joint_d_gt2",
+    covariance_formula_error = discrepancy, reciprocal_subtraction = subtraction,
+    reciprocal_numerator = pairs$reciprocal, reciprocal_pairs = pairs$pairs,
+    diagonal_root_n_variance = diagonal,
+    augmented_row_root_n_variance = augmented_variance,
+    unregularized_root_n_variance = raw_root, unregularized_variance = raw_variance,
+    analysis_target_weight_mean = s$gamma, weight_scale = s$scale,
+    reciprocal_units = "Analysis-weight numerator; subtraction is root-n variance",
+    variance_floor = NULL, floor_active = FALSE,
+    diagnostic = if (available) "Positive complete reciprocal-corrected contrast variance; no floor."
+      else "Nonpositive complete reciprocal-corrected contrast variance; inference unavailable; no floor.",
+    assumptions_verified = FALSE,
+    contract = paste("Original corrected known-weight PATE, equal fixed d>2, bounded iid",
+      "own-field framework and regular baseline joint sheets. Full nuisance slope and",
+      "signed reciprocal covariance retained. Population premises remain unverified;",
+      "no rematching/refit bootstrap or actual sampling-variance convergence claim.")),
+    class = c(".wm_wdsm_fitted_variance", "list"))
+}
+
 # Corrected one-step multinomial replication, not the original refit algorithm.
 # Counts are supplied to make exact paired/algebra comparisons reproducible.
 .wm_wdsm_fitted_count <- function(inference, counts) {
   if (!inherits(inference, ".wm_wdsm_fitted_variance") ||
       !is.list(inference)) stop("Supply a fitted-variance reference result.")
+  if (identical(inference$covariance_scope, "regular_joint_d_gt2")) {
+    stop("regular_joint_d_gt2 cannot use ordinary full-slope count replication.", call. = FALSE)
+  }
   n <- inference$n
   if (!is.numeric(n) || length(n) != 1L || !is.finite(n) ||
       n < 2 || n != floor(n)) stop("Invalid stored sample size.")

@@ -14,6 +14,8 @@ for d>=2, \code{distinct_rarity}, \code{full_x}, \code{common_field} or
 \code{patt}; for all-scalar corrected full-X graphs, PATE
 \code{full_x} or PATT \code{patt} with declared zero/current-centering,
 under at least one stated scalar sampling-law alternative.
+PATE \code{regular_joint_d_gt2} fitted inference instead supplies its
+complete corrected marginal Gaussian variance; counts are unsupported in that scope.
 Mixed scalar/higher-dimensional graphs and other generic scalar scopes
 are unsupported.
 For fixed-reuse replication, an ordinary self-normalized \code{wm_match}
@@ -35,9 +37,11 @@ B-divisor replicate variance; \code{"basic"} is unsupported.
 \code{"none"} omits the interval under either method.}
 \item{chunk_size}{Positive integer maximum number of multiplier values
 generated together for contribution replication. Ignored for fixed-reuse
-replication. No contributions-by-B matrix is allocated.}
+replication. For regular_joint_d_gt2 this bounds scalar Gaussian draw generation.
+No contributions-by-B matrix is allocated.}
 \item{counts}{Required for fixed-reuse replication; optional for fitted
-contribution replication. Entries must be finite nonnegative integers; every column must
+contribution replication in zero-reciprocal/scalar_psm scopes only.
+\code{regular_joint_d_gt2} rejects supplied counts. Entries must be finite nonnegative integers; every column must
 sum to full observed n. Rows correspond to original observations; optional
 row names must be literal indices 1,...,n in order. Do not supply seed with
 frozen counts. Fixed-reuse replication requires positive multiplicity in both
@@ -57,8 +61,9 @@ weights. The default contribution method applies independent Gaussian multiplier
 where present, unordered-edge and independent-training contributions.
 Graphs, predictions, weights,
 and nuisance influence corrections remain fixed.
-Successful fitted inference uses the complete centered fitted-score augmented rows
-and also accepts supplied full-n fixed-contribution counts.
+Successful zero-reciprocal/scalar_psm fitted inference uses complete centered
+augmented rows and also accepts supplied full-n fixed-contribution counts.
+The regular_joint_d_gt2 fitted scope uses corrected-variance Gaussian replication.
 }
 \details{
 With \code{method = "fixed_reuse"}, supplied counts are passed to the unchanged
@@ -89,7 +94,7 @@ remain separate.
 
 The following formulas apply to \code{method = "contribution"}.
 
-For a successful supported fitted inference object, write \eqn{a_i} for its centered
+For a successful zero-reciprocal/scalar_psm fitted inference object, write \eqn{a_i} for its centered
 complete augmented contribution. Gaussian draws are
 \eqn{n^{-1/2}\sum_i a_i\xi_i}. Supplied count columns give
 \deqn{T^*=n^{-1/2}\sum_i (N_i-1)a_i.}
@@ -120,6 +125,25 @@ also retains its numerical-root requirements. Sampling transfer additionally
 requires the applicable empirical row variance and Lindeberg conditions.
 This contribution calculation does not validate the original refit bootstrap.
 An unavailable or inconsistent inference object is rejected.
+
+PATE \code{regular_joint_d_gt2} uses the same contribution-method dispatch
+with direct roots \eqn{T^*=\sqrt{\widehat V}\xi}, where xi is independent
+standard Gaussian and V is the complete fitted contrast variance including
+the signed reciprocal subtraction and all nuisance terms. Stored source
+point, graph, dimensions, pair products, parameter axes, transport/slope and
+corrected covariance identities are reconstructed before drawing. This is
+marginal variance-calibrated Gaussian replication, not augmented-row/count
+replication; supplied counts are rejected. No fixed-map base interval flag
+or hidden base floor gates it: final corrected V must be strictly positive.
+Qualified bounded known-W equal-d>2 regular baseline-sheet sampling and
+feasible plug-in premises remain unverified. This does not establish joint
+nuisance draws, rematching or original nuisance-refit validity. The normal
+interval uses analytic V/n and is independent of B. Finite-B empirical
+quantiles/variances retain Monte Carlo error; B=1 has NA Monte Carlo variance.
+Any growing B gives Monte Carlo variance consistency for these exact Gaussian
+roots, given variance consistency, but not for nonlinear refits from weak
+convergence alone. No actual finite-sample sampling-variance UI claim is made.
+For this path chunk_size bounds normal draws generated together.
 
 For the original wm_match Gaussian branch, the following decomposition applies.
 

@@ -270,6 +270,42 @@
        variance_floor = variance_floor)
 }
 
+# Pure actual-graph pair arithmetic; no interval, floor or availability gate.
+# The same once-oriented products serve fixed-map and qualified fitted inference.
+.wm_reciprocal_pair_state <- function(state) {
+  n <- state$n
+  q <- state$q
+  j <- state$j
+  Z <- state$Z
+  w <- state$w
+  residual <- state$residual
+  expected_outcome_share <- state$expected_outcome_share
+  donor_total <- state$donor_total
+  # Each reciprocal pair appears once, oriented treated -> control.
+  forward <- which(Z[q] == 1L)
+  key <- paste(q, j, sep = ":")
+  reverse <- match(paste(j[forward], q[forward], sep = ":"), key)
+  keep <- !is.na(reverse)
+  forward <- forward[keep]
+  reverse <- reverse[keep]
+  edge_mark <- w[q] * expected_outcome_share * residual[j]
+  pair_value <- edge_mark[forward] * edge_mark[reverse]
+  pairs <- data.frame(treated = q[forward], control = j[forward],
+    treated_to_control_edge = forward, control_to_treated_edge = reverse,
+    control_donor_total = donor_total[q[forward]],
+    treated_donor_total = donor_total[j[forward]],
+    treated_residual = residual[q[forward]], control_residual = residual[j[forward]],
+    treated_to_control_mark = edge_mark[forward],
+    control_to_treated_mark = edge_mark[reverse],
+    product = pair_value, numerator_contribution = pair_value / n)
+  reciprocal <- sum(pair_value) / n
+  if (any(!is.finite(c(edge_mark, pair_value, reciprocal)))) {
+    stop("Reciprocal variance arithmetic exceeded numerical range.", call. = FALSE)
+  }
+  list(edge_mark = edge_mark, pair_value = pair_value,
+       pairs = pairs, reciprocal = reciprocal)
+}
+
 #' Reciprocal covariance inference for a corrected fixed-map matching fit
 #' @export
 wm_reciprocal_inference <- function(object, conf.level = 0.95,
@@ -292,24 +328,11 @@ wm_reciprocal_inference <- function(object, conf.level = 0.95,
   donor_total <- state[["donor_total"]]
   conf.level <- state[["conf.level"]]
   variance_floor <- state[["variance_floor"]]
-  # Each reciprocal pair appears once, oriented treated -> control.
-  forward <- which(Z[q] == 1L)
-  key <- paste(q, j, sep = ":")
-  reverse <- match(paste(j[forward], q[forward], sep = ":"), key)
-  keep <- !is.na(reverse)
-  forward <- forward[keep]
-  reverse <- reverse[keep]
-  edge_mark <- w[q] * expected_outcome_share * residual[j]
-  pair_value <- edge_mark[forward] * edge_mark[reverse]
-  pairs <- data.frame(treated = q[forward], control = j[forward],
-    treated_to_control_edge = forward, control_to_treated_edge = reverse,
-    control_donor_total = donor_total[q[forward]],
-    treated_donor_total = donor_total[j[forward]],
-    treated_residual = residual[q[forward]], control_residual = residual[j[forward]],
-    treated_to_control_mark = edge_mark[forward],
-    control_to_treated_mark = edge_mark[reverse],
-    product = pair_value, numerator_contribution = pair_value / n)
-  reciprocal <- sum(pair_value) / n
+  pair_state <- .wm_reciprocal_pair_state(state)
+  edge_mark <- pair_state$edge_mark
+  pair_value <- pair_state$pair_value
+  pairs <- pair_state$pairs
+  reciprocal <- pair_state$reciprocal
   diagonal <- mean((actual * gamma)^2)
   signed <- diagonal - 2 * reciprocal
   raw_root <- signed / gamma^2

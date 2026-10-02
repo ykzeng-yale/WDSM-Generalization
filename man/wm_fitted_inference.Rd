@@ -45,14 +45,17 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   full-X control predictions; scalar estimated or fixed-map declarations
   are not accepted.}
   \item{covariance_scope}{Required branch declaration: for PATE exactly
-  \code{"distinct_rarity"}, \code{"full_x"} or \code{"common_field"};
+  \code{"distinct_rarity"}, \code{"full_x"}, \code{"common_field"} or
+  \code{"regular_joint_d_gt2"};
   for PATT exactly \code{"patt"}. These are unverified population premises,
   not model-selection or goodness-of-fit labels. When every used matching
   dimension is one, only PATE \code{"full_x"} or PATT \code{"patt"} is
   supported, under at least one stated scalar/full-X sampling-law alternative.
   The separate
   \code{"scalar_psm"} branch accepts PATE or PATT and uses the same
-  fitted logistic probability in each used direction.}
+  fitted logistic probability in each used direction.
+  \code{"regular_joint_d_gt2"} requires PATE and equal used dimensions d>2
+  under the bounded known-weight regular baseline joint-sheet conditions below.}
   \item{conf.level}{Finite confidence level strictly between zero and one.}
   \item{scalar_control}{NULL or a uniquely named list for \code{scalar_psm}
   only. Supported fields are \code{bandwidth_constant} (1),
@@ -168,6 +171,53 @@ All cross-covariances remain. In unnormalized notation
 is \eqn{\widehat V/n} for both PATE and PATT. The positive limiting
 variance condition is a population premise; a nonpositive assembled
 variance does not produce an interval.
+
+For PATE \code{regular_joint_d_gt2}, both matching dimensions are equal
+and strictly greater than two. This bounded iid known-weight branch retains
+baseline own-score-and-weight centering and target identities, fixed M,
+the complete regular root-n score/prediction/centering/scale stack, bounded
+smooth predictions and influence, empirical L2 influence consistency, and
+the stated F1--F4 current projection/transport and compact-index laws.
+The baseline joint-score law has a finite decomposition into compact
+embedded C2 sheets with piecewise smooth Hausdorff-null boundaries,
+dimension r>=d and full-rank score projections. Retain regular marginal
+geometry and full donor subdensities continuous off Lebesgue-null sets,
+bounded arm sheet densities, finite regular atlases with uniformly bounded
+coordinate Jacobians and local inverses, and uniform component small-ball
+bounds. Distinct d-sheets have Hausdorff-d-null intersections. Coincident
+positive-measure sheets are merged with their arm measures and root-mark
+mixtures only when a finite smooth decomposition is admissible; other
+positive-measure coincidences are outside this branch. The full marginal
+conditional donor-weight law, including every sheet and preimage, retains
+its stated a.e. Wasserstein-1 continuity. Current sheets need not remain
+coincident.
+Finite arrays do not verify these population conditions. Estimated
+transport retains its separate signed-chart/density and smoothing
+premises; this scope does not inherit unbounded full-X alternatives.
+
+The signed reciprocal products are computed from the actual fitted graph,
+supplied weights and its own-arm fitted residuals, counting each pair once.
+For normalized analysis weights w and gamma=mean(w), let R be their
+reciprocal numerator average. The corrected calculation is
+\deqn{\widehat V_0=\operatorname{mean}(L_i^2)-2R/\gamma^2,}
+\deqn{\widehat V=\operatorname{mean}\{(L_i+U_i^{\mathsf T}b)^2\}
+ -2R/\gamma^2=\widehat V_0+2b^{\mathsf T}\widehat C+
+ b^{\mathsf T}\widehat\Sigma b.}
+The subtraction is in root-n variance units and invariant to common weight
+rescaling; there is no additional M factor. Signed R and raw corrected V0
+are retained. A nonpositive finite-sample V0 does not gate a positive full
+contrast V. Only final V positivity governs usable SE/intervals; otherwise
+raw signed fields remain and inference is explicitly unavailable. No floor
+or absolute-value correction is applied.
+
+Through \code{wm_bootstrap(..., method = "contribution")}, this scope uses
+explicit marginal Gaussian calibration with variance V rather than ordinary
+row/count multipliers. Supplied counts are rejected even if the observed
+R happens to be zero. The complete C and Sigma blocks remain in the inference
+object; no joint nuisance draws, rematching or refitting are performed.
+Positive limiting variance and the qualified sampling/plug-in premises
+justify this marginal Gaussian law. Fixed B retains Monte Carlo error;
+actual sampling-variance convergence still requires separate L2/UI conditions.
 
 The generic all-scalar branch retains the original corrected point and
 actual graph, with PATE \code{full_x} or PATT \code{patt}. At least one of
@@ -463,10 +513,19 @@ or mutate the supplied fit. Generic branches reject raw estimators and
 unsupported scalar maps; \code{scalar_psm} requires its bound raw logistic object.
 All branches reject unsupported previous adjustments, stabilized rules,
 restricted/fold graphs and covariance specifications. It makes no generic learner,
-nonzero-reciprocal fitted-law or cluster/stratum design claim, and does not
+unrestricted nonzero-reciprocal fitted-law or cluster/stratum design claim, and does not
 certify an actual original-refit callback or raw sampling-variance convergence.
 }
 \value{
+For \code{regular_joint_d_gt2}, additional fields retain
+\code{reciprocal_numerator}, the once-oriented \code{reciprocal_pairs},
+\code{diagonal_root_n_variance}, \code{augmented_row_root_n_variance},
+\code{reciprocal_subtraction} in root-n variance units,
+\code{unregularized_root_n_variance}, \code{unregularized_variance},
+\code{analysis_target_weight_mean}, \code{weight_scale} and explicit
+unfloored diagnostics. Its \code{V0} is the raw reciprocal-corrected oracle
+block, including nonpositive values; unavailable usable variance fields are NA.
+
 A separate \code{wm_fitted_inference} list preserving \code{estimate},
 \code{fit}, n, M and estimand. On successful assembly it contains:
 \describe{
