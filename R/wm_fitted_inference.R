@@ -40,12 +40,21 @@
   }
   required <- c("mode", "raw_scores", "tangents", "cutoff")
   optional <- c("raw_to_matching", "bandwidth", "density_floor",
-                "quadrature_tolerance", "max_nodes")
+                "quadrature_tolerance", "max_nodes", "representation")
   if (!all(required %in% names(spec)) ||
       any(!names(spec) %in% c(required, optional))) {
     stop(label, " estimate mode has missing or unsupported fields; data, weights, ",
          "residuals, donor arm and M must come from fit.", call. = FALSE)
   }
+  representation <- spec[["representation", exact = TRUE]]
+  if (is.null(representation)) representation <- "conditional_weight_chart"
+  if (!is.character(representation) || length(representation) != 1L ||
+      is.na(representation) ||
+      !representation %in% c("conditional_weight_chart", "score_measurable_weight")) {
+    stop(label, " representation must be conditional_weight_chart or score_measurable_weight.",
+         call. = FALSE)
+  }
+  score_weight <- identical(representation, "score_measurable_weight")
   raw <- spec$raw_scores
   .wm_score_matrix(raw, n, paste(label, "raw_scores"))
   d <- ncol(scores)
@@ -68,6 +77,10 @@
       (anyNA(raw_names) || any(!nzchar(raw_names)) || anyDuplicated(raw_names))) {
     stop(label, " raw coordinate names must be unique and nonempty.", call. = FALSE)
   }
+  if (score_weight && !identical(raw_names, colnames(scores))) {
+    stop(label, " score_measurable_weight coordinate names/order must match fit scores.",
+         call. = FALSE)
+  }
   if (!identical(dimnames(tangent)[[2L]], raw_names)) {
     stop(label, " tangent coordinate names/order must match raw_scores (or both be unnamed).",
          call. = FALSE)
@@ -78,6 +91,10 @@
   }
   .wm_fi_row_names(names(spec$cutoff), n, paste(label, "cutoff"))
   map <- spec[["raw_to_matching", exact = TRUE]]
+  if (score_weight && !is.null(map)) {
+    stop(label, " score_measurable_weight requires identity matching coordinates; ",
+         "omit raw_to_matching or use NULL.", call. = FALSE)
+  }
   if (!is.null(map) && !is.function(map)) {
     stop(label, " raw_to_matching must be NULL or a function.", call. = FALSE)
   }
@@ -103,13 +120,20 @@
       stop(label, " max_nodes must be an integer at least three.", call. = FALSE)
     }
   }
-  list(mode = mode, raw_scores = raw, tangents = tangent,
+  result <- list(mode = mode, raw_scores = raw, tangents = tangent,
        cutoff = spec$cutoff, controls = controls,
        map_binding = list(method = if (is.null(map)) "identity" else "supplied_function",
          max_absolute_difference = max(abs(mapped - scores)),
          componentwise_tolerance = 1e-10,
          interpretation = paste("Observed coordinates bound to this fit in original row order;",
            "population invertibility, chart validity and tangent interpretation remain unverified.")))
+  if (score_weight) {
+    result$representation <- representation
+    result$map_binding$interpretation <- paste("Actual matching coordinates bound to this fit",
+      "in original row and coordinate order. Tangents must be the complete actual score",
+      "derivative; population score measurability and derivative validity remain unverified.")
+  }
+  result
 }
 
 .wm_fi_zero_transport <- function(parameter_names, basis) {
@@ -230,9 +254,9 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
     specs <- list(potential0 = list(mode = "zero", basis = "full_x"),
                   potential1 = list(mode = "zero", basis = "full_x"))
   } else {
-    specs <- list(potential0 = .wm_fi_transport_spec(transport0, score0, n,
+    specs <- list(potential0 = .wm_fi_transport_spec(transport0, fit$graph$scores0, n,
                                                     parameters, "transport0"))
-    if (pate) specs$potential1 <- .wm_fi_transport_spec(transport1, score1, n,
+    if (pate) specs$potential1 <- .wm_fi_transport_spec(transport1, fit$graph$scores1, n,
                                                       parameters, "transport1")
   }
   # This reviewed helper reconstructs the complete finite fit and rejects prior
@@ -433,6 +457,22 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
         "separate. The existing mixture support and quantile premises remain unchanged.")
     }
   }
+  if (any(vapply(specs, function(spec) {
+    identical(spec[["representation", exact = TRUE]], "score_measurable_weight")
+  }, logical(1)))) {
+    contract$transport <- paste("Every zero mode is an explicit fixed-map/current-centering declaration.",
+      "Conditional-weight-chart estimates retain the effective raw signed chart, ordinary",
+      "marked-density and vanishing quadrature-error premises. Score-measurable-weight",
+      "estimates instead require donor W=omega_z(S_z^0) with a positive bounded smooth",
+      "omega_z, actual complete-p score tangents, three smooth score subdensities,",
+      "uniform generated-score/tangent control and residual-level consistency.",
+      "Each estimated direction retains own-score/weight centering and compact interior",
+      "signed support with a justified cutoff. Score-weight estimates use denominator floors",
+      "with zero active-floor derivatives and preserve the exact constant-donor-weight",
+      "log-gradient reduction. Their zero quadrature bound excludes statistical estimation",
+      "error and does not certify the sampling, covariance or bootstrap premises.",
+      "Coordinate binding verifies only observed alignment; supplied individual W is unchanged.")
+  }
   transports <- list()
   for (direction in names(specs)) {
     spec <- specs[[direction]]
@@ -445,6 +485,9 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
     arguments <- c(list(raw_scores = spec$raw_scores, Z = Z, W = W,
       residual = fit$data$Y - mu, tangents = spec$tangents,
       cutoff = spec$cutoff, donor_arm = arm, M = fit$M), spec$controls)
+    if (!is.null(spec[["representation", exact = TRUE]])) {
+      arguments$representation <- spec$representation
+    }
     value <- tryCatch(do.call(wm_graph_transport, arguments), error = identity)
     if (inherits(value, "error")) {
       return(structure(list(estimate = fit$estimate, n = n, M = fit$M,

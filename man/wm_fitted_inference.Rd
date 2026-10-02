@@ -440,23 +440,46 @@ a signed-density chart. No other fields are accepted in zero mode.
 For an estimated direction supply a uniquely named list containing
 \code{mode = "estimate"}, \code{raw_scores}, \code{tangents} and
 \code{cutoff}. Optional fields are \code{raw_to_matching},
-\code{bandwidth}, \code{density_floor}, \code{quadrature_tolerance}
-and \code{max_nodes}. The last four controls follow
+\code{bandwidth}, \code{density_floor}, \code{quadrature_tolerance},
+\code{max_nodes} and \code{representation}. The smoothing and numerical controls follow
 \code{\link{wm_graph_transport}}. Alternate outcome, treatment, weight,
 residual, donor-arm and M fields are rejected: these come from the same
 validated fit. The residual is the fit's outcome minus that direction's
 prediction, and M is its actual fixed donor count.
+
+The representation defaults to \code{conditional_weight_chart}, preserving
+its effective raw-chart tangent construction. Alternatively,
+\code{representation = "score_measurable_weight"} uses the three score-density
+construction under donor \eqn{W=\omega_z(S_z^0)}. Then \code{raw_scores} must
+be the fit's actual matching coordinates, with the same column names/order
+(or both unnamed), and \code{raw_to_matching} must be omitted or NULL.
+Even an identity function is rejected: the new representation's binding is
+explicitly identity. Tangents are the actual complete \eqn{D_\theta S_z}
+array, retaining every p nuisance parameter, not the effective raw-chart
+quantity below. Query and donor densities use this same directional map.
+The supplied W, matching graph and point estimate are retained.
+
+The score-weight component's default floor is \eqn{1/\log(n+2)}, with zero
+active-floor derivatives. M=1 drops the logarithmic-weight-gradient term;
+constant donor weights force that gradient to exact zero. This explicit finite
+completion equals the literal floored three-density formula whenever floors
+are inactive. The component remains an unnormalized raw-W j; the existing
+signed PATE/PATT contrast applies its target normalization exactly once.
+Its zero quadrature-only bound does not bound statistical estimation error.
+No covariance-scope restriction or bootstrap dispatch is relaxed.
 
 Raw coordinates must be n-by-d with the same d as the direction's retained
 matching coordinates. Tangents are n-by-d-by-p, with third-axis names equal
 to the influence parameter names/order. Raw-coordinate column names and
 tangent second-axis names must agree exactly, or both be absent. Optional
 row labels of coordinates, tangents or cutoff use the original row indices.
-For \eqn{R_\theta=A_\theta V+B_\theta L}, the effective raw tangent is
+For the default representation and \eqn{R_\theta=A_\theta V+B_\theta L},
+the effective raw tangent is
 \eqn{(\partial_k B_\theta-(\partial_k A_\theta)A_\theta^{-1}B_\theta)L};
 it is generally different from the unadjusted coordinate derivative.
 
-NULL \code{raw_to_matching} uses identity. Otherwise it must be a function
+For the default representation, NULL \code{raw_to_matching} uses identity.
+Otherwise it must be a function
 evaluated once on the raw matrix. Its finite n-by-d result must match the
 fit's retained scores in original row order within the existing package
 engineering tolerance \eqn{10^{-10}\max(1,|x|,|x_{\rm fit}|)} componentwise.
@@ -579,13 +602,18 @@ control-direction conditions and no two-arm reciprocal condition. The
 assembly uses the proved diagonal block in all these branches, without a
 fixed-map reciprocal sample subtraction.
 
-Estimated transport additionally requires the signed chart, compact interior
-signed support, smooth cutoff equal to one on that support, ordinary marked
-C3 density assumptions and bandwidth/rate conditions documented in
-\code{\link{wm_graph_transport}}. These conditions are not implied by a
-label such as survey or balancing weights. For statistical consistency the
-propagated quadrature bound must vanish; the fixed default numerical tolerance
-alone does not guarantee this. Returned quadrature bounds exclude sampling
+Estimated transport additionally requires its representation-specific premises,
+compact interior signed support, and a smooth cutoff equal to one on that support.
+The default conditional-weight chart uses its effective tangent and ordinary
+marked C3 density conditions. The score-measurable-weight construction instead
+uses donor W as a positive bounded smooth function of the baseline score,
+actual complete score tangents, three ordinary smooth score subdensities and
+residual-level consistency. Each retains the bandwidth/generated-input rate
+conditions in \code{\link{wm_graph_transport}}. These conditions are not
+implied by a label such as survey or balancing weights. Any propagated
+quadrature bound must vanish; the fixed default numerical tolerance alone
+does not guarantee this. Score-weight transport uses no quadrature and returns
+zero quadrature-only bounds. All these bounds exclude statistical estimation
 error, kernel bias, nuisance error and floating-point roundoff.
 
 Positive supplied weights define the target and remain fixed throughout

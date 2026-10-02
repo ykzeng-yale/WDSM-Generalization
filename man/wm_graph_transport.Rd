@@ -4,13 +4,16 @@
 \usage{
 wm_graph_transport(raw_scores, Z, W, residual, tangents, cutoff,
   donor_arm, M, bandwidth = NULL, density_floor = NULL,
-  quadrature_tolerance = 1e-7, max_nodes = 131073L)
+  quadrature_tolerance = 1e-7, max_nodes = 131073L,
+  representation = c("conditional_weight_chart", "score_measurable_weight"))
 }
 \arguments{
   \item{raw_scores}{Finite numeric \eqn{n} by \eqn{d} matrix of the
   fitted raw chart for one donor direction, evaluated on every original
   observation. Supply the chart used in the signed-transport model;
-  the function does not recover it from standardized matching scores.}
+  the function does not recover it from standardized matching scores.
+  For \code{score_measurable_weight}, supply the actual matching coordinates
+  instead, evaluated using this same directional map on donors and queries.}
   \item{Z}{Numeric length-\eqn{n} vector with values zero and one. Both
   arms must be represented. Rows agree with all other arguments.}
   \item{W}{Positive finite numeric length-\eqn{n} weights in their original
@@ -23,7 +26,11 @@ wm_graph_transport(raw_scores, Z, W, residual, tangents, cutoff,
   \eqn{p}. The third axis indexes the common nuisance parameter, not the
   matching-coordinate dimension. Its entries are the effective raw-chart
   tangents specified below. Optional third-axis names must be unique and
-  nonempty. Unnamed parameters are interpreted by position.}
+  nonempty. Unnamed parameters are interpreted by position. For
+  \code{score_measurable_weight}, use the actual matching-coordinate derivative
+  \eqn{B_z=D_\theta S_z}, not the effective raw-chart tangent. Its coordinate
+  names must match \code{raw_scores}, or both must be absent; any score/tangent/
+  cutoff row labels must be original indices 1,...,n.}
   \item{cutoff}{Finite length-\eqn{n} values in \eqn{[0,1]} of a fixed
   smooth interior cutoff evaluated at the supplied raw coordinates.
   It must equal one on the signed-density support. Arbitrary trimming or
@@ -37,22 +44,69 @@ wm_graph_transport(raw_scores, Z, W, residual, tangents, cutoff,
   rescaling or bandwidth selection is performed.}
   \item{density_floor}{Positive donor-subdensity threshold. The default
   is \eqn{0.01 n^{-1/4}}. A density at or below this threshold at any
-  active donor raises an error; the function does not silently trim it.}
+  active donor raises an error; the function does not silently trim it.
+  For \code{score_measurable_weight}, the default is \eqn{1/\log(n+2)};
+  this value floors both donor subdensities, with zero derivative where
+  each floor is active. These use the original raw weight units.}
   \item{quadrature_tolerance}{Positive componentwise absolute tolerance
   for the tagged fraction and each spatial derivative. The propagated
   bound on the final drift is returned separately and may differ in size.
-  A fixed tolerance is not an asymptotic error guarantee.}
+  A fixed tolerance is not an asymptotic error guarantee. Validated but unused
+  for \code{score_measurable_weight}, which requires no quadrature.}
   \item{max_nodes}{Maximum number of Simpson quadrature nodes per active
-  donor, at least three. Exceeding the budget raises an error.}
+  donor, at least three. Exceeding the budget raises an error. Validated but
+  unused for \code{score_measurable_weight}.}
+  \item{representation}{The default \code{conditional_weight_chart} uses
+  the conditional donor-weight law in a supplied raw chart. The alternative
+  \code{score_measurable_weight} uses three score subdensities under the
+  separate premise \eqn{W=\omega_z(S_z^0)} on donor rows.}
 }
 \description{
 Estimates the unnormalized incoming graph-transport vector for the
 original self-normalized donor rule, retaining the random finite-M donor
-denominator. The calculation uses a conditional empirical Laplace
-transform and deterministic quadrature; it makes no random draws.
+denominator. The default uses a conditional empirical Laplace
+transform and deterministic quadrature. The score-measurable-weight
+representation uses score-density gradients. Neither makes random draws.
 It produces a variance component input, not a variance or confidence interval.
 }
 \details{
+For \code{score_measurable_weight}, donor weights must admit a positive,
+bounded smooth representation \eqn{W=\omega_z(S_z^0)}. The supplied values W
+are not estimated or changed, and no known formula for \eqn{\omega_z} is needed.
+Using the same actual directional score on every observation, estimate
+\eqn{h_z}, \eqn{H_q^W} and \eqn{H_z^W} by the ordinary donor, weighted-query and
+weighted-donor kernel sums, all divided by \eqn{n b^d}. With floored donor
+subdensities, form
+\deqn{\widehat\kappa=\widehat H_q^W/\widehat h_z^+,\qquad
+ \widehat a_\omega=\nabla\widehat H_z^{W,+}/\widehat H_z^{W,+}
+                  -\nabla\widehat h_z^+/\widehat h_z^+.}
+The supplied actual score tangent is contracted against
+\deqn{\widehat T_z=\nabla\widehat\kappa-
+       (1-1/M)\widehat\kappa\widehat a_\omega,\qquad
+ \widehat j_z=n^{-1}\sum_{i:Z_i=z}\widehat\varepsilon_i
+   \chi(\widehat S_{z,i})\widehat B_{z,i}^{\mathsf T}\widehat T_z(\widehat S_{z,i}).}
+There is no additional donor weight or M multiplier. The derivative of each
+active floor is zero; equality uses the same convention. For M=1 the logarithmic
+term is omitted. Constant donor weights set its logarithmic gradient to exact
+zero, preserving \eqn{\widehat T_z=\nabla\widehat\kappa} even when only one
+raw-unit floor is active. This is an explicit finite-sample completion: it agrees
+with the literal three-density formula when floors are inactive, which occurs
+with probability tending to one under the stated interior positivity premises.
+A unit-weight reduction is exact. Common rescaling of W is homogeneous when
+floors are inactive; it is not promised when the raw-unit floors are active.
+
+This representation requires the reviewed compact interior signed-support and
+cutoff conditions; bounded residuals and actual score tangents; positive bounded
+C3 score-weight representation and ordinary score subdensities; uniformly root-n
+consistent generated scores and tangents; and residual-level consistency.
+The same sufficient bandwidth interval and conservative gradient rate displayed
+below apply. Its consistency supplies a drift input, not a new covariance or
+bootstrap theorem. No quadrature is used; zero quadrature-only bounds do not
+bound statistical estimation error, kernel bias or floating-point roundoff.
+The PATE/PATT normalization below is unchanged.
+
+The following raw-chart construction describes the default
+\code{conditional_weight_chart} representation.
 For a raw chart \eqn{R_\theta=A_\theta V+B_\theta L}, with invertible
 \eqn{A_\theta}, the effective tangent for parameter \eqn{k} is
 \deqn{v_k(X)=\{\partial_k B_\theta-
@@ -101,7 +155,8 @@ supplied weights unchanged. Adding prediction sensitivity again would
 double count it. Parameter order must agree across arms, prediction
 derivatives and nuisance influence columns.
 
-The statistical interpretation requires iid rows, fixed d, p and M,
+For the conditional-weight-chart representation, the statistical interpretation
+requires iid rows, fixed d, p and M,
 the point theorem's identification and geometric assumptions, bounded
 residuals and tangents, and own-(raw score,weight) residual centering.
 The signed residual-tangent density must have compact support strictly
@@ -163,7 +218,19 @@ An object of class \code{wm_graph_transport}. The numerical fields are:
   values are positive.}
   \item{incoming_load, incoming_load_gradient, gradient_error_bound}{First
   incoming weighted-load estimates and their spatial gradients/bounds,
-  in the order of \code{evaluated_donor_rows}.}
+  in the order of \code{evaluated_donor_rows}. In the score-weight
+  representation, these are \eqn{\widehat\kappa} and its actual gradient;
+  the corrected transport field is returned separately.}
+  \item{transport_field, log_donor_weight_gradient}{Score-weight-only
+  corrected vector field and estimated log-weight gradient.}
+  \item{query_weighted_subdensity, donor_weighted_subdensity}{Score-weight-only
+  marked-density diagnostics in total-n normalization.}
+  \item{donor_density_floor_active, donor_weighted_density_floor_active}{Logical
+  score-weight-only floor diagnostics at the evaluated rows.}
+  \item{constant_donor_weights, log_weight_gradient_method, representation}{
+  Score-weight-only exact-reduction and representation records. For M=1 the
+  log-gradient method is \code{not_used_M1}; for constant donor weights it is
+  \code{exact_constant_donor_weights}; otherwise \code{three_score_subdensities}.}
   \item{donor_subdensity, quadrature_nodes}{Density and node diagnostics
   for each active donor.}
   \item{n, d, M, donor_arm, bandwidth, density_floor}{Used dimensions,
