@@ -1,12 +1,11 @@
 # Original WDSM comparison source
 
-This candidate exposes the original population generators, verbatim sampler and
+This directory exposes the original population generators, verbatim sampler and
 existing statistical comparison functions. Their transferred bytes and hashes
 are in `provenance.json`. The small entry points parameterize user paths; they do
 not change matching, model recipes, correction, counts, comparator inference or
-failure retention. The direct generation and scientific run branches have not
-been executed. Source-transfer, parse and preflight checks do not establish
-their execution or scientific reproduction.
+failure retention. The first direct generation and replicate1 run checks are
+described below; source-transfer, parse and preflight checks are separate evidence.
 
 The complete design is in `design.json`: Good/Poor overlap, retrospective and
 prospective sampling, PATE/PATT, all four original PS/PG specifications,
@@ -69,7 +68,29 @@ calling estimators. RNG state and kind were unchanged. The later complete formal
 the unchanged public reporting entry agrees with the native full608-cell report
 within floating-point tolerance, with1,000 requested replicates in every cell.
 See [the compact full-study reporting export](../../results/original_wdsm/README.md).
-These reporting checks do not execute the public generation/run commands.
+The public generator was separately executed for both million-row overlap
+populations; its RDS payloads are byte-identical to the accepted
+source-reconstructed populations. Direct `run` checks evaluated replicate1 in
+each of the four overlap/design settings, all eight source PS/PG/target cases,
+M=1/3/5 and B=200. Of the608 keyed records,456 passed historical full-input/count
+pairing and numeric/status comparisons. In PoorOverlap retrospective sampling,
+all152 point records are compatible within the fixed scaled1e-10 rule, with
+four supplied weights differing at machine precision. Another56 intervals are
+compatible independently of the supplied WM counts:24 WM DSM analytic
+approximations,24 native own-bootstrap intervals and8 SWPSM subclass sandwich
+intervals. The remaining96 historical shared-count intervals are unpaired:
+the200 count columns reverse the last two rows, and their actual interval
+differences are retained rather than labeled reproduction. Their maximum
+absolute and scaled descriptive gaps are0.0004934918079100292 and
+0.00024013170437741632. The strict all608 comparison failed and remains part of
+the validation history; qualified closure does not replace that failed gate.
+All96 current within-run WDSM/WM DSM point, draw, variance and interval
+reductions passed on their shared inputs/counts. The32 historical raw graph/draw
+bundles were not locally compared; whole historical data/pairing-object byte
+identity and an independently emitted original-run namespace-path manifest are
+not asserted. The platform/compiler cause of the count reversal is not proved.
+These first-workflow integration checks use one replicate per setting and do
+not establish repeated-sampling bias, efficiency, coverage or analytic premises.
 
 These are empirical source-design comparisons. Dependent cluster/stratum
 designs and the separate analytic approximations do not establish main WM iid

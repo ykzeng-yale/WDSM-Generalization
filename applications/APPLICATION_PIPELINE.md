@@ -251,8 +251,22 @@ draws, variances, SEs, intervals and root-n draws agree exactly; the maximum
 finite CSV row difference is5.11e-15. Nine ECLS PATE intervals remain unavailable,
 with the same69 failed columns each; no variance from surviving columns is used.
 The replay generates no fits, neighbors or counts and does not invoke nuisance
-callbacks. It validates complete-bundle reproduction, not an arbitrary custom
-recipe, every new-fit branch, upstream agency-data construction or causal and
-sampling-inference assumptions. The default score guard applies the package's
+callbacks. It validates complete-bundle reproduction. Separately, the first
+default new-fit workflow was run once on each of these four prepared
+study/outcome cases, using the authenticated current default recipe and supplied
+accepted counts without callbacks or cached components/refits/points. All72
+point rows and14400 prescribed draw slots were accounted for:63 rows retain
+all12600 available B200 draws, while nine ECLS PATE intervals remain unavailable
+with the same69 failed columns each. No variance from the131 surviving columns
+is substituted. Shared components, complete200-column arm-refit
+matrices/diagnostics, point maps/graphs/loads, variance/SE/CI/root-n outputs and
+1890 descriptive balance rows were compared. Native numerical gaps are0;
+maximum finite CSV rounding difference is5.10702591327572e-15. Keys, statuses,
+nonfinite categories and numerical shape/order/value comparisons retain their
+fixed exact or scaled1e-10 rules. This is recursive numeric/shape/status parity,
+not complete storage-class, all-attribute or serialized-byte identity. It
+validates these default prepared-input workflows, not arbitrary custom recipes,
+all possible inputs, upstream agency-data construction, causal identification
+or sampling-inference assumptions. The default score guard applies the package's
 same double/no-dimname canonicalization before strict value/dimension/order
 comparison; numerical perturbations remain rejected.

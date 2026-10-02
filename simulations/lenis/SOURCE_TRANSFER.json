@@ -1,13 +1,14 @@
 {
-  "status": "candidate_saved_reporting_checked_pending_independent_export_review",
+  "status": "code_only_source_reviewed_qualified_composed_direct_workflow_validation",
   "source_tree_paths_are_relative": true,
   "functions": [
     {
       "source_path": "research/experiments/lenis_comparison_engine.R",
       "source_sha256": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2",
       "export_path": "simulations/lenis/lenis_comparison_engine.R",
-      "export_sha256": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2",
-      "transfer": "byte_identical"
+      "export_sha256": "8ab0aac403ca714831dff2e209321236554c03749175f3f6b006ddedfc4d5dd1",
+      "transfer": "Historical byte-identical engine origin retained; adopted checked weighted-PS solver plus return-only once-computed propensity field. All other statistical function definitions unchanged; exact new engine has separately adopted qualified composed targeted72 validation.",
+      "historical_byte_identical_export_sha256": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2"
     },
     {
       "source_path": "research/experiments/lenis_comparison_batch.R",
@@ -67,10 +68,10 @@
   "retained_helper_default": "lenis_source_sample retains its historical relative source default byte-for-byte; public wrapper always supplies a pinned user path",
   "external_sources": "Only hashes/citation in external_sources.json; no raw supplement or source manifest copied",
   "namespace": "Public run uses asNamespace(\"wdsmatch\"); internal stack helpers are checked at load",
-  "validation_scope": "Exact transfer, parse/load, source/cache/path preflight, installed/current definition identity and actual saved-record reporting checks; no generator/sampler/count/fit/scientific-run execution or Monte Carlo reproduction claim",
+  "validation_scope": "Historical exact transfer, parse/load, source/cache/path and saved-report checks retained. Direct generation and first1800-record run executed; unaffected1728 scientific comparisons agree and original corrected72 mismatches remain history. Exact weighted-quick repair has adopted composed12PS/12partition/72outcome validation with saved-only all-NA semantic reconciliation; both original R failure receipts retained. No postpatch full1800 rerun, whole-RDS storage/byte identity, Monte Carlo, printed-table or causal/design certification.",
   "excluded": "Original private controller, admissions, recovery, execution hosts/accounts and artifacts; all scientific computation remains explicit user action",
   "candidate_file_sha256": {
-    "README.md": "ac0aace54fd0c519d6861d7c218c910e343f6d97fdb9733948307d24529602d2",
+    "README.md": "6eb315ff2991c3b1dc2d198b43b6b239a2facfccb6e6bd11e30fade046077aba",
     "design.json": "3dae0a6a531a4b5cb168cf73b9b8dac3f7867423c5939d126e4b54ef9e241ea5",
     "entrypoint.R": "17fe9a5b44963aa99c96c3be0fc8c98225ccea87fa38ef62e63c478e6560e42d",
     "external_sources.json": "406c7f929fe96c1d25186860dd9bb02a5cd6f406957faa47928a0b15f9a72e4f",
@@ -78,7 +79,7 @@
     "job.example.json": "e87330eba8db63dfdb1722b39c288518fc88269398088886150918dc0cd5ab39",
     "lenis_canonical_counts.R": "21c6e5673a9ed33fc5fb11858ff19d08b3fcad2735977d94234d1e94fcc89dd3",
     "lenis_comparison_batch.R": "1a87677dcffdd5486a4e085e03bcd8ba765c9219edbce9ae55493aa06cd24baa",
-    "lenis_comparison_engine.R": "d92b0481feff2a7714e0737b879df43be37a8ca3f114dd5df5f9cf91c91599e2",
+    "lenis_comparison_engine.R": "8ab0aac403ca714831dff2e209321236554c03749175f3f6b006ddedfc4d5dd1",
     "lenis_reporting.R": "05a27325fb492e8c1ae255507b266df414447770f836719af28212d85de74463",
     "report.R": "a6625a1e05795db0a6c46d06674ae726085dffc9c64b3376a5057d190ad50edb",
     "run.R": "489696c66625d437387427e911692642195c601e9d762155dc84d5622a431e74"
@@ -100,5 +101,88 @@
     "installed_source_function_bodies_and_formals_identical": 127,
     "original_inputs_and_RNG_state_kind_unchanged": true,
     "full_formal_scientific_acceptance": false
+  },
+  "direct_workflow_validation": {
+    "kind": "First direct Lenis workflow plus separately gated weighted-quick repair; not a post-repair full1800 rerun",
+    "generation": {
+      "source_populations": 18,
+      "cache_payloads": 3,
+      "all7_accepted_generated_payloads_byte_identical": true
+    },
+    "first_scientific_run": {
+      "replica_ids": [
+        1
+      ],
+      "population_scenarios": 3,
+      "response_mechanisms": 4,
+      "multipliers": 6,
+      "records": 1800,
+      "M": [
+        1,
+        3,
+        5
+      ],
+      "B": 200
+    },
+    "first_comparison": {
+      "unchanged_formal_reference_records": 1728,
+      "unchanged_record_scientific_differences": 0,
+      "unchanged_scientific_record_numeric_max_gap": 0,
+      "corrected_weighted_quick_reference_records": 72,
+      "corrected_weighted_quick_scientific_mismatches_retained": true,
+      "full_original_comparator_status": "INTERRUPTED_NONPASS_EVIDENCE_PRESERVED",
+      "all1800_finished_strict_comparator_PASS_claimed": false,
+      "precise_timing_fields_separate_from_scientific_differences": true,
+      "independent_scoped_review_sha256": "c438fc4e0536c3c4c96074925d654b26fae1c7f8437f5be920f71e9388340c94"
+    },
+    "weighted_quick_repair": {
+      "status": "ROOT_ADOPTED_QUALIFIED_COMPOSED_WEIGHTED_QUICK72_COMPATIBILITY",
+      "candidate_engine_sha256": "8ab0aac403ca714831dff2e209321236554c03749175f3f6b006ddedfc4d5dd1",
+      "scope": "Exact candidate uses supplied-weight/mean-weight normalized zero-start quasibinomial logit with epsilon1e-12/maxit100 and checked fit/score/information/Newton diagnostics, then once-computed PS for matching; batch/outcome arithmetic unchanged. First6 saved actual outcomes plus66 remaining outcomes; not one postpatch full1800 run.",
+      "prescribed_cases": 12,
+      "prescribed_weighted_PS_fits": 12,
+      "prescribed_partitions": 12,
+      "prescribed_outcomes": 72,
+      "scaled_numeric_tolerance": 1e-10,
+      "actual_comparison_status": "QUALIFIED_COMPOSED_FULL_COMPONENT_AND_SAVED_CSV_SEMANTIC_COMPATIBILITY",
+      "max_absolute_numeric_gap": 5.32907051820075e-15,
+      "max_scaled_numeric_gap": 2.41912196384032e-15,
+      "independent_actual_review_sha256": "8522390acb2cab2d79cda500cc4330e6176ba32c7e6cb1fe9697dde30007b9b4",
+      "root_adoption_sha256": "aff16ebe754b7f1857fb293f9473334f2cc377e94d8a23d059cefdf0f1e78519",
+      "full1800_postpatch_rerun": false,
+      "unchanged1728_refit": false,
+      "accepted_final_response_weights_held_fixed": true,
+      "saved_CSV_reconciliation_independent_review_sha256": "978e376fba7089b5801fd53e660bf62ae2f7b4e53947bb02a333c755a15f1dfe",
+      "actual_execution_scope": {
+        "PS_fits": 12,
+        "partitions": 12,
+        "outcomes": 72,
+        "prior_actual_case_reused_without_refit": 1,
+        "prior_actual_outcomes_reused_without_refit": 6,
+        "new_continuation_cases": 11,
+        "new_continuation_outcomes": 66
+      },
+      "CSV_semantic_reconciliation": {
+        "numeric_cells": 504,
+        "finite_cells": 360,
+        "literal_NA_cells": 144,
+        "numeric_gap": 0,
+        "NA_taxonomy_exact": true
+      },
+      "validation_failures_preserved": {
+        "initial_R_receipt": "FAILED_OR_MISMATCH_RETAINED_NO_RETRY: compact subclass names and absent startup RNG seed guard",
+        "continuation_R_receipt": "FAILED_OR_MISMATCH_RETAINED_NO_RETRY: two all-NA logical-versus-numeric CSV shape guards",
+        "R_component_checks": 5131,
+        "R_component_checks_passing": 5129,
+        "two_all_NA_CSV_shape_failures": 2,
+        "original_failed_R_receipts_relabelled_PASS": false
+      },
+      "firstcase_RNG_trajectory_certified": false,
+      "new11_RNG_exact_after_disclosed_accepted_checkpoint": true,
+      "all_RDS_storage_classes_or_bytes_identical": false
+    },
+    "old_full_count_matrix_independently_scanned": false,
+    "corrected_cross_schema_payload_byte_identity_claimed": false,
+    "printed_Table1_identity_MC_performance_estimated_weight_or_dependent_design_theory_certified": false
   }
 }

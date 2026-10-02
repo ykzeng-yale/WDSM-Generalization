@@ -144,12 +144,85 @@ lenis_validate_native <- function(result) {
   result
 }
 
+# Use the declared weighted logistic-score root for the corrected quick
+# comparator. Supplied weights are rescaled only inside the equivalent score
+# equation; matching and outcome analysis retain the original supplied weights.
+# Explicit starting values and controls reproduce the accepted correction.
+lenis_quick_weighted_ps <- function(d) {
+  diagnostics <- NULL
+  result <- lenis_capture(function() {
+    formula <- stats::reformulate(c(paste0("x", 1:6), "s.wt"), "z")
+    X <- stats::model.matrix(formula, d); y <- d$z; w <- d$s.wt
+    stopifnot(nrow(X) == nrow(d), all(is.finite(X)), all(y %in% 0:1),
+      length(unique(y)) == 2L, all(is.finite(w)), all(w > 0))
+    fit <- stats::glm(formula, data = d, weights = w/mean(w),
+      family = stats::quasibinomial("logit"), start = rep(0, ncol(X)),
+      control = stats::glm.control(epsilon = 1e-12, maxit = 100L),
+      model = FALSE, x = FALSE, y = FALSE)
+    beta <- stats::coef(fit)
+    diagnostics <<- list(coefficients = beta, converged = fit$converged,
+      boundary = fit$boundary, rank = fit$rank, iter = fit$iter,
+      reported_deviance = fit$deviance,
+      start = rep(0, ncol(X)), solver_weight_divisor = mean(w),
+      epsilon = 1e-12, maxit = 100L, formula = deparse(formula))
+    stopifnot(fit$rank == ncol(X), all(is.finite(beta)))
+    eta <- as.vector(X %*% beta); p <- stats::plogis(eta)
+    # Stable objective uses eta; it does not reuse clipped GLM deviance.
+    loss <- pmax(eta, 0) - y * eta + log1p(exp(-abs(eta)))
+    raw_weight_loglik <- -sum(w * loss)
+    stable_loss_per_raw_weight <- -raw_weight_loglik/sum(w)
+    column_scale <- sqrt(colSums(X^2 * w)/sum(w))
+    stopifnot(all(is.finite(column_scale)), all(column_scale > 0))
+    D <- sweep(X, 2L, column_scale, "/")
+    score <- as.vector(crossprod(X, w * (y - p)))/sum(w)
+    normalized_score <- max(abs(score)/pmax(colSums(abs(X) * w)/sum(w),
+      .Machine$double.eps))
+    information <- crossprod(D, D * (w * p * (1 - p)))/sum(w)
+    information_eigenvalues <- eigen(information, symmetric = TRUE,
+      only.values = TRUE)$values
+    positive_information <- all(is.finite(information_eigenvalues)) &&
+      min(information_eigenvalues) > 0
+    newton <- if (positive_information) tryCatch(as.vector(D %*%
+      solve(information, crossprod(D, w * (y - p))/sum(w))),
+      error = function(e) rep(NA_real_, nrow(d))) else rep(NA_real_, nrow(d))
+    boundary <- p <= .Machine$double.eps | p >= 1 - .Machine$double.eps
+    diagnostics <<- c(diagnostics, list(linear_predictors = eta,
+      probabilities = p, raw_weight_loglik = raw_weight_loglik,
+      stable_loss_per_raw_weight = stable_loss_per_raw_weight,
+      score_per_raw_weight = setNames(score, colnames(X)),
+      normalized_score_max = normalized_score,
+      score_normalization = "max |sum w Xj (Z-p)| / max(sum w |Xj|, eps sum w)",
+      column_scale = column_scale, scaled_information = information,
+      information_eigenvalues = information_eigenvalues,
+      max_abs_newton_linear_predictor_step = max(abs(newton)),
+      probability_range = range(p), boundary_count = sum(boundary),
+      boundary_fraction = mean(boundary), distinct_probability_count = length(unique(p))))
+    failures <- c(if (!isTRUE(fit$converged)) "GLM did not converge",
+      if (!all(is.finite(c(eta, p, loss, score)))) "Nonfinite PS arithmetic",
+      if (!all(is.finite(c(raw_weight_loglik, stable_loss_per_raw_weight, fit$deviance))))
+        "Nonfinite aggregate objective or reported deviance",
+      if (!positive_information) "Numerical information is not positive definite",
+      if (!is.finite(normalized_score) || normalized_score > 1e-10)
+        "Normalized weighted-score residual exceeds 1e-10",
+      if (!all(is.finite(newton)) || max(abs(newton)) > 1e-8)
+        "Newton-predicted linear-predictor change exceeds 1e-8",
+      if (all(boundary)) "All fitted probabilities are at machine boundaries")
+    if (length(failures)) stop(paste(failures, collapse = "; "))
+    list(probability = p, formula = formula)
+  })
+  result$diagnostics <- diagnostics
+  result
+}
+
 lenis_quick_case <- function(response, weighted_ps = TRUE) {
   d <- response$data
   formula <- stats::reformulate(c(paste0("x", 1:6), "s.wt"), "z")
   if (weighted_ps) {
+    ps <- lenis_quick_weighted_ps(d)
+    for (message in ps$warnings) warning(message, call. = FALSE)
+    if (!ps$ok) stop(ps$error, call. = FALSE)
     match <- MatchIt::matchit(formula, data = d, method = "quick",
-      distance = "glm", estimand = "ATT", s.weights = ~s.wt)
+      distance = ps$value$probability, estimand = "ATT", s.weights = ~s.wt)
   } else {
     match <- MatchIt::matchit(formula, data = d, method = "quick",
       distance = "glm", estimand = "ATT")
@@ -174,6 +247,7 @@ lenis_quick_case <- function(response, weighted_ps = TRUE) {
        conf.int = estimate + c(-1, 1) * stats::qnorm(.975) * sqrt(variance),
        contrast = contrast, match = match, matched_data = md,
        fit = fit, weighted_ps = weighted_ps,
+       propensity = if (weighted_ps) ps else NULL,
        method = "Adapted official MatchIt generalized-full ATT procedure")
 }
 

@@ -158,7 +158,34 @@
       "arbitrary_custom_or_new_fit_or_full_agency_raw_pipeline_certified": false,
       "source_provenance": "applications/SOURCE_PROVENANCE.json",
       "full_agency_raw_pipeline_included": false,
-      "new_package_API": false
+      "new_package_API": false,
+      "default_new_fit_workflow_validation": {
+        "kind": "First authenticated public default new-fit workflow on four accepted prepared study/outcome cases",
+        "status": "ADOPTED_FOUR_DEFAULT_NEW_FIT_INTEGRATIONS_WITH_NINE_RETAINED_ECLS_INTERVAL_FAILURES",
+        "case_ids": [
+          "NHANES_primary3783_HbA1c",
+          "ECLS_corrected7220_C6R4MSCL",
+          "NSDUH_primary17471_AMIPY",
+          "NSDUH_primary17471_SMIPY"
+        ],
+        "rows": 72,
+        "available_rows": 63,
+        "prescribed_row_draw_slots": 14400,
+        "available_B200_draws": 12600,
+        "unavailable_ECLS_PATE_rows": 9,
+        "failed_columns_per_unavailable_row": 69,
+        "descriptive_balance_rows": 1890,
+        "current_default_recipe_sha256": "afda1cc69041e49f2f44757593a404e387e190644b4f953797ddc4774205cabd",
+        "callbacks_or_cached_components_refits_points_supplied": false,
+        "accepted_counts_supplied_without_generation": true,
+        "comparison_scope": "Complete recursive numeric/shape/order/category comparisons of components/full200 refits/point graphs+loads/rows+draws/variance+SE+CI+rootn/balance; not all storage classes, attributes or serialized-byte identity",
+        "scaled_numeric_tolerance": 1e-10,
+        "native_max_numeric_gap": 0,
+        "CSV_max_numeric_gap": 5.10702591327572e-15,
+        "independent_review_sha256": "3d93cb6f5c6f8aa33c6b149f393e36dfc5c510b78c27a6860b5841b0eb6c2fdb",
+        "adoption_sha256": "00f65307b8eaf060937deb19f33ed73efe22b6e49fd4d849bc328dbb7df9daa0",
+        "arbitrary_custom_or_full_agency_raw_pipeline_or_causal_design_coverage_certified": false
+      }
     },
     "original_formal_study_reporting": {
       "compact_reports": "results/original_wdsm/provenance.json",
@@ -469,6 +496,13 @@
       "variance": "Signed actual-graph reciprocal subtraction plus complete matching/nuisance covariance and sensitivity; raw nonpositive base retained and positive complete contrast controls scalar availability; no hidden floor",
       "replication": "Common wm_bootstrap contribution dispatch supplies corrected-variance marginal Gaussian draws; this scope rejects supplied counts even when observed reciprocal estimate is zero",
       "population_assumptions_original_refit_or_coverage_certified_by_tests": false
+    },
+    "public_direct_workflow_validation": {
+      "original_wdsm": "simulations/original_wdsm/provenance.json",
+      "Lenis": "simulations/lenis/SOURCE_TRANSFER.json",
+      "applications": "applications/SOURCE_PROVENANCE.json",
+      "scope": "Separate qualified integration, not an all-PASS R-receipt claim: original96 historical intervals unpaired; Lenis repair has separately adopted composed72 validation with failed R receipts retained and saved-only NA semantics reconciled. No postpatch full1800 rerun or whole-RDS identity claim.",
+      "one_fixture_integration_not_MC_coverage_or_population_assumption_certification": true
     }
   }
 }
