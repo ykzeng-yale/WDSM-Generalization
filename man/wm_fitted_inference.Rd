@@ -92,7 +92,21 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   \code{maximum_geometric_evaluations = 20000000},
   \code{maximum_draw_entries = 2000000}. Positive integer resource caps bound
   prospective work, retained pair storage and all-B replication. A cap failure
-  never changes participants, M, folds or bandwidth.}
+  never changes participants, M, folds or bandwidth.
+  Optional \code{direct_variance = "raw_only"} omits \code{support} and
+  computes a signed direct scalar variance without support selection or a
+  pseudoinverse; bootstrap and Gaussian intervals are not authorized.
+  \code{direct_variance = "with_mixture"} retains the existing support
+  declaration and adds raw-empirical and support-aligned raw direct quantities.
+  Omit \code{direct_variance} to retain existing objects and outputs exactly.
+  Request-only defaults are \code{maximum_analytic_matrix_products = 5000000},
+  \code{maximum_analytic_coefficient_terms = 200000000},
+  \code{minimum_analytic_reciprocal_condition = 1e-12}, and
+  \code{analytic_precision_tolerance = 1e-10}. The first two are positive
+  integer caps; the last two are positive and below one. Raw-only constructs
+  no Hermite rule and applies no unused order/tensor budget. Existing pair
+  and donor-integration bounds still apply; failed budgets or numerical
+  guards do not filter pairs or change M.}
 
 }
 \description{
@@ -122,10 +136,45 @@ negatives and cone adjustments remain available. Empty/rejected auxiliary
 summaries do not rescue an invalid or failed original fit.
 The operative Schur covariance is explicitly projected onto the nonnegative
 scalar cone with the nuisance covariance held fixed. This generally
-non-Gaussian branch does not report an analytic variance, SE or Normal interval.
+non-Gaussian branch does not report a scalar Wald variance, SE or Normal interval.
 Use \code{wm_bootstrap} with basic mixture quantiles or no interval;
 complete-input consistency and strict-CDF quantile conditions remain required.
 Finite numerical inputs do not verify population assumptions or coverage.
+
+An explicitly requested direct variance analytically averages the full
+signed pair kernel. For the complete four-shift derivative matrix Delta,
+Omega=Delta Sigma Delta' retains cross-arm blocks. Its fixed four-column
+principal square root gives an SPD six-dimensional Gaussian integral,
+including singular Omega. Normalized coefficients c_ab have c_00=1 and
+arise from Psi(t,s)=sqrt(det(Q))*det(Q-tQ0-sQ1)^(-1/2).
+The factor pi/(4sqrt(det(Q))) multiplies their finite sum over 0<=a,b<M.
+Matrix-power and Euler recursions retain actual noncommuting products;
+no extra factorial or M^-2 normalization is inserted. Both full donor
+denominator factors and all residual/weight/derivative marks remain.
+Four integration coordinates do not replace the full nuisance dimension.
+
+The direct root variance is diagonal-2*average_R/gamma^2+2*b'C+b'Sigma*b.
+Its covariance convention is the existing common helper's centered complete
+influence Gram and centered base-row cross block, distinct from an uncentered
+finite-sample second moment. Generic empirical-L2 influence consistency
+plus separate diagonal/normalizer/C/full-slope and compact-uniform kernel
+consistency/global-envelope assumptions give the raw scalar limit without
+support recovery, a rate or a pseudoinverse. It does not give a Gaussian
+pivot or mixture inference; actual sampling-variance convergence still
+requires square UI. Positive eigenvalues are retained however small.
+Tolerated negative floating eigenvalues of Omega are disclosed separately;
+an excess, ill-conditioned solve or underflow gives unavailability, not a
+silent zero. Complete raw Sigma is retained without adjustment. These
+floating operations are approximations, not exact finite covariance identity
+certificates. Raw negative direct variances are retained without a floor/SE.
+Donor-integration errors propagate; roundoff is not bounded, and numerical
+error must vanish along the study sequence.
+
+With-mixture also reports a direct raw quantity using its operative
+support-aligned Sigma/C. It is not the positive-part cone expectation;
+exact operative conditional variance remains NA. Finite-B sample and
+Rao--Blackwell estimates/MCSE stay separate. Direct diagnostics do not
+alter the original fit or mixture draws.
 
 
 For \code{scalar_psm}, omit \code{nuisance_influence}, all supplied
@@ -621,6 +670,19 @@ A separate \code{wm_fitted_inference} list preserving \code{estimate},
   negative flag and cone adjustment; bound controls and raw diagonal/nuisance
   inputs. The original point, complete influence axes and full slopes remain
   unchanged. These diagnostics do not certify population premises.}
+  \item{direct_variance}{Present only on explicit request. Mode, work bounds,
+  availability and \code{raw_empirical} retain signed scalar components,
+  full Sigma/C/b, diagonal/denominator, averaged reciprocal, propagated
+  integration errors and per-pair failure/precision diagnostics.
+  \code{with_mixture} adds \code{support_aligned} raw components.
+  \code{raw_root_n_variance} and \code{raw_variance} retain negative values.
+  Numerical availability is not an interval-validity certificate. Exact
+  operative cone variance stays NA. Raw-only has status
+  \code{raw_direct_variance_only}; top-level \code{available} and
+  \code{conditional_inference_available} are FALSE independently of nested
+  direct numerical availability. Wald fields remain NA; no support or
+  Hermite rule is constructed. Kernel failure retains direct-unavailable
+  diagnostics without repairing the original fit.}
   \item{assumptions_verified, application_verified}{Both FALSE, including
   when a conditional interval is returned.}
   \item{contract, dimensions, parameter_names, covariance_scope}{Explicit

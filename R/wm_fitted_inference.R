@@ -416,6 +416,22 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
       "kernel/Schur/cone diagnostics are retained. No Normal interval or analytic finite-B",
       "variance is asserted. Complete-input consistency and strict-CDF quantile premises",
       "remain; actual sampling-variance convergence requires separate UI.")
+    if (identical(critical_control$direct_variance, "raw_only")) {
+      contract$inference <- paste("Direct signed scalar variance only, using the complete",
+        "centered empirical influence covariance and cross block already used by the common",
+        "fitted-row helper. This differs finitely from an uncentered second moment.",
+        "Generic empirical-L2 covariance consistency plus separate complete diagonal,",
+        "normalizer, C, full-slope, compact-uniform whole-kernel and global-envelope",
+        "consistency suffice for the raw variance limit. No covariance support rate, rank",
+        "recovery, pseudoinverse, mixture replication, Normal pivot or original refit",
+        "bootstrap is authorized. Actual sampling-variance convergence needs separate UI.")
+    } else if (identical(critical_control$direct_variance, "with_mixture")) {
+      contract$direct_variance <- paste("Optional raw-empirical and support-aligned signed",
+        "direct Gaussian averages retain all donor/root marks and the complete nuisance",
+        "blocks. These raw variances need not equal the finite operative cone-positive-part",
+        "expectation, which remains unevaluated/NA; finite-B Monte Carlo summaries are",
+        "separate. The existing mixture support and quantile premises remain unchanged.")
+    }
   }
   transports <- list()
   for (direction in names(specs)) {
@@ -486,6 +502,13 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
       inference$root_n_variance <- inference$variance <- inference$se <- NA_real_
       inference$conf.int <- stats::setNames(rep(NA_real_, 2L), c("lower", "upper"))
       inference$critical_control <- critical_control
+      if (!is.null(critical_control$direct_variance)) {
+        inference$direct_variance <- list(mode = critical_control$direct_variance,
+          status = "critical_kernel_unavailable", available = FALSE,
+          numerically_available = FALSE, unavailable_reason = conditionMessage(value),
+          raw_empirical = list(raw_root_n_variance = NA_real_, raw_variance = NA_real_,
+            available = FALSE, numerically_available = FALSE))
+      }
     } else inference <- value
   }
   class(inference) <- c("wm_fitted_inference", "list")

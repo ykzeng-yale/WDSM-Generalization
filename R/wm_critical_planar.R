@@ -12,9 +12,21 @@
 
 .wm_cp_control <- function(control, fit, parameters) {
   control <- .wm_reciprocal_list(control, "critical_control")
+  direct <- control$direct_variance
+  if (!is.null(direct) && (!is.character(direct) || length(direct) != 1L ||
+      is.na(direct) || !direct %in% c("raw_only", "with_mixture"))) {
+    stop("direct_variance must be 'raw_only' or 'with_mixture' when supplied.", call. = FALSE)
+  }
+  raw_only <- identical(direct, "raw_only")
   required <- c("tangents0", "tangents1", "auxiliary_rows", "bandwidth",
     "density_bounds", "marginal_mass_floor", "projection_floor",
     "tangent_cap", "residual_cap", "support")
+  if (raw_only) {
+    required <- setdiff(required, "support")
+    if ("support" %in% names(control)) {
+      stop("raw_only omits support; it does not authorize mixture replication.", call. = FALSE)
+    }
+  }
   defaults <- list(quadrature_tolerance = .01 / fit$n,
     kernel_error_tolerance = 1 / sqrt(fit$n), max_nodes = 131073L,
     chunk_size = 2048L, maximum_distance_evaluations = 5000000L,
@@ -22,8 +34,14 @@
     maximum_laplace_terms = 200000000L, maximum_hermite_order = 31L,
     maximum_geometric_evaluations = 20000000L,
     maximum_draw_entries = 2000000L)
+  if (!is.null(direct)) defaults <- c(defaults, list(
+    maximum_analytic_matrix_products = 5000000L,
+    maximum_analytic_coefficient_terms = 200000000L,
+    minimum_analytic_reciprocal_condition = 1e-12,
+    analytic_precision_tolerance = 1e-10))
   if (!all(required %in% names(control)) ||
-      any(!names(control) %in% c(required, names(defaults)))) {
+      any(!names(control) %in% c(required, names(defaults),
+                                if (!is.null(direct)) "direct_variance"))) {
     stop("critical_control has missing or unsupported fields.", call. = FALSE)
   }
   for (name in names(defaults)) if (!name %in% names(control)) {
@@ -65,9 +83,18 @@
   if (control$density_bounds[1L] >= control$density_bounds[2L]) {
     stop("density_bounds must be strictly increasing.", call. = FALSE)
   }
-  if (!identical(control$support, "smooth_stack_threshold")) {
+  if (!raw_only && !identical(control$support, "smooth_stack_threshold")) {
     stop("Declare support = 'smooth_stack_threshold' with its complete covariance-rate premises.",
          call. = FALSE)
+  }
+  if (!is.null(direct)) {
+    for (name in c("maximum_analytic_matrix_products", "maximum_analytic_coefficient_terms")) {
+      control[[name]] <- .wm_cp_integer(control[[name]], name)
+    }
+    for (name in c("minimum_analytic_reciprocal_condition", "analytic_precision_tolerance")) {
+      .wm_numeric_vector(control[[name]], 1L, name, positive = TRUE)
+      if (control[[name]] >= 1) stop(name, " must be below one.", call. = FALSE)
+    }
   }
   for (name in c("max_nodes", "chunk_size", "maximum_distance_evaluations",
     "maximum_pairs", "maximum_pair_entries", "maximum_laplace_terms",
@@ -76,10 +103,10 @@
     control[[name]] <- .wm_cp_integer(control[[name]], name,
       if (name == "max_nodes") 3L else 1L)
   }
-  if (2 * as.double(fit$M) - 1 > control$maximum_hermite_order) {
+  if (!raw_only && 2 * as.double(fit$M) - 1 > control$maximum_hermite_order) {
     stop("The unchanged M exceeds the declared Hermite-order budget.", call. = FALSE)
   }
-  if ((2 * as.double(fit$M) - 1)^2 >
+  if (!raw_only && (2 * as.double(fit$M) - 1)^2 >
       min(control$maximum_pair_entries, control$maximum_geometric_evaluations)) {
     stop("The Hermite matrix/tensor exceeds prospective numerical budgets.", call. = FALSE)
   }
@@ -221,8 +248,9 @@
   if (prospective_distances > control$maximum_distance_evaluations) {
     stop("Critical distance-work budget exceeded before construction.", call. = FALSE)
   }
-  q <- 2L * fit$M - 1L
-  rule <- .wm_cp_hermite(fit$M)
+  raw_only <- identical(control$direct_variance, "raw_only")
+  q <- if (raw_only) NA_integer_ else 2L * fit$M - 1L
+  rule <- if (raw_only) NULL else .wm_cp_hermite(fit$M)
   rows <- vector("list", length(treated)); pairs <- list(); laplace <- 0
   pair_count <- 0L; raw_pair_count <- 0L
   A <- function(law, root_weight) {
@@ -251,7 +279,7 @@
       if (!plane$retained || !length(take)) next
       if (pair_count + length(take) > control$maximum_pairs ||
           (pair_count + length(take)) * as.double(4 * p + 7) > control$maximum_pair_entries ||
-          (pair_count + length(take)) * as.double(q)^2 > control$maximum_geometric_evaluations) {
+          (!raw_only && (pair_count + length(take)) * as.double(q)^2 > control$maximum_geometric_evaluations)) {
         stop("Critical retained-pair/geometry budget exceeded; no pairs are trimmed.", call. = FALSE)
       }
       if (is.null(A1)) A1 <- A(d1$law, W[i])
@@ -373,6 +401,9 @@
 }
 
 .wm_cp_complete <- function(inference, control) {
+  if (identical(control$direct_variance, "raw_only")) {
+    return(.wm_cp_complete_raw_direct(inference, control))
+  }
   kernel <- .wm_cp_kernel(inference$fit, inference$parameter_names, control)
   support <- .wm_cp_covariance(inference)
   inference$diagonal_root_n_variance <- inference$V0
@@ -404,6 +435,11 @@
   inference$interval <- "none: non-Gaussian law requires mixture quantiles"
   inference$variance_interpretation <- paste("Analytic conditional-law variance is an unevaluated",
     "Gaussian expectation; finite-B Monte Carlo summaries are supplied by wm_bootstrap.")
+  if (identical(control$direct_variance, "with_mixture")) {
+    inference$direct_variance <- .wm_cp_direct_results(inference, kernel, control,
+      list(raw_empirical = list(Sigma = inference$raw_Sigma, C = inference$raw_C),
+           support_aligned = list(Sigma = support$Sigma, C = support$C)))
+  }
   inference
 }
 
@@ -503,6 +539,9 @@
 }
 
 .wm_cp_bootstrap <- function(object, B, seed, conf.level, interval, chunk_size, counts) {
+  if (identical(object$critical_control$direct_variance, "raw_only")) {
+    stop("raw_only direct variance does not authorize bootstrap or Gaussian inference.", call. = FALSE)
+  }
   if (!is.null(counts)) stop("critical_planar rejects counts; use full nuisance/Schur-mixture draws.", call. = FALSE)
   if (length(interval) > 1L && identical(interval, c("normal", "basic", "none"))) interval <- "basic"
   interval <- match.arg(interval, c("basic", "none"))

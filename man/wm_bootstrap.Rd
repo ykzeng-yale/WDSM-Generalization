@@ -87,6 +87,14 @@ An explicit seed preserves its prior value or absence. Within each draw,
 p nuisance normals precede the scalar innovation; chunk size does not change
 this ordering. Complete theorem/input and strict-CDF premises remain unverified.
 
+A \code{critical_planar} object with
+\code{critical_control$direct_variance = "raw_only"} is rejected before RNG:
+a rate-free raw scalar variance does not authorize replication. The
+\code{"with_mixture"} opt-in preserves the mixture outputs and draws;
+direct diagnostics remain in \code{source_inference}. Its support-aligned
+raw variance is not the exact operative cone variance, whose positive-part
+expectation remains unevaluated.
+
 
 With \code{method = "fixed_reuse"}, supplied counts are passed to the unchanged
 \code{\link{wm_bootstrap_refit}} calculation. Matching maps may be scalar,
