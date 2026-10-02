@@ -5,8 +5,8 @@
 #' Weighted Matching with Finite Lists of Fitted Score Models
 #'
 #' Fits finite lists of logistic propensity and arm-specific linear prognostic
-#' models, pooled coordinate standardization and complete weighted quadratic
-#' corrections, then applies the original self-normalized matching estimator.
+#' models and pooled coordinate standardization, with complete weighted quadratic
+#' corrections by default or an explicit local-polynomial option, then applies the original self-normalized matching estimator.
 #'
 #' @param Y Finite numeric outcome vector.
 #' @param Z Binary treatment vector containing both arms.
@@ -32,6 +32,12 @@
 #' @param max_stack_elements Conservative element cap for complete nuisance
 #'   arrays, including the legacy dispatch. Inputs, copies, solver overhead and
 #'   total resident memory are outside this cap. No model/basis term is trimmed.
+#' @param correction NULL retains the exact default quadratic/legacy path.
+#'   An opt-in list with method='local_polynomial', explicit degree and
+#'   bandwidth_exponent (one value or control/treated values), and optional
+#'   positive guard_exponent (default 2) uses the constructive correction.
+#'   This option requires inference='none', but retains the complete score-root
+#'   IF and caller-completed reference-inference inputs without a quadratic fit.
 #' @param tie_rule,tie_seed,tie_tolerance Matching options from \code{wm_match()}.
 #'   \code{"source_random"} requires an explicit seed and point-only inference.
 #'
@@ -62,7 +68,7 @@
 #'   separate bounded, finite-moment and complete Gaussian alternatives.
 #'   A correct PS candidate does not automatically establish these conditions.
 #'
-#'   Point-only mode skips IF/covariance arrays but retains root checks:
+#'   Default-correction point-only mode skips IF/covariance arrays but retains root checks:
 #'   normalized PS residual at most 1e-10 and maximum scaled Newton step at
 #'   most min(1e-9,1/n). Accuracy-only refinement and structured
 #'   \code{wm_wdsm_fit_error} conditions follow \code{wm_wdsm_fit()}.
@@ -70,13 +76,27 @@
 #'   account for the complete fitted pipeline. Weights and offsets are known.
 #'   Their estimation uncertainty and cluster/stratum inference are excluded.
 #'
+#'   The local-polynomial option uses a fixed normalized radial C2 triweight
+#'   kernel on the unit ball, all monomials through the requested degree,
+#'   bandwidth n^(-alpha), raw-W total-n Gram normalization and guard n^(-g).
+#'   Its derivative differentiates the fitted intercept, including the kernel
+#'   and shifted basis. No ridge, basis deletion or bandwidth retry is used.
+#'   Guard failures retain the stated zero-level completion and NA derivatives
+#'   with explicit diagnostics. Successful evaluated rows do not verify the
+#'   required uniform neighborhood event. The bounded-Y/bounded-W correction
+#'   theorem does not inherit unbounded Gaussian full-X alternatives.
+#'   Local coefficients are auxiliary and do not enter the finite score root;
+#'   B'gradient estimates the reference derivative, not an LP-refit derivative.
+#'
 #' @return A \code{wm_model_fit} list with point/interval fields and nested
 #'   \code{fit}, \code{nuisance}, \code{inference}, \code{assembly},
 #'   \code{solver}, \code{model_recipe} and \code{allocation} records.
 #'   Point-only interval fields are NA and assembly is NULL. Legacy
 #'   specializations also inherit \code{wm_wdsm_fit}. Interval availability
 #'   requires finite positive variance. Assumptions are never automatically
-#'   verified, and no bootstrap is requested by this wrapper.
+#'   verified, and no bootstrap is requested by this wrapper. The local-polynomial
+#'   option adds correction_fit diagnostics and inference_inputs containing
+#'   complete caller-use arguments and separately bound actual score tangents.
 #' @seealso \code{wm_wdsm_fit()}, \code{wm_match()}, \code{wm_fit()},
 #'   \code{wm_fitted_inference()}
 #' @export
@@ -88,7 +108,8 @@ wm_model_fit <- function(Y, Z, weights, ps_models = list(),
                           conf.level = 0.95, max_stack_elements = 5e7,
                           tie_rule = c("row_order", "source_random"),
                           tie_seed = NULL,
-                          tie_tolerance = 64 * .Machine$double.eps) {
+                          tie_tolerance = 64 * .Machine$double.eps,
+                          correction = NULL) {
   call <- match.call()
   estimand <- match.arg(estimand)
   inference <- match.arg(inference)
@@ -118,6 +139,11 @@ wm_model_fit <- function(Y, Z, weights, ps_models = list(),
   }
   used <- if (estimand == "PATE") 0:1 else 0L
   layout <- .wm_model_layout(ps, pg, used)
+  if (!is.null(correction)) {
+    return(.wm_model_local_polynomial_fit(Y, Z, weights, ps, pg, layout,
+      correction, M, estimand, inference, controls, conf.level, max_stack_elements,
+      ties, call))
+  }
   allocation <- .wm_model_allocation(n, ps, pg, layout, max_stack_elements)
   recipe <- list(J = length(ps), K = lengths(pg),
     matching_dimensions = layout$matching_dimensions,

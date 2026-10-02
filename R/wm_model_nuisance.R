@@ -232,6 +232,11 @@
     index <- k$correction[[arm]]
     labels <- layout$scores[[arm]]
     s <- standardized[, labels, drop = FALSE]
+    if (isTRUE(object$score_only)) {
+      scores[[arm]] <- s
+      score_derivatives[[arm]] <- ds[labels]
+      next
+    }
     b <- .wm_model_basis(s)
     db <- .wm_model_basis_derivatives(s)
     beta <- theta[index]
@@ -274,7 +279,7 @@
                              estimand = c("PATE", "PATT"), multiplicity = NULL,
                              glm_maxit = 100L, glm_epsilon = 1e-12,
                              rank_tolerance = 1e-10, max_stack_elements = 5e7,
-                             influence = TRUE) {
+                             influence = TRUE, score_only = FALSE) {
   estimand <- match.arg(estimand)
   n <- length(Y)
   if (n < 2L) stop("At least two rows are required.")
@@ -296,6 +301,9 @@
   if (!is.logical(influence) || length(influence) != 1L || is.na(influence)) {
     stop("influence must be TRUE or FALSE.")
   }
+  if (!is.logical(score_only) || length(score_only) != 1L || is.na(score_only)) {
+    stop("score_only must be TRUE or FALSE.")
+  }
   used <- if (estimand == "PATE") 0:1 else 0L
   if (estimand == "PATT" && !is.null(pg1_models)) {
     stop("PATT does not fit an unused treated prognostic model.")
@@ -306,9 +314,14 @@
     pg[["1"]] <- .wm_model_specs(pg1_models, n, "pg", "pg1_models")
   }
   layout <- .wm_model_layout(ps, pg, used)
-  allocation <- .wm_model_allocation(n, ps, pg, layout, max_stack_elements)
+  allocation <- if (score_only) {
+    .wm_model_score_allocation(n, ps, pg, layout, max_stack_elements)
+  } else {
+    .wm_model_allocation(n, ps, pg, layout, max_stack_elements)
+  }
   # Exact existing double-score recipe uses existing constructor/evaluator.
-  legacy <- length(ps) == 1L && all(lengths(pg) == 1L)
+  # A score-only root must never fit its unused quadratic correction.
+  legacy <- !score_only && length(ps) == 1L && all(lengths(pg) == 1L)
   if (legacy) {
     fitter <- if (influence) .wm_wdsm_nuisance_stack else .wm_wdsm_prediction_stack
     return(fitter(Y, Z, weights, ps[[1L]]$design, pg[["0"]][[1L]]$design,
@@ -353,7 +366,7 @@
   }
   k$center <- stats::setNames(add_block("center", layout$raw_names), layout$raw_names)
   k$variance <- stats::setNames(add_block("variance", layout$raw_names), layout$raw_names)
-  for (z in used) {
+  if (!score_only) for (z in used) {
     arm <- as.character(z)
     dummy <- matrix(0, 1L, length(layout$scores[[arm]]),
                     dimnames = list(NULL, layout$scores[[arm]]))
@@ -401,7 +414,7 @@
     stop("A pooled matching-score variance is zero or nonfinite.")
   }
   standardized <- sweep(centered, 2L, sqrt(theta[k$variance]), "/")
-  for (z in used) {
+  if (!score_only) for (z in used) {
     arm <- as.character(z)
     b <- .wm_model_basis(standardized[, layout$scores[[arm]], drop = FALSE])
     theta[k$correction[[arm]]] <- .wm_ns_ols(b, Y,
@@ -412,6 +425,7 @@
     multiplicity = m, empirical_probability = prob, weight_scale = weight_scale,
     scaled_weights = w, ps_weighting = vapply(ps, function(x) x$weighting, character(1L)),
     scaled_ps_weights = psw), class = c(".wm_model_nuisance_stack", "list"))
+  if (score_only) object$score_only <- TRUE
   evaluated <- .wm_model_nuisance_evaluate(object)
   A <- evaluated$jacobian
   if (qr(A, tol = solver$rank_tolerance)$rank != ncol(A)) {
@@ -456,6 +470,15 @@
     "cross blocks retained.", if (influence) "Empirical influence is -A^{-1}psi; centered empirical covariance is not a verification of population assumptions." else
       "Prediction-only construction omits nuisance influence and covariance.", "For nonunit",
     "multiplicities this is empirical-measure arithmetic, not iid sampling inference.")
+  if (score_only) {
+    object$contract <- paste("Complete fixed-p score-only root: known supplied weights,",
+      "shared logistic PS fits, unweighted arm PG fits and pooled centers/variances.",
+      "No quadratic or auxiliary local-regression coefficients enter this root.",
+      "All generated-score Jacobian blocks are retained.",
+      if (influence) "Complete score-root influence and covariance are retained." else
+        "Influence/covariance arrays were not requested.",
+      "Regularity and population assumptions are unverified. Nonunit multiplicity arithmetic is not iid inference.")
+  }
   object
 }
 

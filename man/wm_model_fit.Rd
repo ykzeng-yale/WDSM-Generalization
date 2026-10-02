@@ -7,7 +7,7 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
   estimand = c("PATE", "PATT"), inference = c("none", "full_x"),
   controls = list(), conf.level = 0.95, max_stack_elements = 5e7,
   tie_rule = c("row_order", "source_random"), tie_seed = NULL,
-  tie_tolerance = 64 * .Machine$double.eps)
+  tie_tolerance = 64 * .Machine$double.eps, correction = NULL)
 }
 \arguments{
   \item{Y}{Finite numeric outcome vector.}
@@ -38,7 +38,9 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
   population average effect, \code{"PATT"}.}
   \item{inference}{The default \code{"none"} returns point estimation only.
   \code{"full_x"} requests the conditional full-X fitted-score variance.
-  Selecting it does not verify the required population assumptions.}
+  Selecting it does not verify the required population assumptions.
+  The opt-in local-polynomial correction currently requires \code{"none"};
+  it still returns the complete score-root influence and reference inputs.}
   \item{controls}{Supported root controls from \code{\link{wm_wdsm_fit}}:
   \code{glm_maxit}, \code{glm_epsilon}, \code{refine_maxit},
   \code{refine_epsilon} and \code{rank_tolerance}. An accuracy failure permits
@@ -46,8 +48,19 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
   \item{conf.level}{Confidence level strictly between zero and one.}
   \item{max_stack_elements}{Positive finite cap on a conservative element
   estimate for the complete nuisance arrays. Exceeding it stops before fitting;
-  no model or quadratic term is removed. It also applies to the legacy dispatch.
+  no model or basis term is removed. It also applies to the legacy dispatch.
+  For local polynomials this cap covers the complete score-only root, retained
+  correction/derivative arrays and the largest serial local Gram workspace.
   Inputs, R copies, solver overhead and total resident memory are outside this cap.}
+  \item{correction}{NULL preserves the default complete quadratic correction
+  and legacy dispatch. Alternatively, supply a list containing
+  \code{method = "local_polynomial"}, \code{degree} and
+  \code{bandwidth_exponent}, with optional \code{guard_exponent} (default 2).
+  Degree and bandwidth exponent have length one, shared across used arms, or
+  length two in control/treated order for PATE; PATT uses one. Degree is an
+  integer at least one. The exponent must lie in the sufficient range below.
+  The fixed positive guard exponent specifies \eqn{c_n=n^{-g}}. No arbitrary
+  kernel, ridge, fold, adaptive bandwidth or basis-subset option is accepted.}
   \item{tie_rule, tie_seed, tie_tolerance}{Options passed to
   \code{\link{wm_match}}. The default breaks exact distance ties by row order.
   \code{"source_random"} requires an explicit seed and
@@ -56,7 +69,8 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
 \description{
 Fits finite lists of logistic propensity and arm-specific linear prognostic
 models, constructs arm-specific matching coordinates, fits the complete
-weighted quadratic correction, and computes self-normalized weighted matching.
+weighted quadratic correction by default or an explicitly requested local
+polynomial correction, and computes self-normalized weighted matching.
 }
 \details{
 For J propensity models and K_z prognostic models in arm z, the matching
@@ -68,7 +82,7 @@ are not merged and dependent score coordinates are not deleted.
 Propensity coordinates are fitted probabilities. Prognostic fits use ordinary
 arm-specific least squares. All raw coordinates are centered and scaled using
 pooled empirical means and variances with divisor n, without probability
-weights. Each arm's correction uses its full intercept, linear and quadratic
+weights. With the default correction, each arm uses its full intercept, linear and quadratic
 basis, including every coordinate pair, with probability-weighted least
 squares. Its basis size is (d_z+1)(d_z+2)/2. The full nuisance dimension also
 includes all fitted regression coefficients, pooled centers and variances,
@@ -77,11 +91,11 @@ and correction coefficients. It is distinct from the matching dimensions.
 Matching uses Euclidean distance on the standardized coordinates. The selected
 donor fraction is its supplied weight divided by the sum of weights over that
 query's M donors. The target denominator is the total supplied weight for PATE
-and the treated supplied weight for PATT. This wrapper always fits a quadratic
+and the treated supplied weight for PATT. By default this wrapper fits a quadratic
 correction, including in PS-only or PG-only configurations; it does not define
 the raw propensity-score estimator by merely setting d_z to one.
 
-When J=1 and every used K_z=1, this wrapper delegates to
+With the default correction, when J=1 and every used K_z=1, this wrapper delegates to
 \code{\link{wm_wdsm_fit}} with the same designs, offsets, PS fitting weight,
 M, solver controls and ties. Underlying fit, nuisance and inference arithmetic
 is unchanged. Call/class and model/allocation metadata differ. New allocation
@@ -90,7 +104,7 @@ admission applies before the dispatch.
 The complete equation Jacobian includes both generated-basis and prediction
 derivatives. Full-X inference retains every PS, PG, center, variance and
 correction influence and all covariance blocks. Known weights have zero
-parameter derivatives. Point-only mode omits influence and covariance arrays,
+parameter derivatives. Default-correction point-only mode omits influence and covariance arrays,
 but retains the complete root accuracy checks. Normalized PS residuals must
 not exceed 1e-10, and the maximum scaled Newton step must not exceed
 min(1e-9,1/n). An exhausted root fit raises a \code{wm_wdsm_fit_error} with
@@ -114,6 +128,82 @@ support. A correct PS candidate alone does not establish full-X correction
 correctness or automatic multiple-robust inference. The full conditional
 variance calculation does not estimate a generic nonzero graph transport.
 
+With \code{correction = list(method = "local_polynomial", degree = q,
+bandwidth_exponent = alpha, guard_exponent = g)}, the same score fits and
+pooled standardization are used, but the quadratic correction is never fitted.
+The complete finite score parameter contains every PS/PG coefficient and pooled
+center/variance, with all Jacobian and influence blocks. Local regression
+coefficients are auxiliary and do not enter this root. Its full influence is
+retained even with \code{inference = "none"}; no false full-X declaration is
+needed to obtain it.
+
+For each used arm, the same full arm donor sample defines one local regression
+function, evaluated at all original fitted scores. Let
+\eqn{u_i=(\widehat S_{z,i}-s)/h}, let \eqn{r_q(u)} contain all monomials through
+degree q with constant first, and use the fixed kernel
+\deqn{K_d(u)=C_d(1-\|u\|^2)^3_+,\qquad
+ C_d=\Gamma(d/2+4)/\{6\pi^{d/2}\}.}
+The Gram and moment are
+\deqn{G(s)=(nh^d)^{-1}\sum_{i:Z_i=z}W_i K_d(u_i)r_q(u_i)r_q(u_i)^{\mathsf T},
+ \quad b(s)=(nh^d)^{-1}\sum_{i:Z_i=z}W_i K_d(u_i)r_q(u_i)Y_i.}
+All weights remain in their original supplied units and n is the full observed
+sample size. If \eqn{\lambda_{\min}(G)\ge c_n}, the correction is the intercept
+of \eqn{G^{-1}b}; otherwise its declared pointwise completion is zero.
+There is no ridge, term deletion or change of the requested bandwidth. The
+absolute guard is affected by rescaling W or the kernel, even though a
+successful unfloored intercept is invariant to common positive rescaling.
+The kernel amplitude is fixed and disclosed, not estimated from the data.
+
+The bandwidth is exactly \eqn{h=n^{-\alpha}}. For d<=2, require q>=1 and
+\eqn{0<\alpha<1/4}. For d>2, require integer \eqn{q>(d^2-4)/4} and
+\deqn{(d-2)/(2dq)<\alpha<2/\{d(d+2)\}.}
+The guard uses a fixed g>0 and \eqn{c_n=n^{-g}}, default g=2. These are explicit
+sufficient choices; no numerical success infers the required smoothness,
+weighted conditional-mean identity, compact convex donor support, bounded
+query density, uniform root-n score displacement or other population premises.
+In particular, this constructive result requires bounded outcomes and known
+positive weights bounded above and away from zero. It does not automatically
+inherit the separate unbounded Gaussian/full-X inference alternatives.
+
+The returned spatial gradient differentiates the fitted intercept itself:
+\deqn{\partial_k\widehat m(s)=e_0^{\mathsf T}G(s)^{-1}
+  \{\partial_k b(s)-\partial_kG(s)G(s)^{-1}b(s)\}.}
+Both kernel and shifted monomial derivatives are included. Selecting a local
+linear coefficient and dividing by h would be a different calculation.
+The actual full-p score Jacobian B is contracted with this gradient to estimate
+the reference derivative \eqn{B^{\mathsf T}\nabla m(S_z^0)}. This is not the
+full derivative obtained by refitting the local regression after moving all
+its donor coordinates. Under the stated local-polynomial and baseline matching
+conditions, the constructive result supplies reference-derivative consistency
+and correction point transfer. Using those inputs for inference additionally
+requires the separate finite-edge, variance and fitted-law conditions.
+
+Below the guard, the completed level is zero and the inference derivative is
+NA, with retained failure/eigenvalue diagnostics and a summary warning. At
+exact guard equality the level is computed but its derivative is withheld with
+a boundary flag. Numerical eigenvalue/solve/overflow failures remain errors;
+they do not trigger another degree, bandwidth or hidden regularization. Guard
+success at finitely many evaluated rows does not verify the required uniform
+shrinking-tube event. A nonfinite B/gradient contraction on an otherwise usable
+row is separately marked by \code{reference_derivative_failure}; that row's
+reference derivative is set to NA. Such arithmetic failure does not change the
+LP level, point estimate or score-root influence. Required unavailable
+derivatives suppress the optional common inference-input arguments while
+preserving the completed point and the score root.
+
+The local-polynomial option computes no variance or interval. When its
+reference inputs are numerically available and the tie rule is supported,
+\code{inference_inputs$arguments} can be combined with the caller's justified
+\code{covariance_scope}, directional transport specifications and any required
+critical controls in \code{\link{wm_fitted_inference}}. Actual matching-coordinate
+arrays are separately in \code{inference_inputs$score_tangents}, in the complete
+score-parameter order; their coordinate axes match the retained fit.
+This does not establish generic multiple-robust inference, a general scalar
+fitted-score theorem, bootstrap-refit validity or nominal coverage. Scalar
+local-polynomial point correction and its transfer result alone do not extend
+the common fitted-inference interface's scalar branches. The source_random
+policy remains point-only and does not receive inference arguments.
+
 No bootstrap is run. A fixed-map bootstrap of the nested \code{fit} does not
 account for this complete fitted pipeline. Known offsets and supplied weights
 are held fixed; their estimation uncertainty and dependent cluster/stratum
@@ -131,6 +221,17 @@ point-only mode; interval fields are \code{NA}. Legacy specializations also
 inherit \code{wm_wdsm_fit}. Numerical interval availability requires finite,
 strictly positive variance. \code{assumptions_verified} and
 \code{bootstrap_requested} are always \code{FALSE}.
+
+With local-polynomial correction, \code{nuisance} is the complete score-only
+root, \code{correction_fit} retains controls, per-arm levels, gradients,
+reference derivatives, eigenvalues, guard-failure/boundary and reference-
+derivative-failure indicators and counts, and \code{inference_inputs} retains complete caller-use arguments and
+actual score tangent arrays when numerically usable. Its numerical availability
+is separate from verified assumptions or sampling inference. The top-level
+\code{correction} still denotes the point estimate's correction amount.
+The new correction path does not inherit \code{wm_wdsm_fit} or silently invoke
+its quadratic correction. Default outputs and legacy dispatch are unchanged.
+
 }
 \seealso{\code{\link{wm_wdsm_fit}}, \code{\link{wm_match}},
   \code{\link{wm_fit}}, \code{\link{wm_fitted_inference}}}
