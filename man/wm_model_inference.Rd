@@ -78,7 +78,7 @@ point/root and prepares \code{inference$contrast_inputs}. Its
 \code{evaluate(contrast)} function recomputes pooled standardization and
 local-index graphs from the retained smaller fit and the declared added-parameter
 perturbation. It fits no PS, PG or quadratic outcome model. Matching uses every
-original coordinate and the same metric, M, donor fractions and supplied W.
+original coordinate and the same metric, M, donor-normalization rule and supplied W.
 The reported point remains the original complete-quadratic fit.
 
 The evaluator retains all ten quadratic terms, total-n donor-weighted projections,
