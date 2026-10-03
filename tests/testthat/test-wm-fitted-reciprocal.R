@@ -260,3 +260,84 @@ test_that("private full-slope counts reject the new scope even when observed R i
   expect_error(wdsmatch:::.wm_wdsm_fitted_count(reference, matrix(1, 2, 2)),
                "cannot use ordinary full-slope count")
 })
+
+
+# Currency changes multiply Y, correction means and their derivatives, while
+# the same literal graph, weights and dimensionless nuisance influence remain.
+# This is a finite-arithmetic check, not a fitted-model or coverage experiment.
+test_that("complete fitted bootstrap is equivariant to outcome currency units", {
+  for (estimand in c("PATE", "PATT")) {
+    a <- wm_joint_fixture(M = 3L)
+    a$data$estimand <- estimand
+    a$data$scores0 <- a$data$scores0[, 1L, drop = FALSE]
+    a$data$scores1 <- a$data$scores1[, 1L, drop = FALSE]
+    if (estimand == "PATT") a$data[c("scores1", "mean1")] <- NULL
+    infer <- function(x) {
+      fit <- do.call(wm_match, x$data)
+      wm_fitted_inference(fit, x$influence, mean_derivative0 = x$D0,
+        mean_derivative1 = if (estimand == "PATE") x$D1 else NULL,
+        covariance_scope = if (estimand == "PATE") "full_x" else "patt",
+        transport0 = if (estimand == "PATT")
+          list(mode = "zero", basis = "current_centering") else NULL)
+    }
+    reference <- infer(a)
+    counts <- cbind(rep(1, reference$n), rep(c(2, 0), reference$n / 2))
+    reference_boot <- wm_bootstrap(reference, counts = counts)
+    for (currency in c(.01, 100, 1e4)) {
+      changed <- a
+      changed$data$Y <- currency * a$data$Y
+      changed$data$mean0 <- currency * a$data$mean0
+      if (estimand == "PATE") changed$data$mean1 <- currency * a$data$mean1
+      changed$D0 <- currency * a$D0
+      changed$D1 <- currency * a$D1
+      out <- infer(changed)
+      boot <- wm_bootstrap(out, counts = counts)
+      expect_identical(out$fit$graph, reference$fit$graph)
+      expect_identical(out$fit$weights, reference$fit$weights)
+      expect_equal(out$estimate / currency, reference$estimate, tolerance = 1e-12)
+      expect_equal(out$base_rows / currency, reference$base_rows, tolerance = 1e-12)
+      expect_equal(out$augmented_rows / currency, reference$augmented_rows,
+                   tolerance = 1e-12)
+      expect_equal(out$total_sensitivity / currency, reference$total_sensitivity,
+                   tolerance = 1e-12)
+      expect_equal(out$C / currency, reference$C, tolerance = 1e-12)
+      expect_equal(out$Sigma, reference$Sigma, tolerance = 1e-12)
+      for (field in c("V0", "cross_term", "nuisance_variance", "root_n_variance",
+                      "variance")) {
+        expect_equal(out[[field]] / currency^2, reference[[field]], tolerance = 1e-12)
+      }
+      expect_equal(boot$root_n_draws / currency, reference_boot$root_n_draws,
+                   tolerance = 1e-12)
+      expect_equal(boot$draws / currency, reference_boot$draws, tolerance = 1e-12)
+      expect_equal(boot$conditional_variance / currency^2,
+                   reference_boot$conditional_variance, tolerance = 1e-12)
+      expect_equal(boot$conf.int / currency, reference_boot$conf.int, tolerance = 1e-12)
+      expect_identical(boot$source_inference, out)
+
+      # Model a few last-bit differences between equivalent covariance
+      # evaluations. No point, row, slope, covariance or variance is changed.
+      block_scale <- max(abs(c(out$V0, out$cross_term, out$nuisance_variance)))
+      roundoff <- out
+      roundoff$covariance_formula_error <- out$covariance_formula_error +
+        8 * .Machine$double.eps * block_scale
+      if (currency == 1e4) expect_gt(roundoff$covariance_formula_error -
+        out$covariance_formula_error, 1e-10)
+      retained <- roundoff$covariance_formula_error
+      roundoff_boot <- wm_bootstrap(roundoff, counts = counts)
+      expect_identical(roundoff_boot$root_n_draws, boot$root_n_draws)
+      expect_identical(roundoff_boot$conditional_variance, boot$conditional_variance)
+      expect_identical(roundoff_boot$source_inference$covariance_formula_error, retained)
+
+      corrupted <- out
+      corrupted$covariance_formula_error <- out$covariance_formula_error + 1e-6 * block_scale
+      expect_error(wm_bootstrap(corrupted, counts = counts), "covariance_formula_error")
+      corrupted <- out
+      corrupted$V0 <- out$V0 + 1e-3 * block_scale
+      expect_error(wm_bootstrap(corrupted, counts = counts), "Complete fitted V0")
+    }
+    for (invalid in c(-1, Inf, NA_real_)) {
+      corrupted <- reference; corrupted$covariance_formula_error <- invalid
+      expect_error(wm_bootstrap(corrupted, counts = counts), "covariance_formula_error")
+    }
+  }
+})

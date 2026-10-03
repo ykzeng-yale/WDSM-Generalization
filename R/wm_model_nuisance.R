@@ -261,7 +261,8 @@
     basis[[arm]] <- b
   }
   if (any(!is.finite(c(raw, standardized, equation, jacobian,
-                        unlist(mean_derivative), unlist(score_derivatives))))) {
+                        unlist(mean_derivative, use.names = FALSE),
+                        unlist(score_derivatives, use.names = FALSE))))) {
     stop("Nuisance evaluation exceeded numerical range.", call. = FALSE)
   }
   list(parameter = theta, raw_scores = raw, center = center, variance = variance,

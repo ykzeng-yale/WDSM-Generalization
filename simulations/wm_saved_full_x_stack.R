@@ -265,7 +265,11 @@ wm_saved_full_x_stack <- function(data, fit, mean_models,
     derivatives[[label]] <- matrix(0, n, p, dimnames = list(NULL, parameter_names))
     derivatives[[label]][, index] <- D
   }
-  if (any(!is.finite(c(equations, jacobian, score_derivative, unlist(derivatives))))) {
+  # Check the retained components without concatenating the full score tensor
+  # or manufacturing names for the mean-derivative matrices.
+  if (any(!is.finite(equations)) || any(!is.finite(jacobian)) ||
+      any(!is.finite(score_derivative)) ||
+      any(vapply(derivatives, function(x) any(!is.finite(x)), logical(1L)))) {
     stop("Complete stack evaluation exceeded numerical range.", call. = FALSE)
   }
   influence <- tryCatch(-t(solve(jacobian, t(equations))), error = function(e) {

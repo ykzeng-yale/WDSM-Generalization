@@ -598,14 +598,29 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
   expected <- .wm_wdsm_fitted_variance(object$fit, influence, smooth, graph,
                                       scope, object$conf.level)
   for (field in c("base_rows", "augmented_rows", "V0", "C", "cross_term",
-                  "nuisance_variance", "root_n_variance", "variance", "se",
-                  "covariance_formula_error")) {
+                  "nuisance_variance", "root_n_variance", "variance", "se")) {
     value <- .wm_fv_number(object[[field]], length(expected[[field]]), field)
     if (field %in% c("base_rows", "augmented_rows")) {
       .wm_fi_row_names(names(value), n, paste(field, "indices"))
     }
     .wm_reciprocal_agree(value, expected[[field]], paste("Complete fitted", field))
   }
+  # This diagnostic is a cancellation residual in outcome-squared units.
+  # Re-centering the retained influence can change its last bits without
+  # changing any complete covariance block. Compare using covariance-block
+  # magnitudes, without a currency-unit floor, rather than the near-zero residual.
+  formula_error <- .wm_fv_number(object$covariance_formula_error, 1L,
+                                  "covariance_formula_error")
+  formula_scale <- max(abs(c(expected$V0, expected$cross_term,
+    expected$nuisance_variance, if (reciprocal_scope)
+      c(expected$diagonal_root_n_variance, expected$reciprocal_subtraction))))
+  if (formula_error < 0 || !is.finite(formula_scale) || formula_scale <= 0) {
+    stop("Complete fitted covariance_formula_error requires a nonnegative residual and a finite positive covariance-block scale.",
+         call. = FALSE)
+  }
+  .wm_reciprocal_agree(formula_error / formula_scale,
+    expected$covariance_formula_error / formula_scale,
+    "Complete fitted covariance_formula_error")
   if (!identical(names(object$C), parameters) ||
       !is.matrix(object$Sigma) || !is.numeric(object$Sigma) ||
       is.complex(object$Sigma) || !identical(dim(object$Sigma), c(p, p)) ||

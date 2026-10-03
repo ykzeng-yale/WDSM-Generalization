@@ -80,9 +80,11 @@
   weight_part <- prediction_part <- numeric(d$p)
   reconstructed_numerator <- 0
   fraction_error <- 0
-  for (i in queries) {
-    take <- s$edges$query == i
-    donors <- s$edges$donor[take]
+  # The validated graph has exactly M ordered edges per eligible query.
+  for (position in seq_along(queries)) {
+    i <- queries[position]
+    block <- (as.double(position) - 1) * fit$M + seq_len(fit$M)
+    donors <- s$edges$donor[block]
     donor_sum <- sum(s$w[donors])
     fraction <- s$w[donors] / donor_sum
     dfraction <- (dw[donors, , drop = FALSE] -
