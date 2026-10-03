@@ -629,7 +629,16 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
     stop("Complete covariance blocks must retain the exact parameter axes.", call. = FALSE)
   }
   .wm_reciprocal_agree(object$Sigma, expected$Sigma, "Complete joint covariance")
-  .wm_reciprocal_agree(influence, expected$nuisance_influence, "Centered joint influence")
+  # Re-centering can leave last-bit shifts near zero entries in a large-unit
+  # parameter column. Compare in that column's own units; retain both original
+  # arrays and all complete covariance comparisons above without modification.
+  for (j in seq_len(p)) {
+    column_scale <- max(abs(influence[, j]), abs(expected$nuisance_influence[, j]))
+    if (column_scale == 0) next # Both columns contain only exact zero entries.
+    .wm_reciprocal_agree(influence[, j] / column_scale,
+      expected$nuisance_influence[, j] / column_scale,
+      paste("Centered joint influence parameter", parameters[j]))
+  }
   if (reciprocal_scope) {
     for (field in c("reciprocal_subtraction", "reciprocal_numerator",
                     "diagonal_root_n_variance", "augmented_row_root_n_variance",

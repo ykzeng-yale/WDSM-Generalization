@@ -341,3 +341,92 @@ test_that("complete fitted bootstrap is equivariant to outcome currency units", 
     }
   }
 })
+
+
+# These existing literal matching arrays exercise units and centering only;
+# no nuisance model is fitted and no population calibration is asserted.
+test_that("complete fitted centering validation respects nuisance parameter units", {
+  for (estimand in c("PATE", "PATT")) {
+    a <- wm_joint_fixture(M = 3L)
+    a$data$estimand <- estimand
+    a$data$scores0 <- a$data$scores0[, 1:2, drop = FALSE]
+    a$data$scores1 <- a$data$scores1[, 1:2, drop = FALSE]
+    # Antisymmetric retained marks have zero sum and two zero entries; the
+    # near-zero positions expose an absolute-unit validation error directly.
+    v <- a$influence[1:5, "p"]
+    a$influence[, "p"] <- c(v, 0, -v, 0)
+    if (estimand == "PATT") {
+      a$data$scores1 <- NULL; a$data$mean1 <- NULL
+    }
+    infer <- function(x) {
+      wm_fitted_inference(do.call(wm_match, x$data), x$influence,
+        mean_derivative0 = x$D0,
+        mean_derivative1 = if (estimand == "PATE") x$D1 else NULL,
+        covariance_scope = if (estimand == "PATE") "full_x" else "patt",
+        transport0 = if (estimand == "PATT")
+          list(mode = "zero", basis = "current_centering") else NULL)
+    }
+    reference <- infer(a)
+    counts <- cbind(rep(1, reference$n), rep(c(2, 0), reference$n / 2))
+    reference_boot <- wm_bootstrap(reference, counts = counts)
+    units <- c(p = -1e10, q = 1e-8)
+    for (currency in c(.01, 1e4)) {
+      b <- a
+      b$data$Y <- currency * a$data$Y
+      b$data$mean0 <- currency * a$data$mean0
+      if (estimand == "PATE") b$data$mean1 <- currency * a$data$mean1
+      b$influence <- sweep(a$influence, 2L, units, "*")
+      b$D0 <- currency * sweep(a$D0, 2L, units, "/")
+      b$D1 <- currency * sweep(a$D1, 2L, units, "/")
+      out <- infer(b)
+      boot <- wm_bootstrap(out, counts = counts)
+      expect_identical(out$fit$graph, reference$fit$graph)
+      expect_identical(out$fit$weights, reference$fit$weights)
+      expect_equal(out$estimate / currency, reference$estimate, tolerance = 1e-12)
+      expect_equal(sweep(out$nuisance_influence, 2L, units, "/"),
+                   reference$nuisance_influence, tolerance = 1e-12)
+      expect_equal(out$C / (units * currency), reference$C, tolerance = 1e-12)
+      expect_equal(out$Sigma / outer(units, units), reference$Sigma, tolerance = 1e-12)
+      expect_equal(out$total_sensitivity * units / currency,
+                   reference$total_sensitivity, tolerance = 1e-12)
+      expect_equal(out$augmented_rows / currency, reference$augmented_rows,
+                   tolerance = 1e-12)
+      expect_equal(out$variance / currency^2, reference$variance, tolerance = 1e-12)
+      expect_equal(boot$root_n_draws / currency, reference_boot$root_n_draws,
+                   tolerance = 1e-12)
+      expect_equal(boot$conf.int / currency, reference_boot$conf.int, tolerance = 1e-12)
+
+      scale <- max(abs(out$nuisance_influence[, "p"]))
+      roundoff <- out
+      roundoff$nuisance_influence[, "p"] <- out$nuisance_influence[, "p"] +
+        8 * .Machine$double.eps * scale
+      recentered <- sweep(roundoff$nuisance_influence, 2L,
+                          colMeans(roundoff$nuisance_influence), "-")
+      # The exact old elementwise validator rejects the same few-ULP column
+      # shift, despite unchanged scientific rows and complete covariance.
+      expect_error(.wm_reciprocal_agree(roundoff$nuisance_influence, recentered,
+        "Centered joint influence"), "Centered joint influence")
+      accepted <- wm_bootstrap(roundoff, counts = counts)
+      expect_identical(accepted$root_n_draws, boot$root_n_draws)
+      expect_identical(accepted$conditional_variance, boot$conditional_variance)
+      expect_identical(accepted$source_inference, roundoff)
+      expect_identical(out$nuisance_influence, boot$source_inference$nuisance_influence)
+
+      corrupted <- out
+      corrupted$nuisance_influence[, "p"] <- out$nuisance_influence[, "p"] + 1e-6 * scale
+      expect_error(wm_bootstrap(corrupted, counts = counts), "Centered joint influence")
+      corrupted <- out; corrupted$Sigma["p", "p"] <- 1.001 * out$Sigma["p", "p"]
+      expect_error(wm_bootstrap(corrupted, counts = counts), "Complete joint covariance")
+    }
+    # Exact zero influence coordinates remain admissible with their complete
+    # zero covariance row/column, rather than a unit floor or parameter drop.
+    zero <- a
+    zero$influence <- cbind(a$influence, zero = 0)
+    zero$D0 <- cbind(a$D0, zero = 0); zero$D1 <- cbind(a$D1, zero = 0)
+    zero_out <- infer(zero)
+    zero_boot <- wm_bootstrap(zero_out, counts = counts)
+    expect_identical(zero_out$nuisance_influence[, "zero"], rep(0, reference$n))
+    expect_equal(zero_boot$root_n_draws, reference_boot$root_n_draws, tolerance = 1e-12)
+    expect_equal(zero_out$Sigma["zero", ], c(p = 0, q = 0, zero = 0))
+  }
+})
