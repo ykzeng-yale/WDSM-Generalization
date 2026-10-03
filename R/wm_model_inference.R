@@ -1,5 +1,6 @@
-# Post-fit binding only. This file never fits a model, rebuilds a matching graph,
-# or changes a supplied individual weight.
+# Regular post-fit binding retains the original graph and known weights.
+# Explicit quadratic preparation returns a covariance-only local-index evaluator.
+# No model is fitted by this file or the evaluator.
 
 .wm_mi_unavailable <- function(object, scope, level, stage, reason) {
   structure(list(estimate = object$fit$estimate, n = object$fit$n,
@@ -36,7 +37,11 @@
     influence_completion = object$nuisance$influence_completion,
     graph_rebuilt = FALSE, individual_weights_estimated = FALSE,
     assumptions_verified = FALSE,
-    correction_contract = if (!is.null(object$correction_fit)) paste(
+    correction_contract = if (identical(object$correction_fit$method, "quadratic_qr")) paste(
+      "Same complete quadratic WLS predictions with a retained score-only root.",
+      "The correction-projection law and its cross covariance are not supplied",
+      "by the regular full-coefficient handoff; no sampling inference was dispatched.") else
+      if (!is.null(object$correction_fit)) paste(
       "Local-polynomial score-only IF and B'gradient reference derivative.",
       "This is not differentiation through refitting local coefficients.",
       "The adopted correction transfer and derivative consistency use bounded",
@@ -243,13 +248,16 @@
 
 #' Add explicitly qualified inference to a retained finite-model matching fit
 #'
-#' No model, local correction or graph is refitted. Scientific scope and transport
-#' premises are supplied explicitly and are not verified from the retained arrays.
+#' Regular handoff uses the retained fit and complete root. An explicit nested
+#' quadratic control prepares covariance-law inputs and a local-index evaluator.
+#' Preparation alone supplies no sampling variance or interval; its inference object
+#' can be passed to wm_bootstrap for the scoped untruncated Gaussian mixture.
 #' @export
 wm_model_inference <- function(object, covariance_scope,
                                transport0 = NULL, transport1 = NULL,
                                critical_control = NULL, conf.level = 0.95,
-                               max_influence_elements = 5e7) {
+                               max_influence_elements = 5e7,
+                               quadratic_control = NULL) {
   call <- match.call()
   .wm_mi_structure(object)
   allowed <- c("distinct_rarity", "full_x", "common_field", "patt",
@@ -276,12 +284,45 @@ wm_model_inference <- function(object, covariance_scope,
     "max_influence_elements", positive = TRUE)
   request <- list(covariance_scope = covariance_scope, transport0 = transport0,
     transport1 = transport1, critical_control = critical_control, conf.level = conf.level,
-    max_influence_elements = max_influence_elements)
+    max_influence_elements = max_influence_elements, quadratic_control = quadratic_control)
   unavailable <- function(stage, reason) .wm_mi_finish(object,
     .wm_mi_unavailable(object, covariance_scope, conf.level, stage, reason),
     request, call, FALSE)
   if (!identical(object$fit$graph$tie_rule, "Exact distance, then original row index")) {
     return(unavailable("tie_rule", "Sampling handoff is unavailable for source_random or an unsupported tie policy; the point is retained."))
+  }
+  if (!is.null(quadratic_control)) {
+    if (!identical(object$correction_fit$method, "quadratic_qr") ||
+        !covariance_scope %in% c("full_x", "patt") ||
+        !is.null(transport0) || !is.null(transport1) || !is.null(critical_control)) {
+      stop("quadratic_control requires a quadratic_qr point with full_x/PATE or patt/PATT and no transport/critical inputs.", call. = FALSE)
+    }
+    prepared <- .wm_qc_prepare(object, quadratic_control, max_influence_elements)
+    if (!isTRUE(prepared$available)) return(unavailable("quadratic_inputs", prepared$unavailable_reason))
+    result <- .wm_mi_unavailable(object, covariance_scope, conf.level, "sampling_law",
+      "Conditional-law inputs are ready for explicit wm_bootstrap replication; preparation alone supplies no sampling variance or confidence interval.")
+    result$status <- "model_quadratic_contrast_inputs_ready"
+    result$failure_stage <- NULL
+    result$numerically_available <- TRUE
+    result$conditional_law_inputs_available <- TRUE
+    result$replication_available <- TRUE
+    result$numerical_error_rate_verified <- FALSE
+    result$contrast_inputs <- prepared
+    answer <- .wm_mi_finish(object, result, request, call, FALSE, prepared$full_parameters)
+    answer$inference_inputs$quadratic_contrast <- prepared
+    answer$inference_handoff$law_inputs_prepared <- TRUE
+    answer$inference_handoff$correction_contract <- prepared$contract
+    answer$inference_handoff$contract <- paste("Observable nested-contrast law preparation in the common API.",
+      "No models are refitted and the original fit/root remain retained.",
+      "Explicit evaluate(contrast) builds covariance-only local-index graphs.",
+      "This output contains no sampling interval or original-refit bootstrap claim.")
+    return(answer)
+  }
+  if (identical(object$correction_fit$method, "quadratic_qr")) {
+    return(unavailable("correction_law", paste(
+      "The quadratic QR correction requires its projection contribution and complete",
+      "joint law; regular full-coefficient inference is not a substitute.",
+      "The original point, correction and graph are retained.")))
   }
   if (!is.null(object$correction_fit) &&
       !isTRUE(object$correction_fit$reference_derivatives_available)) {

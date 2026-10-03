@@ -6,8 +6,12 @@
   if (!is.list(control) || length(control)) {
     control <- .wm_reciprocal_list(control, "scalar_control")
   }
+  if ("outcome_clip_constant" %in% names(control)) {
+    stop("outcome_clip_constant is no longer supported; scalar_psm uses raw outcomes without clipping.",
+         call. = FALSE)
+  }
   defaults <- list(weight_lower_bound = NULL, bandwidth_constant = 1,
-    density_constant = 0.01, outcome_clip_constant = 1,
+    density_constant = 0.01,
     quadrature_error_constant = 0.01, max_nodes = 131072L,
     maximum_matrix_entries = 1000000L, maximum_laplace_terms = 2000000000,
     design = NULL, root_certificate = NULL)
@@ -28,21 +32,152 @@
   }
   defaults$bandwidth <- defaults$bandwidth_constant * n^(-1 / 12)
   defaults$density_threshold <- defaults$density_constant * n^(-1 / 256)
-  defaults$outcome_clip <- defaults$outcome_clip_constant * n^(1 / 8)
-  # This is a direct bound on b, after empirical amplification. Any prescribed
-  # sequence tending to zero suffices; no density-threshold factor is needed.
-  defaults$drift_error_target <- defaults$quadrature_error_constant / sqrt(n)
-  if (any(!is.finite(unlist(defaults[c("bandwidth", "density_threshold",
-      "outcome_clip", "drift_error_target")]))) ||
-      any(unlist(defaults[c("bandwidth", "density_threshold",
-        "outcome_clip", "drift_error_target")]) <= 0)) {
+  if (any(!is.finite(unlist(defaults[c("bandwidth", "density_threshold")]))) ||
+      any(unlist(defaults[c("bandwidth", "density_threshold")]) <= 0)) {
     stop("Scalar smoothing controls exceed numerical range.", call. = FALSE)
   }
   defaults
 }
 
-.wm_scalar_psm_bind <- function(object, control) {
-  fit <- .wm_reciprocal_list(object$fit, "scalar fit")
+.wm_scalar_psm_outcome_scale <- function(Y) {
+  # Compute the ordinary n-1 sample SD after a common rescaling, so a
+  # representable SD need not fail merely because an unscaled square overflows.
+  amplitude <- max(abs(Y))
+  if (!is.finite(amplitude) || amplitude <= 0) {
+    stop("Scalar inference requires a finite positive sample outcome SD.")
+  }
+  standardized <- Y / amplitude
+  centered <- standardized - mean(standardized)
+  value <- amplitude * sqrt(sum(centered^2) / (length(Y) - 1L))
+  if (!is.finite(value) || value <= 0) {
+    stop("Scalar inference requires a finite positive sample outcome SD; the scale is zero or unrepresentable.")
+  }
+  value
+}
+
+.wm_scalar_psm_model <- function(model, fit) {
+  model <- .wm_reciprocal_list(model, "scalar_model")
+  required <- c("probability", "derivative", "coefficients", "Z", "weights",
+    "converged", "normalized_score_tolerance", "model", "criterion")
+  if (!setequal(names(model), required)) {
+    stop("scalar_model requires probability, derivative, coefficients, Z, weights, converged, ",
+         "normalized_score_tolerance, model and criterion only.", call. = FALSE)
+  }
+  if (!identical(model$criterion, "supplied_weight_bernoulli") ||
+      !is.character(model$model) || length(model$model) != 1L ||
+      is.na(model$model) || !nzchar(model$model)) {
+    stop("Declare a nonempty model label and criterion = 'supplied_weight_bernoulli'.",
+         call. = FALSE)
+  }
+  n <- fit$n
+  e <- .wm_numeric_vector(model$probability, n, "scalar_model probability")
+  Z <- .wm_numeric_vector(model$Z, n, "scalar_model Z")
+  W <- .wm_numeric_vector(model$weights, n, "scalar_model weights", TRUE)
+  for (name in c("probability", "Z", "weights")) {
+    .wm_fi_row_names(names(model[[name]]), n, paste("scalar_model", name))
+  }
+  if (any(e <= 0 | e >= 1) || !identical(Z, as.numeric(fit$data$Z)) ||
+      !identical(W, as.numeric(fit$weights))) {
+    stop("scalar_model must retain probabilities in (0,1) and the exact original Z and raw weights.",
+         call. = FALSE)
+  }
+  D <- model$derivative
+  .wm_score_matrix(D, n, "scalar_model derivative")
+  parameters <- names(model$coefficients)
+  p <- ncol(D)
+  .wm_numeric_vector(model$coefficients, p, "scalar_model coefficients")
+  if (is.null(parameters) || anyNA(parameters) || any(!nzchar(parameters)) ||
+      anyDuplicated(parameters) || !identical(colnames(D), parameters)) {
+    stop("Derivative columns must use every coefficient name in exact parameter order.",
+         call. = FALSE)
+  }
+  .wm_fi_row_names(rownames(D), n, "scalar_model derivative")
+  if (p >= n || qr(D)$rank != p) {
+    stop("scalar_model requires a numerically full-rank n-by-p derivative with 1 <= p < n; no columns are dropped.",
+         call. = FALSE)
+  }
+  tolerance <- .wm_numeric_vector(model$normalized_score_tolerance, 1L,
+                                 "scalar_model normalized_score_tolerance", TRUE)
+  w <- fit$analysis_weights
+  a <- D / (e * (1 - e))
+  psi <- a * (w * (Z - e))
+  score_scale <- colSums(w * abs(a))
+  if (any(!is.finite(c(a, psi, score_scale))) || any(score_scale <= 0)) {
+    stop("Weighted Bernoulli score arithmetic is nonfinite or has a zero parameter scale.",
+         call. = FALSE)
+  }
+  normalized_score <- colSums(psi) / score_scale
+  raw_score_mean <- colMeans(psi) * fit$weight_scale
+  if (!isTRUE(model$converged) || any(!is.finite(c(normalized_score, raw_score_mean))) ||
+      max(abs(normalized_score)) > tolerance) {
+    stop("scalar_model fails the declared weighted-Bernoulli numerical score check.",
+         call. = FALSE)
+  }
+  list(e = e, D = D, parameters = parameters,
+    observed_model_check = list(model = model$model, criterion = model$criterion,
+      normalized_score = normalized_score, normalized_score_max = max(abs(normalized_score)),
+      original_score_tolerance = tolerance, raw_weight_score_mean = raw_score_mean,
+      normalized_weight_score_mean = colMeans(psi), weight_scale = fit$weight_scale,
+      derivative_interpretation = "Supplied actual probability derivative, not logit or coefficient-design derivative",
+      derivative_validity_verified = FALSE, fitting_history_verified = FALSE,
+      exact_root_verified = FALSE))
+}
+
+# Recheck the general descriptor and complete-row identities before contribution
+# replication. This uses retained arrays only, with no smoothing or donor search.
+.wm_scalar_psm_general_rows <- function(object) {
+  fit <- object$fit
+  if (!identical(fit$method, "self_normalized") ||
+      !identical(fit$info$corrected, FALSE) ||
+      !identical(fit$info$nuisance_correction, FALSE) ||
+      !identical(as.numeric(fit$weight_scale), max(fit$weights)) ||
+      !identical(as.numeric(fit$analysis_weights), as.numeric(fit$weights / fit$weight_scale))) {
+    stop("General scalar replication requires the same raw known-weight point.", call. = FALSE)
+  }
+  bound <- .wm_scalar_psm_model(object$scalar_model, fit)
+  if (!identical(object$score_derivative, bound$D) ||
+      !identical(object$parameter_names, bound$parameters) ||
+      !identical(names(object$total_sensitivity), bound$parameters)) {
+    stop("General scalar derivative and complete parameter bindings differ.", call. = FALSE)
+  }
+  n <- fit$n
+  pate <- identical(fit$estimand, "PATE")
+  e <- bound$e; D <- bound$D; w <- fit$analysis_weights
+  Z <- fit$data$Z; Y <- fit$data$Y
+  incoming <- .wm_scalar_repl_graph(fit, e)
+  means <- .wm_score_matrix(object$feasible_means, n, "scalar feasible means")
+  if (ncol(means) != if (pate) 2L else 1L) stop("Wrong scalar mean columns.", call. = FALSE)
+  b <- .wm_numeric_vector(object$total_sensitivity, ncol(D), "full scalar drift")
+  H <- crossprod(D, D * (w / (e * (1 - e)))) / n
+  psi <- D * (w * (Z - e) / (e * (1 - e)))
+  influence <- t(solve(H, t(psi)))
+  influence <- sweep(influence, 2L, colMeans(influence), "-")
+  gamma <- mean(if (pate) w else Z * w)
+  raw <- if (pate) {
+    mu <- means[cbind(seq_len(n), Z + 1L)]
+    own <- incoming[cbind(seq_len(n), Z + 1L)]
+    (w * (means[, 2L] - means[, 1L] - fit$estimate) +
+       (2 * Z - 1) * (w + own) * (Y - mu)) / gamma
+  } else {
+    (Z * w * (Y - means[, 1L] - fit$estimate) -
+       (1 - Z) * incoming[, 1L] * (Y - means[, 1L])) / gamma
+  }
+  base <- raw - mean(raw)
+  augmented <- base + drop(influence %*% b)
+  augmented <- augmented - mean(augmented)
+  expected <- list(H = H, estimating_equations = psi, nuisance_influence = influence,
+    gamma = gamma, uncentered_base_rows = raw, base_rows = base,
+    augmented_rows = augmented, V0 = mean(base^2),
+    C = drop(crossprod(influence, base)) / n, Sigma = crossprod(influence) / n)
+  for (name in names(expected)) {
+    .wm_scalar_repl_agree(object[[name]], expected[[name]], paste("General scalar", name))
+  }
+  invisible(TRUE)
+}
+
+.wm_scalar_psm_bind <- function(object, control, scalar_model = NULL) {
+  general <- !is.null(scalar_model)
+  fit <- .wm_reciprocal_list(if (general) object else object$fit, "scalar fit")
   if (!inherits(fit, "wm_match") || !identical(fit$method, "self_normalized") ||
       !identical(fit$info$corrected, FALSE) ||
       !identical(fit$info$nuisance_correction, FALSE)) {
@@ -88,7 +223,13 @@
     stop("Stored raw and analysis weights do not have the exact common scale.",
          call. = FALSE)
   }
-  e <- .wm_numeric_vector(object$propensity$probability, n, "stored probability")
+  if (general && (!is.null(control$design) || !is.null(control$root_certificate))) {
+    stop("scalar_control design and root_certificate are logistic-only; omit them with scalar_model.",
+         call. = FALSE)
+  }
+  model_bound <- if (general) .wm_scalar_psm_model(scalar_model, fit) else NULL
+  e <- if (general) model_bound$e else
+    .wm_numeric_vector(object$propensity$probability, n, "stored probability")
   if (any(e <= 0 | e >= 1)) stop("Stored probabilities must lie in (0,1).")
   if (!identical(object$estimate, fit$estimate)) stop("Stored raw point records differ.")
   incoming <- .wm_scalar_repl_graph(fit, e)
@@ -114,6 +255,20 @@
       stop("Stored donors are not the recorded nearest donors at row ", i, ".",
            call. = FALSE)
     }
+  }
+  if (general) {
+    if (!is.null(control$weight_lower_bound) && control$weight_lower_bound > min(W)) {
+      stop("Declared weight_lower_bound exceeds an observed raw weight.", call. = FALSE)
+    }
+    model_bound$observed_model_check$stored_nearest_donors_validated <- TRUE
+    return(list(n = n, M = M, pate = pate, estimand = fit$estimand, Y = Y, Z = Z,
+      W = W, w = w, scale = scale, e = e, D = model_bound$D,
+      parameters = model_bound$parameters, incoming = incoming,
+      gamma = mean(if (pate) w else Z * w),
+      certificate = list(numerical_root_status = "not_certified",
+        donor_set_status = "not_certified", point_arithmetic_bound = NULL,
+        bound_certificate = NULL, asymptotic_root_rate_verified = FALSE),
+      observed_model_check = model_bound$observed_model_check))
   }
   if (!identical(object$design_binding, "validated_input_matrix_v1") ||
       is.null(object$fitting_design)) {
@@ -176,7 +331,8 @@
     certificate_status$bound_certificate <- certificate
   }
   list(n = n, M = M, pate = pate, estimand = fit$estimand, Y = Y, Z = Z,
-    W = W, w = w, scale = scale, e = e, X = X, parameters = parameters,
+    W = W, w = w, scale = scale, e = e, X = X,
+    D = e * (1 - e) * X, parameters = parameters,
     incoming = incoming, gamma = mean(if (pate) w else Z * w),
     certificate = certificate_status,
     observed_logistic_check = list(logit_representation_max_error =
@@ -197,14 +353,13 @@
   list(K = K, derivative = derivative)
 }
 
-.wm_scalar_psm_smooth <- function(s, Y, Z, w, bandwidth, outcome_clip,
+.wm_scalar_psm_smooth <- function(s, Y, Z, w, bandwidth,
                                    maximum_entries, pate) {
   n <- length(s)
   a <- da <- weighted <- dweighted <- matrix(0, n, 2L,
     dimnames = list(NULL, c("arm0", "arm1")))
   mu <- dmu <- matrix(NA_real_, n, if (pate) 2L else 1L,
     dimnames = list(NULL, if (pate) c("mean0", "mean1") else "mean0"))
-  Yclip <- pmax(-outcome_clip, pmin(outcome_clip, Y))
   for (z in 0:1) {
     donor <- which(Z == z)
     block <- max(1L, floor(maximum_entries / (2 * length(donor))))
@@ -219,8 +374,8 @@
       dweighted[rows, z + 1L] <- drop(crossprod(w[donor], kernel$derivative)) / n
       if (z == 0L || pate) {
         usable <- den > 0
-        level <- drop(crossprod(Yclip[donor], kernel$K))
-        prime <- drop(crossprod(Yclip[donor], kernel$derivative))
+        level <- drop(crossprod(Y[donor], kernel$K))
+        prime <- drop(crossprod(Y[donor], kernel$derivative))
         mu[rows[usable], z + 1L] <- level[usable] / den[usable]
         dmu[rows[usable], z + 1L] <-
           (prime[usable] - mu[rows[usable], z + 1L] * dp[usable]) / den[usable]
@@ -232,7 +387,7 @@
   }
   list(density = a, density_derivative = da, weighted_density = weighted,
     weighted_density_derivative = dweighted, mean = mu, mean_derivative = dmu,
-    bandwidth = bandwidth, outcome_clip = outcome_clip,
+    bandwidth = bandwidth, outcome_input = "raw, without clipping",
     kernel = "triweight 35/32*(1-u^2)^3, abs(u)<1; compact C2")
 }
 
@@ -316,12 +471,11 @@
                                remaining_terms, error_target) {
   n <- bound$n
   M <- bound$M
-  X <- bound$X
-  p <- ncol(X)
+  p <- length(bound$parameters)
   donor <- which(bound$Z == z)
   rows <- which(active & bound$Z == z)
   query <- which(active & bound$Z != z)
-  derivative <- bound$e * (1 - bound$e) * X
+  derivative <- bound$D
   m <- smooth$mean[, z + 1L]
   mp <- smooth$mean_derivative[, z + 1L]
   a <- smooth$density[, z + 1L]
@@ -432,20 +586,25 @@
     partial_derivative_holds_root_weight_fixed = TRUE)
 }
 
-.wm_scalar_psm_inference <- function(object, scalar_control, conf.level) {
+.wm_scalar_psm_inference <- function(object, scalar_control, conf.level,
+                                     scalar_model = NULL) {
   object <- .wm_reciprocal_list(object, "scalar fit object")
-  if (!inherits(object, "wm_scalar_logistic_match") ||
-      !identical(object$status, "point_computed") ||
+  general <- !is.null(scalar_model)
+  if ((general && !inherits(object, "wm_match")) ||
+      (!general && (!inherits(object, "wm_scalar_logistic_match") ||
+                   !identical(object$status, "point_computed"))) ||
       !is.numeric(object$estimate) || length(object$estimate) != 1L ||
       !is.finite(object$estimate)) {
-    stop("scalar_psm requires a completed wm_scalar_logistic_match object.", call. = FALSE)
+    stop("scalar_psm requires a completed wm_scalar_logistic_match object, or a raw wm_match with scalar_model.",
+         call. = FALSE)
   }
-  n <- .wm_fit_integer(object$fit$n, "fit$n", 3L)
+  fit <- if (general) object else object$fit
+  n <- .wm_fit_integer(fit$n, "fit$n", 3L)
   control <- .wm_scalar_psm_controls(scalar_control, n)
   conf.level <- .wm_numeric_vector(conf.level, 1L, "conf.level")
   if (conf.level <= 0 || conf.level >= 1) stop("conf.level must lie in (0,1).")
-  bound <- .wm_scalar_psm_bind(object, control)
-  result <- list(estimate = object$estimate, fit = object$fit, source_object = object,
+  bound <- .wm_scalar_psm_bind(object, control, scalar_model)
+  result <- list(estimate = object$estimate, fit = fit, source_object = object,
     n = n, M = bound$M, estimand = bound$estimand, covariance_scope = "scalar_psm",
     parameter_names = bound$parameters, dimensions = c(potential0 = 1L,
       if (bound$pate) c(potential1 = 1L)), controls = control,
@@ -456,21 +615,28 @@
     population_assumptions_verified = FALSE, numerical_certificate = bound$certificate,
     observed_logistic_check = bound$observed_logistic_check,
     contract = list(
-      branch = "known smooth positive W(Z,X); raw fixed-M target-logistic PSM",
-      population = paste("iid observed law; fixed full-rank bounded logistic design and M;",
-        "correct target propensity, overlap, target identities and true own-(score,weight)",
+      branch = "known smooth positive W(Z,X); raw fixed-M finite-dimensional target-propensity PSM",
+      population = paste("iid observed law Q; target dP=W dQ/E_Q(W); fixed finite parameter dimension and M;",
+        "correct target propensity P(Z=1|X), overlap, target identities and true own-(score,weight)",
         "centering (control only for PATT); compact zero-extended smooth conditional",
-        "design densities, smooth means/known weights and the weighted-root derivative-span",
+        "design densities, a smooth invertible scalar chart, bounded mixed family derivatives",
+        "through order three, smooth means/known weights and the weighted-root derivative-span",
         "condition; uniform conditional outcome moment of order 2+eta; positive limit variance."),
       numerical_root = paste("The statistical theorem concerns the regular exact root.",
-        "The stored numerical root's asymptotic bridge is not certified here;",
-        "an optional bound input-matched certificate is only finite-data evidence."),
+        "The actual fit must select the consistent exact supplied-weight Bernoulli root,",
+        "or satisfy a separately justified numerical-root/graph equivalence.",
+        "Supplied derivatives must be the complete actual probability derivatives.",
+        "Neither a descriptor, convergence flag nor numerical score residual proves these premises.",
+        "Optional input-bound certificates apply only to the legacy logistic path and provide finite-data evidence."),
       weight_lower_bound = paste("Optional initial-cutoff bound, checked against observed raw W.",
         "Otherwise the empirical minimum is used. Neither verifies population boundedness."),
-      variance_only = "Smoothing, clipping and trimming never change the raw point or donor graph.",
+      variance_only = paste("Raw-outcome smoothing and the density trim never change the raw point or donor graph.",
+        "Inactive variance-row means use the observed unweighted arm-specific outcome mean."),
       integration = paste("Empirical Laplace interval plus tail bound propagated directly to b;",
         "excludes floating roundoff, smoothing bias, sampling and model error.",
-        "A prescribed error constant/sqrt(n) tends to zero if the numerical budget passes;",
+        "The final drift target is quadrature_error_constant * sample_SD(Y)/sqrt(n);",
+        "zero or unrepresentable outcome scale is unavailable, without a scale floor.",
+        "This target tends to zero under the stated moment premises if the numerical budget passes;",
         "finite caps do not establish an asymptotic pass probability."),
       operations = paste("Scalar smoothing and conditional-mark construction use O(n^2) work;",
         "shared Laplace products use O(n^2 * nodes) work, prospectively capped.",
@@ -478,9 +644,24 @@
       replication = "Complete centered rows are returned; no refit bootstrap law is asserted.",
       estimated_weights_supported = FALSE, original_refit_limit_agreement_declared = FALSE),
     completed_components = list())
+  if (general) {
+    result$scalar_model <- scalar_model
+    result$score_derivative <- bound$D
+    result$observed_model_check <- bound$observed_model_check
+  }
   class(result) <- "wm_fitted_inference"
-  stage <- "scalar_smoothing"
+  stage <- "outcome_scale"
   tryCatch({
+    control$outcome_scale <- .wm_scalar_psm_outcome_scale(bound$Y)
+    # Bound the final full-vector drift after arm aggregation and target
+    # normalization. Both error amplification and this target scale with Y.
+    control$drift_error_target <- control$quadrature_error_constant *
+      (control$outcome_scale / sqrt(n))
+    result$controls <- control
+    if (!is.finite(control$drift_error_target) || control$drift_error_target <= 0) {
+      stop("The outcome-scaled drift error target is zero or unrepresentable.")
+    }
+    stage <- "scalar_smoothing"
     if (control$maximum_matrix_entries < 2 * max(table(bound$Z))) {
       stop("maximum_matrix_entries cannot hold one donor kernel/derivative column.")
     }
@@ -491,7 +672,7 @@
       stop("Normalized weight bound or Laplace cutoff is unrepresentable.")
     }
     smooth <- .wm_scalar_psm_smooth(bound$e, bound$Y, bound$Z, bound$w,
-      control$bandwidth, control$outcome_clip, control$maximum_matrix_entries, bound$pate)
+      control$bandwidth, control$maximum_matrix_entries, bound$pate)
     active <- apply(smooth$density, 1L, min) >= 2 * control$density_threshold
     result$completed_components$smoothing <- smooth
     result$active <- active
@@ -522,18 +703,26 @@
     result$drift_tail_error_bound <- Reduce("+", lapply(components, `[[`, "tail_error_bound"))
     result$laplace_terms <- control$maximum_laplace_terms - remaining_terms
     stage <- "complete_rows_and_sandwich"
-    means <- matrix(0, n, if (bound$pate) 2L else 1L,
+    fallback <- vapply(arms, function(z) mean(bound$Y[bound$Z == z]), numeric(1))
+    if (any(!is.finite(fallback))) stop("Arm-specific outcome means are nonfinite.")
+    means <- matrix(rep(fallback, each = n), n, length(arms),
       dimnames = list(NULL, if (bound$pate) c("mean0", "mean1") else "mean0"))
-    means[active, ] <- pmax(-log(n), pmin(log(n), smooth$mean[active, , drop = FALSE]))
+    means[active, ] <- smooth$mean[active, , drop = FALSE]
     if (any(!is.finite(means))) stop("Feasible row means are nonfinite.")
     w <- bound$w
     Z <- bound$Z
     Y <- bound$Y
     X <- bound$X
     e <- bound$e
-    H <- crossprod(X, X * (w * e * (1 - e))) / n
+    if (general) {
+      D <- bound$D
+      H <- crossprod(D, D * (w / (e * (1 - e)))) / n
+      psi <- D * (w * (Z - e) / (e * (1 - e)))
+    } else {
+      H <- crossprod(X, X * (w * e * (1 - e))) / n
+      psi <- X * (w * (Z - e))
+    }
     chol(H)
-    psi <- X * (w * (Z - e))
     influence <- t(solve(H, t(psi)))
     influence <- sweep(influence, 2L, colMeans(influence), "-")
     if (bound$pate) {
@@ -562,10 +751,12 @@
     .wm_scalar_repl_agree(V, V0 + cross_term + nuisance_variance,
                          "complete scalar covariance identity")
     result$feasible_means <- means
+    result$feasible_mean_fallback <- stats::setNames(fallback, colnames(means))
     result$base_rows <- base
     result$uncentered_base_rows <- raw
     result$augmented_rows <- augmented
     result$nuisance_influence <- influence
+    if (general) result$estimating_equations <- psi
     result$H <- H
     result$V0 <- V0
     result$C <- C

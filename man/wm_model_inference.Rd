@@ -5,7 +5,7 @@
 wm_model_inference(object, covariance_scope,
   transport0 = NULL, transport1 = NULL,
   critical_control = NULL, conf.level = 0.95,
-  max_influence_elements = 5e7)
+  max_influence_elements = 5e7, quadratic_control = NULL)
 }
 \arguments{
 \item{object}{A retained \code{wm_model_fit} result. The complete nuisance influence
@@ -34,6 +34,23 @@ unchanged. A selected branch need not provide a normal confidence interval.}
 a missing influence matrix from retained equations. The planned bound is
 \eqn{8np+8p^2+4p}, for full nuisance dimension p. Inputs, solver/R overhead and
 total resident memory are outside this cap. No parameter column is removed.}
+\item{quadratic_control}{NULL retains the existing handoff. For a
+\code{quadratic_qr} point, an explicit list with
+\code{method="nested_contrast"}, \code{small_ps} and \code{large_ps} names
+prepares observable candidate-law inputs for subsequent
+\code{wm_bootstrap(answer$inference, ...)}. Optional
+\code{maximum_draw_entries = 2000000} and
+\code{maximum_distance_evaluations = 100000000} are positive computational
+allocation/work caps checked before RNG. The former bounds planned retained
+numeric entries; it excludes R/solver overhead and is not an RSS bound. The latter
+bounds all requested local-graph distance evaluations. Fixed caps do not establish
+asymptotic success; callers must provide adequate resources for predeclared n and B.
+They do not filter draws or impose a statistical cutoff. The obsolete \code{guard_exponent}
+field is rejected, including an explicitly supplied NULL. It requires PATE
+\code{full_x} or PATT \code{patt},
+exactly two probability-weighted PS models with identical shared design columns
+and fixed offsets, and one PG per used arm. Omit transport and critical inputs.
+Preparation alone does not compute sampling variance, draws or an interval.}
 }
 \description{
 Binds the original matching fit, full nuisance influence, complete
@@ -42,11 +59,74 @@ prediction/reference derivatives and exact-zero known-weight derivative to
 weight refitting. The covariance and transport premises remain caller declarations.
 }
 \details{
-The quadratic route uses its complete retained prediction derivatives and
+The default quadratic route uses its complete retained prediction derivatives and
 nuisance influence, including correction coefficients. The local-polynomial
 route uses its complete score-only influence and the plug-in reference derivative
 \eqn{B^T\nabla\widehat m}. This is not differentiation through refitting local
 coefficients. These different parameter layouts must never be mixed.
+
+The \code{quadratic_qr} route retains the same complete quadratic WLS point
+and a score-only root. Its correction-projection contribution and complete
+joint law are not implemented by the regular handoff. Without explicit
+\code{quadratic_control}, it returns
+\code{model_correction_law_unavailable} without fitting, deleting
+coordinates, supplying zero derivatives or dispatching an existing variance
+formula. Numerical stability of the point fit does not verify sampling inference.
+
+With explicit \code{quadratic_control}, the same API retains the original
+point/root and prepares \code{inference$contrast_inputs}. Its
+\code{evaluate(contrast)} function recomputes pooled standardization and
+local-index graphs from the retained smaller fit and the declared added-parameter
+perturbation. It fits no PS, PG or quadratic outcome model. Matching uses every
+original coordinate and the same metric, M, donor fractions and supplied W.
+The reported point remains the original complete-quadratic fit.
+
+The evaluator retains all ten quadratic terms, total-n donor-weighted projections,
+signed PATE/PATT functionals, correction-projection rows, complete score influence
+and full sensitivity. Its \code{conditional_mean} and
+\code{conditional_variance} evaluate an algebraically exact representation of
+the conditional Gaussian parameters, subject to floating-point error.
+Full-column donor-weighted QR replaces normal equations. The basis uses
+standardized smaller PS, standardized arm PG and the exact finite probability
+divided difference evaluated with sign-stable exponential identities. It spans
+the same complete quadratic space for each nonzero contrast; no limiting
+directional approximation replaces the finite function. Matching continues
+to use the original three standardized scores.
+
+A full QR of the contrast influence, scaled by the square root of total n,
+computes the conditional mean and the residual sum of squares without
+inverting its covariance or subtracting variances. Singular complete score
+covariance is permitted. This single-index conditional variance is not the
+marginal sampling variance: the latter also contains variation in the conditional
+mean over the Gaussian contrast law.
+
+There is no radial cutoff or statistical Gram threshold. Full-column pivoting
+does not delete a basis term or contrast direction. The numerical QR resolution
+check requires the triangular factor's reciprocal condition estimate to exceed
+\code{64 * .Machine$double.eps * max(nrow(A), ncol(A))}. This is a
+machine-resolution diagnostic, not an asymptotic Gram guard or an error
+certificate. An exact zero contrast, unresolved numerical rank, zero score
+scale or nonrepresentable arithmetic returns unavailable evaluated inputs,
+retaining the requested contrast. No failed index is silently replaced by
+zero, redrawn or deleted. Returned QR reconstruction and orthogonality
+diagnostics do not verify forward prediction error or simultaneous all-draw
+accuracy; \code{numerical_error_rate_verified} remains FALSE. Numerical availability does not
+establish correct candidate models, identification, bounded support/density,
+sampling/input limits or a numerical prediction-error rate. Preparation provides
+no interval, sampling variance or draws. Its \code{replication_available} flag
+permits explicit \code{wm_bootstrap} dispatch to the scoped untruncated
+Gaussian-mixture law. That call retains every requested contrast/innovation pair;
+any failed slot makes all aggregate variance, standard-error and interval fields
+unavailable. No runtime zero-completed bootstrap is supported.
+
+This route requires the bounded outcome-correct nested weighted-logistic PS and
+arm-specific linear PG sampling/input conditions. It does not admit arbitrary
+model-union correctness or every singular multiple-score stack. The complete
+nuisance covariance remains shared across matching and correction components.
+The same-draw numerical RMS requirement and the original point's root-n numerical
+error requirement remain separate unverified premises; QR diagnostics do not
+certify either. See \code{wm_bootstrap} for growing-B variance and quantile
+requirements and the distinction from full finite-data conditional variance.
 
 All original-row and parameter bindings are preserved. Supplied weights remain
 known and may depend on treatment and covariates; their estimation uncertainty
@@ -82,8 +162,8 @@ unavailable inference; existing transport/critical unavailability is retained.
 
 No bootstrap is run. If the returned low-level result and its selected branch
 support replication, use \code{wm_bootstrap(answer$inference, ...)} subject to
-that existing method's requirements. This helper adds no bootstrap route or
-original-refit validity claim; critical direct-variance-only output does not
+that method's requirements. This helper makes no original-refit validity claim;
+critical direct-variance-only output does not
 authorize replication or a normal interval.
 }
 \value{
@@ -93,6 +173,20 @@ recipe, call and solver records, with \code{inference} equal to the exact return
 standard-error and interval fields mirror that object. Pre-dispatch failures or
 recognized arithmetic failures receive explicit unavailable status and NA
 interval fields. Population assumptions are never automatically verified.
+
+For explicit nested quadratic preparation, status is
+\code{model_quadratic_contrast_inputs_ready},
+\code{conditional_law_inputs_available} and \code{numerically_available} are
+TRUE, \code{replication_available} is TRUE, and
+\code{sampling_inference_available} remains FALSE until a separate replication
+call. The
+\code{contrast_inputs} record contains the deterministic evaluator, full and
+contrast parameter orders/covariances, information map, complete QR factors,
+numerical-resolution diagnostics and allocation record. Evaluated projections
+retain the complete basis, signed query/donor functional, triangular factors,
+coefficients, predictions and projected derivative; no Gram inverse is formed.
+Top-level sampling variance/interval fields remain NA. This is also
+retained at \code{inference_inputs$quadratic_contrast}.
 
 The active \code{assembly} is NULL to avoid retaining a stale full-X assembly
 under a different covariance scope. The first original assembly and inference

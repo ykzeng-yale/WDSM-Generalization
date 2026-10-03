@@ -39,8 +39,9 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
   \item{inference}{The default \code{"none"} returns point estimation only.
   \code{"full_x"} requests the conditional full-X fitted-score variance.
   Selecting it does not verify the required population assumptions.
-  The opt-in local-polynomial correction currently requires \code{"none"};
-  it still returns the complete score-root influence and reference inputs.}
+  Both opt-in correction routes currently require \code{"none"}.
+  They retain the complete score-root influence; the local-polynomial route
+  additionally provides reference-derivative inputs.}
   \item{controls}{Supported root controls from \code{\link{wm_wdsm_fit}}:
   \code{glm_maxit}, \code{glm_epsilon}, \code{refine_maxit},
   \code{refine_epsilon} and \code{rank_tolerance}. An accuracy failure permits
@@ -51,6 +52,8 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
   no model or basis term is removed. It also applies to the legacy dispatch.
   For local polynomials this cap covers the complete score-only root, retained
   correction/derivative arrays and the largest serial local Gram workspace.
+  For quadratic QR it covers the complete score-only root, retained correction
+  bases and coordinate transforms, and serial regression workspaces.
   Inputs, R copies, solver overhead and total resident memory are outside this cap.}
   \item{correction}{NULL preserves the default complete quadratic correction
   and legacy dispatch. Alternatively, supply a list containing
@@ -60,7 +63,10 @@ wm_model_fit(Y, Z, weights, ps_models = list(),
   length two in control/treated order for PATE; PATT uses one. Degree is an
   integer at least one. The exponent must lie in the sufficient range below.
   The fixed positive guard exponent specifies \eqn{c_n=n^{-g}}. No arbitrary
-  kernel, ridge, fold, adaptive bandwidth or basis-subset option is accepted.}
+  kernel, ridge, fold, adaptive bandwidth or basis-subset option is accepted.
+  Alternatively, \code{list(method = "quadratic_qr")} uses invertible QR
+  correction coordinates for the same complete quadratic WLS. It accepts no
+  additional correction fields and requires \code{inference = "none"}.}
   \item{tie_rule, tie_seed, tie_tolerance}{Options passed to
   \code{\link{wm_match}}. The default breaks exact distance ties by row order.
   \code{"source_random"} requires an explicit seed and
@@ -101,7 +107,37 @@ M, solver controls and ties. Underlying fit, nuisance and inference arithmetic
 is unchanged. Call/class and model/allocation metadata differ. New allocation
 admission applies before the dispatch.
 
-The complete equation Jacobian includes both generated-basis and prediction
+For \code{quadratic_qr}, all original matching scores, distances, donor
+fractions and target denominators are retained. QR transforms correction
+coordinates only. An invertible linear coordinate change preserves the
+complete degree-two polynomial space and hence its exact WLS predictions.
+No correction column is removed. The complete score-only root excludes raw
+quadratic coefficients; this matters when distinct fitted model outputs
+coincide at their probability limit and those coefficients have no regular
+full-rank population Jacobian.
+
+The full score QR is rejected when its reciprocal condition is no greater
+than \eqn{64\epsilon\max(n,d_z)}, with machine precision \eqn{\epsilon}.
+The donor regression retains \code{controls$rank_tolerance}. Unresolved
+rank, too few donor rows or nonfinite arithmetic stops without a ridge,
+column deletion or bandwidth/model retry. Retained reconstruction,
+orthogonality and normal-equation residual diagnostics are floating-point
+checks, not a rigorous prediction-error bound or a verified root-n error
+rate. Without explicit \code{quadratic_control},
+\code{\link{wm_model_inference}} returns unavailable regular full-coefficient
+inference for this option. Its separate \code{nested_contrast} preparation
+retains the correction-projection contribution and complete joint covariance
+under the scoped bounded outcome-correct nested model and numerical premises.
+Pass that preparation's inference object to \code{\link{wm_bootstrap}} for its
+untruncated Gaussian-mixture replication. The original point, supplied weights
+and matching graph are retained; covariance-only local graphs vary with the
+nuisance index. The route supports basic or no intervals, and any failed
+requested slot makes all aggregate variance, standard-error and interval fields
+unavailable. Numerical diagnostics do not verify the population or numerical
+error-rate premises. This route does not substitute the regular
+full-coefficient formula or establish original fixed-reuse bootstrap validity.
+
+For the default quadratic route, the complete equation Jacobian includes both generated-basis and prediction
 derivatives. Full-X inference retains every PS, PG, center, variance and
 correction influence and all covariance blocks. Known weights have zero
 parameter derivatives. Default-correction point-only mode omits influence and covariance arrays,

@@ -18,6 +18,8 @@ PATE \code{regular_joint_d_gt2} fitted inference instead supplies its
 complete corrected marginal Gaussian variance; counts are unsupported in that scope.
 PATE \code{critical_planar} instead supplies a complete nuisance/Schur-mixture
 law through this same contribution interface, with counts unsupported.
+A prepared \code{model_quadratic_contrast_inputs_ready} inference object instead
+supplies the scoped nested quadratic Gaussian-mixture law described below.
 Mixed scalar/higher-dimensional graphs and other generic scalar scopes
 are unsupported.
 For fixed-reuse replication, an ordinary self-normalized \code{wm_match}
@@ -36,16 +38,19 @@ normal generator before calling this function.}
 conditional contribution variance and \code{"basic"} uses empirical root-n draw
 quantiles. For fixed-reuse replication, \code{"normal"} uses the original
 B-divisor replicate variance; \code{"basic"} is unsupported.
-\code{"none"} omits the interval under either method. For \code{critical_planar},
-an omitted interval selects \code{"basic"}; explicitly requested \code{"normal"}
+\code{"none"} omits the interval under either method. For \code{critical_planar}
+and the nested quadratic mixture, an omitted interval selects \code{"basic"};
+explicitly requested \code{"normal"}
 is rejected because this law is generally non-Gaussian.}
 \item{chunk_size}{Positive integer maximum number of multiplier values
 generated together for contribution replication. Ignored for fixed-reuse
 replication. For regular_joint_d_gt2 this bounds scalar Gaussian draw generation.
+For the nested quadratic law this bounds normal generation within each slot;
+contrast normals precede its scalar innovation, independent of chunk size.
 No contributions-by-B matrix is allocated.}
 \item{counts}{Required for fixed-reuse replication; optional for fitted
 contribution replication in zero-reciprocal/scalar_psm scopes only.
-\code{regular_joint_d_gt2} rejects supplied counts. Entries must be finite nonnegative integers; every column must
+\code{regular_joint_d_gt2} and nested quadratic replication reject supplied counts. Entries must be finite nonnegative integers; every column must
 sum to full observed n. Rows correspond to original observations; optional
 row names must be literal indices 1,...,n in order. Do not supply seed with
 frozen counts. Fixed-reuse replication requires positive multiplicity in both
@@ -64,14 +69,63 @@ through one interface. Both retain the original matching graph and individual
 weights. The default contribution method applies independent Gaussian multipliers to normalized row contributions and,
 where present, unordered-edge and independent-training contributions.
 Graphs, predictions, weights,
-and nuisance influence corrections remain fixed.
+and nuisance influence corrections remain fixed on these contribution routes.
 Successful zero-reciprocal/scalar_psm fitted inference uses complete centered
 augmented rows and also accepts supplied full-n fixed-contribution counts.
 The regular_joint_d_gt2 fitted scope uses corrected-variance Gaussian replication.
 The critical_planar scope uses full nuisance Gaussian draws and an independent
 conditional Schur innovation, retaining the original fit and every B slot.
+Nested quadratic preparation instead uses its contrast Gaussian law and
+covariance-only local-index graphs; the original estimator graph and point are
+retained.
 }
 \details{
+For a nested quadratic preparation from \code{wm_model_inference}, the default
+contribution dispatch uses its literal untruncated Gaussian-mixture law. If the
+retained contrast influence satisfies
+\eqn{(H/\sqrt n)\Pi = QR}, each slot draws independent standard normals zeta
+and eta in that order, forms \eqn{h=\Pi R^T\zeta}, evaluates m(h) and s2(h),
+and retains the raw root \eqn{L=m(h)+\sqrt{s2(h)}\eta}. The full nuisance
+influence and its cross-covariances remain in these evaluated inputs. The
+covariance-only local-index graph changes with h; the original estimator,
+weights, correction and matching graph are retained without model refitting.
+
+This branch accepts \code{"basic"} (the omitted-interval default) or
+\code{"none"}; an explicit normal interval, counts, refit callback or
+\code{method="fixed_reuse"} is rejected before RNG. No radial or statistical
+Gram threshold, zero completion, column deletion, draw rejection, redraw or
+survivor summary is used. Every ordered requested slot, including its normal
+innovations and failures, is retained. Any failed slot makes all aggregate
+variance, standard-error and interval fields unavailable. B=1 returns draws
+without variance or an interval. Numerical evaluation failures retain the
+requested contrast and cannot be interpreted as zero roots.
+
+With all B slots successful and B>1, the reported Monte Carlo root variance is
+\eqn{\sum_b(L_b-\bar L)^2/(B-1)}, including variation of m(h); the estimator-scale
+variance divides this by full observed n. Reverse-basic intervals subtract the
+upper/lower empirical quantiles of the \emph{uncentered} raw roots, divided by
+\eqn{\sqrt n}, from the original point. The exact full finite-data conditional
+variance is not evaluated, and its existence or convergence is not asserted:
+\code{conditional_root_n_variance} and \code{conditional_variance} remain NA.
+
+The scoped bounded outcome-correct nested weighted-logistic PS and arm-specific
+linear PG sampling/input assumptions remain required. Limit-law quantiles use
+predeclared deterministic \eqn{B_n\to\infty} and unique continuous limiting
+quantiles. Consistency of the all-B empirical variance additionally requires
+\eqn{B_n\le n^\kappa} for a fixed finite kappa. These are theorem premises, not
+runtime statistical cutoffs. Same-draw numerical RMS and original-point root-n
+numerical error premises are separate; \code{numerical_error_rate_verified} and
+population-assumption flags remain FALSE. No finite-sample coverage or original
+fixed-reuse bootstrap validity is claimed.
+
+Original context and cached full QR bind before RNG. Computational output/work
+caps come from \code{quadratic_control} at preparation; exceeding a cap rejects
+the whole request before RNG. These caps neither filter draws nor establish
+asymptotic success probability. Callers may supply adequate resources for their
+predeclared n and B. Explicit seeds preserve prior RNG state including absence;
+normal generation follows the same ordered zeta-then-eta sequence for every
+chunk size.
+
 For \code{critical_planar}, H*=Sigmahat^(1/2)Z* and an independent standard
 Normal innovation generate the root (bhat+Sigmahat^+Chat)'H*+sqrt(Dhat(H*))xi*.
 The full nuisance dimension and raw kernel/Schur/cone diagnostics are retained.
@@ -151,7 +205,11 @@ stored source fit, point, used dimensions, parameter axes, base rows and
 covariance identities are checked. A row vector given a fitted-inference label
 is insufficient. Private WDSM pipeline results are not automatically coerced.
 Population assumptions remain those of the inference object; scalar_psm
-also retains its numerical-root requirements. Sampling transfer additionally
+also retains its numerical-root requirements. Its general propensity path
+retains the raw \code{wm_match} source and supplied \code{scalar_model}
+descriptor, rechecks the probability/derivative/known-weight binding and
+complete influence and contribution rows, and does not fabricate a logistic
+object or fit a model. Sampling transfer additionally
 requires the applicable empirical row variance and Lindeberg conditions.
 This contribution calculation does not validate the original refit bootstrap.
 An unavailable or inconsistent inference object is rejected.
@@ -216,17 +274,23 @@ list: \code{estimate}, \code{draws}, \code{root_n_draws}, \code{variance},
 \code{conf.int} is removed from that list.
 
 For \code{method = "contribution"},
-A list with \code{root_n_draws}, centered multiplier draws on the root-n scale;
+A list with \code{root_n_draws}, multiplier or raw mixture draws on the root-n scale;
 \code{draws}, equal to the fitted estimate plus those draws divided by
 \code{sqrt(n)}; exact \code{conditional_root_n_variance} and
 \code{conditional_variance} in the supported Gaussian/count branches, and
-NA in \code{critical_planar}, whose exact variance is an unevaluated Gaussian
-expectation; Monte Carlo sample variances
+NA in \code{critical_planar} and nested quadratic mixtures; Monte Carlo sample variances
 \code{monte_carlo_root_n_variance} and \code{monte_carlo_variance}; and
 \code{conf.int}, \code{interval}, \code{conf.level}, \code{B}, \code{n},
 \code{seed}, \code{estimate}, and \code{method}. The Monte Carlo variances are
 \code{NA} for B equal to one. The interval is \code{NULL} for
 \code{interval = "none"}.
+For the nested quadratic law, results additionally retain \code{contrast_draws},
+\code{standard_contrast_normals}, \code{scalar_innovations}, RNG-kind/seed
+provenance, every slot's \code{draw_diagnostics}, and allocation controls.
+\code{variance_divisor} is \code{"B-1"}; \code{variance}, \code{se} and the
+basic interval are available only after every slot succeeds and B>1. Preparation
+and original fit remain in \code{source_inference}. A failed slot is preserved
+as unavailable with its failure stage; no roots or diagnostics are replaced.
 For \code{critical_planar}, the result additionally retains full
 \code{nuisance_draws}, every B-slot \code{draw_diagnostics} with raw signed
 kernel/Schur values, cone adjustments, numerical bounds and failure statuses,

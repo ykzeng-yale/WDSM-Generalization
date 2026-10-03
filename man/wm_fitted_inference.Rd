@@ -6,7 +6,7 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   mean_derivative0 = NULL, mean_derivative1 = NULL,
   weight_derivative = NULL, transport0 = NULL, transport1 = NULL,
   covariance_scope, conf.level = 0.95, scalar_control = NULL,
-  critical_control = NULL)
+  critical_control = NULL, scalar_model = NULL)
 }
 \arguments{
   \item{fit}{One unadjusted, bias-corrected, self-normalized
@@ -20,7 +20,10 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   Mixed scalar/higher-dimensional graphs are unsupported.
   For \code{covariance_scope = "scalar_psm"}, supply the raw completed
   \code{\link{wm_scalar_logistic_match}} object with its original fitting
-  design binding, preferably obtained with \code{inference = FALSE}.}
+  design binding, preferably obtained with \code{inference = FALSE}; or a raw
+  \code{wm_match(..., scores0 = fitted_probability, variance = FALSE)}
+  together with \code{scalar_model}. Use the same probability in both PATE
+  directions and no outcome corrections. The general path does not fit models.}
   \item{nuisance_influence}{Finite numeric n-by-p matrix estimating one
   joint same-sample parameter influence. Column names are required,
   nonempty and unique. Include scores, predictions and
@@ -54,23 +57,49 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   supported, under at least one stated scalar/full-X sampling-law alternative.
   The separate
   \code{"scalar_psm"} branch accepts PATE or PATT and uses the same
-  fitted logistic probability in each used direction.
+  fitted probability in each used direction under the S12 conditions.
   \code{"regular_joint_d_gt2"} requires PATE and equal used dimensions d>2
   under the bounded known-weight regular baseline joint-sheet conditions below.
   \code{"critical_planar"} requires corrected PATE and both used dimensions exactly two.}
   \item{conf.level}{Finite confidence level strictly between zero and one.}
   \item{scalar_control}{NULL or a uniquely named list for \code{scalar_psm}
   only. Supported fields are \code{bandwidth_constant} (1),
-  \code{density_constant} (0.01), \code{outcome_clip_constant} (1),
+  \code{density_constant} (0.01),
   \code{quadrature_error_constant} (0.01), \code{max_nodes} (131072),
   \code{maximum_matrix_entries} (1000000),
   \code{maximum_laplace_terms} (2000000000), optional
   \code{weight_lower_bound}, \code{design} and \code{root_certificate}.
   Numeric controls must be positive; the three computational caps must be
   representable integers, with \code{max_nodes >= 8}. A supplied design
-  must be identical to the stored fitting design. A supplied
+  and \code{root_certificate} are logistic-only and rejected with
+  \code{scalar_model}. A supplied design must be identical to the stored
+  fitting design. A supplied
   \code{\link{wm_scalar_root_certificate}} must bind the exact same
-  design, outcomes, treatment, weights, probability and graph.}
+  design, outcomes, treatment, weights, probability and graph.
+  The former \code{outcome_clip_constant} field is rejected explicitly:
+  this branch uses raw outcomes without clipping.}
+  \item{scalar_model}{NULL retains the legacy logistic-object path. Otherwise,
+  a uniquely named descriptor for a raw \code{wm_match} in \code{scalar_psm}
+  only, with exactly these fields: \code{probability} (n fitted target
+  probabilities strictly inside (0,1)); \code{derivative} (finite n-by-p
+  matrix of actual probability derivatives, not logit derivatives);
+  \code{coefficients} (finite named vector of all p fitted parameters);
+  \code{Z} and \code{weights} (the original treatment and raw known weights);
+  \code{converged = TRUE}; a positive \code{normalized_score_tolerance};
+  a nonempty \code{model} label; and
+  \code{criterion = "supplied_weight_bernoulli"}. Derivative column names
+  must exactly equal coefficient names in order, with numerically full
+  column rank and 1 <= p < n. No intercept or equality between p and the
+  covariate dimension is required. Optional row labels must be literal
+  original indices 1,...,n. Probabilities must match the stored graph exactly;
+  no probability clipping, coordinate transformation, refitting or rematching
+  occurs. For a general link, the Bernoulli score contains the factor
+  derivative/[probability*(1-probability)]. The normalized numerical residual
+  divides each weighted score sum by the corresponding sum of absolute
+  logit-derivative magnitudes times normalized weights; zero scales fail.
+  Supplied coefficients, derivative validity, full-sample fitting history
+  and exact-root equivalence remain the caller's obligations. Observed rank,
+  convergence and score checks do not verify these or population conditions.}
   \item{critical_control}{Required only for \code{critical_planar}; otherwise NULL.
   A uniquely named list with \code{tangents0}, \code{tangents1} (actual
   matching-coordinate n-by-2-by-p derivatives, exact complete parameter order),
@@ -114,7 +143,7 @@ Assembles conditional fitted-map inference using the complete matching
 rows, joint nuisance influence, the exact fixed-edge smooth derivative and
 the signed incoming graph-transport component. The point estimator is
 unchanged. The separate \code{scalar_psm} branch computes the finite-M integrated score drift
-and complete contribution rows for raw weighted-logistic PSM. This interface
+and complete contribution rows for raw finite-dimensional target-propensity PSM. This interface
 implements the stated iid fitted-map branches with supplied known weights;
 it does not establish their assumptions for an application.
 }
@@ -177,18 +206,23 @@ Rao--Blackwell estimates/MCSE stay separate. Direct diagnostics do not
 alter the original fit or mixture draws.
 
 
-For \code{scalar_psm}, omit \code{nuisance_influence}, all supplied
-derivatives and both transport specifications. The bound raw scalar object
-must use known positive weights, an unrestricted common probability graph,
-fixed M and a full-rank leading-intercept logistic design with p>=2.
+For \code{scalar_psm}, omit \code{nuisance_influence},
+\code{mean_derivative0}, \code{mean_derivative1}, \code{weight_derivative}
+and both transport specifications. The general path instead requires the
+actual probability derivative in \code{scalar_model$derivative}. The bound raw scalar object
+must use known positive weights, an unrestricted common probability graph
+and fixed M. With \code{scalar_model = NULL}, the legacy path retains its
+full-rank leading-intercept logistic design with p>=2. The general path uses
+the complete supplied probability derivative and coefficient order, with p>=1.
 The stored nearest donors and row-priority ties are validated without
 changing the graph. No propensity or outcome model is refitted.
 
 A compact nonnegative C2 triweight kernel estimates scalar subdensities,
 weighted query subdensities, outcome means and their score derivatives.
-The bandwidth, density threshold and training-outcome clip are respectively
-\eqn{c_h n^{-1/12}}, \eqn{c_\delta n^{-1/256}} and
-\eqn{c_Y n^{1/8}}. The default positive constants are declared engineering
+The bandwidth and density threshold are respectively
+\eqn{c_h n^{-1/12}} and \eqn{c_\delta n^{-1/256}}.
+Kernel outcome numerators use the raw outcomes without clipping.
+The default positive constants are declared engineering
 choices, not coverage-selected tuning. The raw point and graph are never
 trimmed. PATT estimates only the control outcome mean.
 
@@ -201,7 +235,14 @@ donor-weight laws use exact expressions. Other laws use chunked composite
 eight-point Gauss-Legendre integration, a mixture-derivative error bound and
 an exponential tail bound. These bounds are propagated through the complete
 empirical drift; their sum in each parameter must not exceed
-\eqn{c_q/\sqrt n}. The initial cutoff is
+\eqn{c_q s_Y/\sqrt n}, where \eqn{s_Y} is the ordinary unweighted
+sample standard deviation of all observed outcomes with divisor n-1.
+The bound is on the final full drift vector after aggregating all required
+arms and applying the target normalization. A common rescaling protects the
+SD calculation against avoidable overflow when the SD itself is representable.
+A zero or unrepresentable outcome scale or error target returns unavailable
+inference; no numerical floor or artificial interval is substituted.
+The initial cutoff is
 \eqn{4\log(n)/(M w_{\min})}, where weights are in the same normalized
 units as all rows; empirical donor/root minima justify the empirical tail
 bound. The optional raw \code{weight_lower_bound} only controls this
@@ -213,23 +254,43 @@ kernel bias, sampling error and model error.
 The scalar drift is the donor-direction residual formula, with the signed
 PATE difference or negative control-only PATT normalization. There is no
 additional fixed-edge prediction derivative. Feasible means are used only
-in the complete inference rows, with retained values clipped at log(n).
-The branch computes \eqn{H=\operatorname{mean}\{W e(1-e)XX^{\mathsf T}\}}
-and influence \eqn{\ell_i=H^{-1}W_i(Z_i-e_i)X_i}, retaining its full
-sandwich covariance. It reports the complete centered-row variance identity
+in the complete inference rows without clipping. On rows outside the common
+two-arm density trim, each required mean column uses the observed unweighted
+mean of that arm's outcomes. This fallback is not used in the drift ratios
+or derivatives; PATT requires only the control mean.
+Writing D for the actual fitted probability derivative, the branch computes
+\eqn{H=\operatorname{mean}\{W DD^{\mathsf T}/[e(1-e)]\}} and
+\eqn{\psi_i=W_i(Z_i-e_i)D_i/[e_i(1-e_i)]}, with influence
+\eqn{\ell_i=H^{-1}\psi_i}. Common weight normalization is applied consistently.
+For logistic D=e(1-e)X, the original arithmetic path is retained.
+The general result exposes the uncentered estimating-equation rows and raw
+weighted score mean. Its influence covariance Sigma uses centered influence
+rows; a small nonzero numerical score mean is not silently declared zero.
+All parameter cross-covariances are retained. It reports the complete centered-row variance identity
 below and an interval around the original point, with total n for both
 estimands. Complete centered rows are returned for separately justified
 contribution replication; no original refit-bootstrap agreement is asserted.
 
+In exact arithmetic, adding a common outcome constant leaves the point,
+drift and variance unchanged; multiplying outcomes by a nonzero constant
+multiplies the point, drift and complete rows by that constant and the
+variance by its square. Means, including inactive-row extensions, transform
+affinely. The outcome-scaled error target and propagated absolute error
+bounds scale together, so the integration refinement choices agree in exact
+arithmetic. These properties do not certify floating-point accuracy or
+that a fixed computational budget suffices.
+
 The scalar population premises require iid rows, known bounded positive
-smooth W(Z,X), correct target logistic propensity and overlap, true
+smooth W(Z,X), correct target propensity under dP = W dQ / E_Q(W) and overlap, true
 own-(score,weight) centering and target identities (control only for PATT),
-bounded general covariates with an active continuous coordinate, the stated
-globally C2 zero-extended mixed latent subdensities, smooth conditional means,
+bounded covariates with an invertible scalar chart and bounded mixed
+propensity-family derivatives through order three, the stated globally C2
+zero-extended mixed latent subdensities, smooth conditional means,
 the weighted-root derivative-span condition and uniform conditional outcome
 moments of order 2+eta. These are assumptions, not conclusions of observed
-fit checks. The theorem concerns a regular exact logistic root; optional
-finite-data root/donor/point certificates do not verify its asymptotic
+fit checks. The theorem concerns a consistent exact supplied-weight
+Bernoulli root. A numerical root needs separately justified equivalence;
+optional legacy logistic root/donor/point certificates do not verify its asymptotic
 numerical bridge or these population assumptions. Simultaneously estimated
 weights and dependent survey-design inference are outside this branch.
 
@@ -635,7 +696,8 @@ it cannot establish that a nonempty signed support was handled correctly.
 
 This interface does not fit a model, rematch at a perturbed parameter, bootstrap,
 or mutate the supplied fit. Generic branches reject raw estimators and
-unsupported scalar maps; \code{scalar_psm} requires its bound raw logistic object.
+unsupported scalar maps; \code{scalar_psm} accepts the bound legacy logistic
+object or a raw \code{wm_match} object with its bound \code{scalar_model}.
 All branches reject unsupported previous adjustments, stabilized rules,
 restricted/fold graphs and covariance specifications. It makes no generic learner,
 unrestricted nonzero-reciprocal fitted-law or cluster/stratum design claim, and does not
@@ -678,7 +740,13 @@ A separate \code{wm_fitted_inference} list preserving \code{estimate},
   \item{drift_error_bound, drift_tail_error_bound, controls, active,
   feasible_means, H, laplace_terms}{Separate \code{scalar_psm} total integration and tail
   bounds, recorded controls, common density trim, variance-only mean predictions,
-  weighted-logistic derivative matrix and prospective Laplace work accounting.}
+  weighted-Bernoulli information matrix H and prospective Laplace work accounting.}
+  \item{scalar_model, score_derivative, estimating_equations, observed_model_check}{
+  General scalar-path fields retaining the supplied model descriptor, actual
+  n-by-p probability derivative D, uncentered Bernoulli score rows computed
+  with commonly normalized known weights, and numerical score diagnostics.
+  These fields do not certify derivative validity, fitting history or the
+  population and exact-root premises.}
   \item{numerical_certificate, observed_logistic_check}{Separate \code{scalar_psm} exact
   optional certificate binding and observed score/nearest-donor checks.
   Neither verifies a population premise or asymptotic numerical-root rate.}
@@ -723,3 +791,25 @@ remain available. Variance, standard error and interval are NA.
 \seealso{\code{\link{wm_graph_transport}}, \code{\link{wm_match}},
   \code{\link{wm_reciprocal_inference}}, \code{\link{wm_scalar_logistic_match}},
   \code{\link{wm_scalar_root_certificate}}}
+
+\examples{
+\dontrun{
+# ps is an existing full-sample stats::glm fit with binomial("probit"),
+# response Z and weights W, and no omitted rows. Y, Z, W use that row order.
+e <- as.numeric(fitted(ps))
+D <- model.matrix(ps) * ps$family$mu.eta(predict(ps, type = "link"))
+rownames(D) <- NULL
+colnames(D) <- names(coef(ps))
+model <- list(probability = e, derivative = D, coefficients = coef(ps),
+  Z = Z, weights = W, converged = ps$converged,
+  normalized_score_tolerance = 1e-7, model = "probit",
+  criterion = "supplied_weight_bernoulli")
+point <- wm_match(Y, Z, W, scores0 = matrix(e, ncol = 1),
+  estimand = "PATE", M = 3, variance = FALSE)
+inference <- wm_fitted_inference(point, covariance_scope = "scalar_psm",
+  scalar_model = model)
+if (inference$available) wm_bootstrap(inference, B = 999)
+# The target propensity is under P, not the observed law Q. These calls
+# do not verify S12 identification, centering, scalar-chart or root conditions.
+}
+}

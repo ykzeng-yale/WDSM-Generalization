@@ -38,6 +38,10 @@
 #'   positive guard_exponent (default 2) uses the constructive correction.
 #'   This option requires inference='none', but retains the complete score-root
 #'   IF and caller-completed reference-inference inputs without a quadratic fit.
+#'   Alternatively, list(method='quadratic_qr') solves the same complete
+#'   quadratic WLS in invertible QR correction coordinates. It requires
+#'   inference='none', retains the score-only root and all correction columns,
+#'   and leaves the matching scores unchanged.
 #' @param tie_rule,tie_seed,tie_tolerance Matching options from \code{wm_match()}.
 #'   \code{"source_random"} requires an explicit seed and point-only inference.
 #'
@@ -87,6 +91,19 @@
 #'   theorem does not inherit unbounded Gaussian full-X alternatives.
 #'   Local coefficients are auxiliary and do not enter the finite score root;
 #'   B'gradient estimates the reference derivative, not an LP-refit derivative.
+#'
+#'   Quadratic QR retains a complete degree-two polynomial space under an
+#'   invertible coordinate transform; it does not fit a different regression
+#'   or use QR distances for matching. Unresolved score rank or unidentified
+#'   donor regression stops without a ridge, deletion or retry. Numerical
+#'   diagnostics do not prove a root-n prediction-error rate. Without explicit
+#'   quadratic_control, wm_model_inference returns unavailable regular
+#'   full-coefficient inference. Its separate nested_contrast preparation can
+#'   be passed to wm_bootstrap under the scoped bounded outcome-correct nested
+#'   model and numerical premises. The original point and graph are retained;
+#'   covariance-only local graphs vary with the nuisance index. That route
+#'   supports basic or no intervals, and any failed requested slot makes all
+#'   aggregate variance, standard-error and interval fields unavailable.
 #'
 #' @return A \code{wm_model_fit} list with point/interval fields and nested
 #'   \code{fit}, \code{nuisance}, \code{inference}, \code{assembly},
@@ -140,6 +157,12 @@ wm_model_fit <- function(Y, Z, weights, ps_models = list(),
   used <- if (estimand == "PATE") 0:1 else 0L
   layout <- .wm_model_layout(ps, pg, used)
   if (!is.null(correction)) {
+    if (is.list(correction) &&
+        identical(correction[["method", exact = TRUE]], "quadratic_qr")) {
+      return(.wm_model_quadratic_qr_fit(Y, Z, weights, ps, pg, layout,
+        correction, M, estimand, inference, controls, conf.level, max_stack_elements,
+        ties, call))
+    }
     return(.wm_model_local_polynomial_fit(Y, Z, weights, ps, pg, layout,
       correction, M, estimand, inference, controls, conf.level, max_stack_elements,
       ties, call))

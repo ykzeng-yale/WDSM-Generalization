@@ -12,6 +12,11 @@ near <- function(x, y, label, tolerance = 2e-10) {
     all(is.finite(c(x, y))) &&
     all(abs(x - y) <= tolerance * pmax(1, abs(x), abs(y))), label)
 }
+near_with_na <- function(x, y, label) {
+  check(identical(dim(x), dim(y)) && identical(is.na(x), is.na(y)) &&
+    any(!is.na(x)), paste(label, "defined-entry pattern"))
+  near(x[!is.na(x)], y[!is.na(y)], label)
+}
 fails <- function(expr, label) check(inherits(try(expr, silent = TRUE), "try-error"), label)
 had_rng <- exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
 if (had_rng) rng_before <- get(".Random.seed", envir = .GlobalEnv)
@@ -24,6 +29,40 @@ check(isTRUE(fixture$provenance$synthetic) && fixture$provenance$M == 3L &&
   identical(fixture$provenance$original_fits_sha256,
     "58485ec76a4cc7c5427a5f49df29552d22476c3b9cd5cbd21de8c297ccc54336"),
   "existing portable synthetic fixture provenance")
+
+# Transform only the saved outcome-dependent records. The PS, design, W and
+# graph remain literal saved arrays; this is not a fit or another data generator.
+affine_saved_fit <- function(object, location, multiplier) {
+  answer <- object
+  f <- object$fit
+  Y <- location + multiplier * f$data$Y
+  Z <- f$data$Z
+  w <- f$analysis_weights
+  pate <- identical(f$estimand, "PATE")
+  f$data$Y <- Y
+  f$imputed <- location + multiplier * f$imputed
+  f$raw_imputed <- location + multiplier * f$raw_imputed
+  outer <- if (pate) w else Z * w
+  contrast <- if (pate) f$raw_imputed[, 2L] - f$raw_imputed[, 1L] else
+    Y - f$raw_imputed[, 1L]
+  f$numerator <- sum(outer * contrast)
+  f$estimate <- f$raw_estimate <- f$numerator / f$denominator
+  f$correction <- 0
+  incoming <- f$loads$incoming[cbind(seq_along(Y), Z + 1L)]
+  uncentered <- if (pate) (2 * Z - 1) * (w + incoming) * Y else
+    Z * w * Y - (1 - Z) * incoming * Y
+  numerator_rows <- uncentered - outer * f$estimate
+  f$contributions$row <- f$contributions$actual <- numerator_rows / f$gamma
+  f$contributions$edge <- multiplier * f$contributions$edge
+  f$contributions$nuisance <- multiplier * f$contributions$nuisance
+  f$numerator_identity <- list(direct = f$numerator, reconstructed = sum(uncentered),
+    difference = f$numerator - sum(uncentered), centered_sum = sum(numerator_rows),
+    row_edge_sum = sum(numerator_rows))
+  answer$estimate <- f$estimate
+  answer$fit <- f
+  answer$inference <- list(status = "not_requested")
+  answer
+}
 
 # Literal finite-sum oracle for two independent donor marks (M=3), and its
 # derivative with the root argument fixed. It does not call the Laplace helper.
@@ -67,6 +106,7 @@ check(all(abs(vapply(root_weights, function(w)
 
 results <- list()
 oracle_results <- list()
+affine_results <- list()
 for (target in c("PATE", "PATT")) {
   x <- fixture$fits[[target]]
   unchanged <- serialize(x, NULL)
@@ -162,6 +202,128 @@ for (target in c("PATE", "PATT")) {
     mean(drop(ell %*% result$total_sensitivity)^2), paste(target, "full covariance identity"))
   near(result$variance, result$root_n_variance / n, paste(target, "total-n sampling variance"))
   near(mean(result$conf.int), x$estimate, paste(target, "interval centered at original raw point"))
+  near(result$controls$outcome_scale, stats::sd(Y),
+    paste(target, "ordinary unweighted n-minus-one outcome SD"))
+  near(result$controls$drift_error_target,
+    result$controls$quadrature_error_constant * stats::sd(Y) / sqrt(n),
+    paste(target, "outcome-scaled final full-vector drift target"))
+  check(is.null(result$controls$outcome_clip_constant) &&
+    is.null(result$controls$outcome_clip) &&
+    identical(result$completed_components$smoothing$outcome_input, "raw, without clipping"),
+    paste(target, "no runtime outcome clipping control or numerator"))
+  transformed_results <- list()
+  for (transformation in list(location = c(37, 1), positive_scale = c(0, 4),
+                             negative_scale = c(-11, -2))) {
+    offset <- transformation[1L]
+    multiplier <- transformation[2L]
+    tag <- paste(target, "outcome affine", offset, multiplier)
+    changed <- affine_saved_fit(x, offset, multiplier)
+    changed_before <- serialize(changed, NULL)
+    transformed <- wm_fitted_inference(changed, covariance_scope = "scalar_psm")
+    check(transformed$available && identical(serialize(changed, NULL), changed_before) &&
+      identical(transformed$fit, changed$fit), paste(tag, "public inference preserves transformed point"))
+    check(identical(changed$fit$graph, x$fit$graph) &&
+      identical(changed$fit$weights, x$fit$weights) &&
+      identical(changed$fit$analysis_weights, x$fit$analysis_weights) &&
+      identical(changed$propensity, x$propensity) &&
+      identical(changed$fitting_design, x$fitting_design), paste(tag, "PS design W graph unchanged"))
+    near(transformed$estimate, multiplier * result$estimate, paste(tag, "raw point equivariance"))
+    near_with_na(transformed$fit$imputed, offset + multiplier * x$fit$imputed,
+      paste(tag, "raw imputations transformed coherently"))
+    check(identical(transformed$active, result$active), paste(tag, "density trim unchanged"))
+    near(transformed$feasible_means, offset + multiplier * result$feasible_means,
+      paste(tag, "feasible means affine equivariance"))
+    near(transformed$feasible_mean_fallback, offset + multiplier * result$feasible_mean_fallback,
+      paste(tag, "arm-mean fallback affine equivariance"))
+    near_with_na(transformed$completed_components$smoothing$mean_derivative,
+      multiplier * result$completed_components$smoothing$mean_derivative,
+      paste(tag, "raw smoothing derivative equivariance"))
+    near(transformed$total_sensitivity, multiplier * result$total_sensitivity,
+      paste(tag, "complete finite-M drift equivariance"))
+    near(transformed$base_rows, multiplier * result$base_rows, paste(tag, "base-row equivariance"))
+    near(transformed$augmented_rows, multiplier * result$augmented_rows,
+      paste(tag, "complete-row equivariance"))
+    near(transformed$nuisance_influence, result$nuisance_influence,
+      paste(tag, "full logistic influence unchanged"))
+    near(transformed$Sigma, result$Sigma, paste(tag, "full root covariance unchanged"))
+    near(transformed$C, multiplier * result$C, paste(tag, "full row-root covariance equivariance"))
+    near(c(transformed$V0, transformed$cross_term, transformed$nuisance_variance,
+      transformed$root_n_variance, transformed$variance), multiplier^2 *
+      c(result$V0, result$cross_term, result$nuisance_variance,
+        result$root_n_variance, result$variance), paste(tag, "all variance components scale squared"))
+    near(unname(transformed$conf.int), sort(multiplier * unname(result$conf.int)),
+      paste(tag, "confidence endpoints including negative scale"))
+    near(transformed$controls$outcome_scale, abs(multiplier) * result$controls$outcome_scale,
+      paste(tag, "outcome scale equivariance"))
+    near(transformed$controls$drift_error_target, abs(multiplier) * result$controls$drift_error_target,
+      paste(tag, "integration target equivariance"))
+    near(transformed$drift_error_bound, abs(multiplier) * result$drift_error_bound,
+      paste(tag, "final error bound equivariance"))
+    check(identical(transformed$laplace_terms, result$laplace_terms),
+      paste(tag, "M3 nonconstant-weight work unchanged"))
+    for (arm in names(result$completed_components$drift)) {
+      before <- result$completed_components$drift[[arm]]
+      after <- transformed$completed_components$drift[[arm]]
+      check(identical(after$method, "shared_empirical_Laplace_composite_Gauss8") &&
+        identical(after$nodes, before$nodes) && identical(after$cutoff, before$cutoff) &&
+        identical(after$donor_rows, before$donor_rows), paste(tag, arm, "actual integration choices unchanged"))
+      near(c(after$quadrature_error_bound, after$tail_error_bound),
+        abs(multiplier) * c(before$quadrature_error_bound, before$tail_error_bound),
+        paste(tag, arm, "propagated quadrature and tail bounds scale"))
+    }
+    transformed_results[[paste(offset, multiplier, sep = "/")]] <- transformed
+  }
+  affine_results[[target]] <- transformed_results
+
+  # One predeclared midpoint of this fixture's density range exercises both
+  # trim branches. This selects software branches only, with no search/tuning
+  # against coverage, bias, variance or availability and no default change.
+  density_range <- range(apply(result$completed_components$smoothing$density, 1L, min))
+  check(diff(density_range) > 0, paste(target, "existing density fixture distinguishes trim branches"))
+  mixed_control <- list(density_constant = mean(density_range) * n^(1 / 256) / 2)
+  mixed <- wm_fitted_inference(x, covariance_scope = "scalar_psm", scalar_control = mixed_control)
+  check(mixed$available && any(mixed$active) && any(!mixed$active),
+    paste(target, "partial trim exercises nonempty active and fallback rows"))
+  for (z in if (target == "PATE") 0:1 else 0L) {
+    near(mixed$feasible_means[!mixed$active, z + 1L],
+      rep(mean(Y[Z == z]), sum(!mixed$active)), paste(target, z, "inactive rows use ordinary arm mean"))
+    near(mixed$feasible_means[mixed$active, z + 1L],
+      mixed$completed_components$smoothing$mean[mixed$active, z + 1L],
+      paste(target, z, "active means retained without prediction clipping"))
+  }
+  mixed_changed <- wm_fitted_inference(affine_saved_fit(x, 37, -2),
+    covariance_scope = "scalar_psm", scalar_control = mixed_control)
+  check(mixed_changed$available && identical(mixed_changed$active, mixed$active),
+    paste(target, "affine public inference retains partial trim"))
+  near(mixed_changed$feasible_means, 37 - 2 * mixed$feasible_means,
+    paste(target, "active and inactive means jointly affine"))
+  near(mixed_changed$augmented_rows, -2 * mixed$augmented_rows,
+    paste(target, "partial-trim complete rows affine"))
+  near(mixed_changed$root_n_variance, 4 * mixed$root_n_variance,
+    paste(target, "partial-trim variance affine"))
+
+  obsolete <- tryCatch(wm_fitted_inference(x, covariance_scope = "scalar_psm",
+    scalar_control = list(outcome_clip_constant = 1)), error = identity)
+  check(inherits(obsolete, "error") &&
+    grepl("outcome_clip_constant is no longer supported", conditionMessage(obsolete), fixed = TRUE),
+    paste(target, "removed clipping option rejected explicitly"))
+  fails(wm_fitted_inference(x, covariance_scope = "scalar_psm",
+    scalar_control = list(outcome_clip_constant = NULL)),
+    paste(target, "removed clipping option cannot be silently supplied as NULL"))
+  constant_outcomes <- affine_saved_fit(x, 5, 0)
+  constant_inference <- wm_fitted_inference(constant_outcomes, covariance_scope = "scalar_psm")
+  check(!constant_inference$available && constant_inference$failure_stage == "outcome_scale" &&
+    identical(constant_inference$fit, constant_outcomes$fit) &&
+    is.na(constant_inference$variance) && all(is.na(constant_inference$conf.int)),
+    paste(target, "constant outcomes retain point with unavailable positive-variance inference"))
+  large_outcomes <- affine_saved_fit(x, 0, 1e150)
+  scale_failure <- wm_fitted_inference(large_outcomes, covariance_scope = "scalar_psm",
+    scalar_control = list(quadrature_error_constant = 1e200))
+  check(!scale_failure$available && scale_failure$failure_stage == "outcome_scale" &&
+    is.finite(scale_failure$controls$outcome_scale) && scale_failure$controls$outcome_scale > 0 &&
+    identical(scale_failure$fit, large_outcomes$fit) && is.na(scale_failure$variance) &&
+    all(is.na(scale_failure$conf.int)),
+    paste(target, "unrepresentable scaled target unavailable after finite stable SD"))
   if (target == "PATT") check(ncol(result$feasible_means) == 1L &&
     length(result$completed_components$drift) == 1L &&
     all(is.finite(row[Z == 1L])) && any(abs(row[Z == 1L]) > 1e-8),
@@ -234,6 +396,9 @@ for (target in c("PATE", "PATT")) {
   oracle_results[[target]] <- list(b = b_oracle, arms = oracle_arm)
 }
 
+fails(.wm_scalar_psm_outcome_scale(c(-.Machine$double.xmax, .Machine$double.xmax)),
+  "unrepresentable sample SD rejected without a scale floor")
+
 # A finite engineering reparameterization of stored logits tests p=2 algebra.
 # It is not presented as a newly fitted or historically bound statistical model.
 x2 <- fixture$fits$PATE
@@ -292,5 +457,5 @@ receipt <- list(status = "PASS", checks = length(labels), labels = labels,
   max_drift_error_bound = vapply(results, function(x) max(x$drift_error_bound), numeric(1)),
   default_laplace_terms = vapply(results, `[[`, numeric(1), "laplace_terms"))
 if (length(args) >= 2L) saveRDS(list(receipt = receipt, results = results,
-  oracle_results = oracle_results), args[2L])
+  oracle_results = oracle_results, affine_results = affine_results), args[2L])
 cat(length(labels), "checks PASS; zero propensity/outcome model refits, RNG or new datasets.\n")

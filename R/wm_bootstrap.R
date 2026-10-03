@@ -1,12 +1,14 @@
 #' Bootstrap Replication for Weighted Matching
 #'
 #' Use contribution multipliers or fixed-reuse multinomial replication through
-#' one interface. Both retain the original matching graph and individual weights.
+#' one interface, plus qualified Gaussian laws. The original point and weights
+#' are retained; nested quadratic replication uses covariance-only local graphs.
 #'
 #' @param object For contribution replication, a \code{wm_match} result with
 #'   variance estimation enabled or successful \code{wm_fitted_inference} with
 #'   available complete rows in scalar_psm or a qualified zero-reciprocal scope,
-#'   or complete corrected Gaussian variance in regular_joint_d_gt2.
+#'   or complete corrected Gaussian variance in regular_joint_d_gt2, or prepared
+#'   nested quadratic conditional-law inputs with replication_available = TRUE.
 #'   For fixed_reuse, an ordinary self-normalized \code{wm_match} result.
 #' @param B Positive integer number of draws, at least two for fixed_reuse.
 #'   With supplied counts,
@@ -21,7 +23,8 @@
 #'   analytic conditional contribution variance and \code{"basic"} uses empirical
 #'   root-n draw quantiles. For fixed_reuse, \code{"normal"} uses the original
 #'   B-divisor replicate variance; basic is unsupported. \code{"none"} omits
-#'   the interval under either method.
+#'   the interval under either method. Nested quadratic mixtures default to basic
+#'   and reject an explicitly requested normal interval.
 #' @param chunk_size Positive integer maximum number of multiplier values
 #'   generated together for contribution replication. Ignored for fixed_reuse.
 #'   For regular_joint_d_gt2 this bounds scalar Gaussian draw generation.
@@ -37,10 +40,11 @@
 #'   mean0 and, for PATE, mean1 predictions. Only used with fixed_reuse.
 #'   NULL retains the original predictions; supplied callbacks perform any
 #'   intended nuisance refitting without changing graph, weights or reuse.
-#' @return A list with \code{root_n_draws}, centered multiplier draws on the
+#' @return A list with \code{root_n_draws}, multiplier or raw mixture draws on the
 #'   root-n scale; \code{draws}, estimates shifted by those draws divided by
 #'   \code{sqrt(n)}; exact \code{conditional_root_n_variance} and
-#'   \code{conditional_variance}; Monte Carlo sample variances
+#'   \code{conditional_variance} in the applicable Gaussian/count branches
+#'   (both NA for nested quadratic mixtures); Monte Carlo sample variances
 #'   \code{monte_carlo_root_n_variance} and \code{monte_carlo_variance}; and
 #'   \code{conf.int}, \code{interval}, \code{conf.level}, \code{B}, \code{n},
 #'   \code{seed}, \code{estimate}, and \code{method}. Monte Carlo variances
@@ -111,6 +115,18 @@
 #' growing B, empirical nonlinear variance consistency additionally requires the
 #' stated prediction derivative/Hessian moment above order two and simultaneous
 #' selected-root, numerical-error and success conditions; see wm_bootstrap_refit.
+#' Prepared nested quadratic inputs use the literal untruncated Gaussian mixture:
+#' full contrast QR generates h, its evaluator returns m(h), s2(h), and the root
+#' is m(h)+sqrt(s2(h))*eta. All B slots and innovations are retained. Any failed
+#' slot invalidates aggregate inference; no cutoff, zero completion or redraw is
+#' supported. The original point is unchanged. Counts, refit and fixed_reuse are
+#' rejected. B=1 supplies draws only. B-1 sample variance over all raw roots/n
+#' includes variation in m(h); basic intervals use uncentered root quantiles.
+#' Exact finite-data conditional variance fields remain NA. Predeclared increasing
+#' B and continuous unique limiting quantiles are required; empirical variance
+#' additionally requires at-most-polynomial B. These are not runtime cutoffs.
+#' Numerical RMS/point-error and population premises remain unverified; see the
+#' manual for explicit scope, allocation caps and numerical qualifications.
 #' @seealso \code{\link{wm_match}}, \code{\link{wm_bootstrap_refit}}
 #' @export
 wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
@@ -118,6 +134,13 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
                          chunk_size = 65536L, counts = NULL,
                          method = c("contribution", "fixed_reuse"), refit = NULL) {
   method <- match.arg(method)
+  if (inherits(object, "wm_fitted_inference") &&
+      identical(object$status, "model_quadratic_contrast_inputs_ready")) {
+    if (method != "contribution" || !is.null(refit)) {
+      stop("Nested quadratic law replication does not support fixed_reuse or refit; the original point is retained.", call. = FALSE)
+    }
+    return(.wm_qc_bootstrap(object, B, seed, conf.level, interval, chunk_size, counts))
+  }
   if (method == "fixed_reuse") {
     return(.wm_fixed_reuse_bootstrap(object, B, missing(B), seed, conf.level,
                                     interval, counts, refit))
@@ -322,18 +345,24 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
          call. = FALSE)
   }
   n <- object$n
+  general_scalar <- !is.null(object$scalar_model)
+  source_bound <- if (general_scalar) {
+    inherits(object$source_object, "wm_match") && identical(object$source_object, object$fit)
+  } else {
+    inherits(object$source_object, "wm_scalar_logistic_match") &&
+      identical(object$source_object$fit, object$fit) &&
+      identical(object$source_object$estimate, object$estimate)
+  }
   if (!positive_integer(n) || !finite_scalar(object$estimate) ||
       !is.character(object$estimand) || length(object$estimand) != 1L ||
       !object$estimand %in% c("PATE", "PATT") ||
       !inherits(object$fit, "wm_match") ||
       !identical(object$fit$n, n) || !identical(object$fit$estimate, object$estimate) ||
-      !identical(object$fit$estimand, object$estimand) ||
-      !inherits(object$source_object, "wm_scalar_logistic_match") ||
-      !identical(object$source_object$fit, object$fit) ||
-      !identical(object$source_object$estimate, object$estimate)) {
+      !identical(object$fit$estimand, object$estimand) || !source_bound) {
     stop("Scalar contribution inference must retain the same raw point and full observed n.",
          call. = FALSE)
   }
+  if (general_scalar) .wm_scalar_psm_general_rows(object)
   row <- object$augmented_rows
   if (!finite_vector(row) || length(row) != n ||
       !finite_scalar(object$root_n_variance) || object$root_n_variance <= 0) {

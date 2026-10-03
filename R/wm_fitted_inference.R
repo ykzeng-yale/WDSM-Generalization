@@ -157,7 +157,13 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
                                 weight_derivative = NULL,
                                 transport0 = NULL, transport1 = NULL,
                                 covariance_scope, conf.level = 0.95,
-                                scalar_control = NULL, critical_control = NULL) {
+                                scalar_control = NULL, critical_control = NULL,
+                                scalar_model = NULL) {
+  if (!is.null(scalar_model) &&
+      (missing(covariance_scope) || !identical(covariance_scope, "scalar_psm"))) {
+    stop("scalar_model is only supported with covariance_scope = 'scalar_psm'.",
+         call. = FALSE)
+  }
   if (!is.null(critical_control) &&
       (missing(covariance_scope) || !identical(covariance_scope, "critical_planar"))) {
     stop("critical_control is only supported with critical_planar.", call. = FALSE)
@@ -169,7 +175,7 @@ wm_fitted_inference <- function(fit, nuisance_influence = NULL,
       stop("scalar_psm derives its own influence and drift; omit supplied derivatives and transport.",
            call. = FALSE)
     }
-    return(.wm_scalar_psm_inference(fit, scalar_control, conf.level))
+    return(.wm_scalar_psm_inference(fit, scalar_control, conf.level, scalar_model))
   }
   if (!is.null(scalar_control)) {
     stop("scalar_control is only supported with covariance_scope = 'scalar_psm'.",
