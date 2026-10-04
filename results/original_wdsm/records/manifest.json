@@ -1,0 +1,234 @@
+{
+  "format": "wm_compact_csv_archive_v1",
+  "study": "original_wdsm",
+  "scope": "Synthetic estimator-level records only; no participant samples, fitted models, graphs or count matrices",
+  "source_identity": "Accepted complete original WDSM source-setting compact estimator records",
+  "source_csv_bytes": 248616882,
+  "source_csv_sha256": "05c0b3c4eb77fb57b66bdb5587dbf5e197c41c750b65810520557f74b56bfacd",
+  "rows": 608000,
+  "planned_cells": 608,
+  "requested_replicates_per_cell": 1000,
+  "schema": [
+    {
+      "name": "sampling_design",
+      "type": "character"
+    },
+    {
+      "name": "overlap",
+      "type": "character"
+    },
+    {
+      "name": "estimand",
+      "type": "character"
+    },
+    {
+      "name": "scenario",
+      "type": "character"
+    },
+    {
+      "name": "replicate",
+      "type": "integer"
+    },
+    {
+      "name": "method",
+      "type": "character"
+    },
+    {
+      "name": "n",
+      "type": "integer"
+    },
+    {
+      "name": "target",
+      "type": "numeric"
+    },
+    {
+      "name": "estimate",
+      "type": "numeric"
+    },
+    {
+      "name": "raw_estimate",
+      "type": "numeric"
+    },
+    {
+      "name": "variance",
+      "type": "numeric"
+    },
+    {
+      "name": "lower",
+      "type": "numeric"
+    },
+    {
+      "name": "upper",
+      "type": "numeric"
+    },
+    {
+      "name": "status",
+      "type": "character"
+    },
+    {
+      "name": "point_status",
+      "type": "character"
+    },
+    {
+      "name": "interval_status",
+      "type": "character"
+    },
+    {
+      "name": "warning_count",
+      "type": "integer"
+    },
+    {
+      "name": "error",
+      "type": "character"
+    },
+    {
+      "name": "pairing_id",
+      "type": "character"
+    },
+    {
+      "name": "bootstrap_requested",
+      "type": "integer"
+    },
+    {
+      "name": "bootstrap_draws_available",
+      "type": "integer"
+    },
+    {
+      "name": "variance_method",
+      "type": "character"
+    },
+    {
+      "name": "inference_scope",
+      "type": "character"
+    }
+  ],
+  "unique_record_key": [
+    "sampling_design",
+    "overlap",
+    "estimand",
+    "scenario",
+    "method",
+    "replicate"
+  ],
+  "pairing_group": [
+    "sampling_design",
+    "overlap",
+    "estimand",
+    "replicate"
+  ],
+  "pairing_identity": "Original source pairing_id retained verbatim; not recreated from replicate number",
+  "missing_value_token": "NA",
+  "empty_character_fields": "Preserved as empty strings, distinct from NA",
+  "status_counts": {
+    "status": {
+      "ok": 608000
+    },
+    "point_status": {
+      "ok": 608000
+    },
+    "interval_status": {
+      "ok": 608000
+    }
+  },
+  "error_counts": [],
+  "multiline_records": 0,
+  "max_part_decoded_bytes": 33554432,
+  "encoding": "UTF-8",
+  "header_bytes": 302,
+  "header_sha256": "eaefe0b563562d32d07c35172d528ac955337ac71f0569ceeb2fdf083a10ea6b",
+  "record_serialization": "Original logical CSV record bytes and order retained; exact original header repeated in each part",
+  "source_reconstruction": "Decompress ordered parts; concatenate part 1 and all later parts after removing their identical first header line",
+  "parts": [
+    {
+      "file": "records-001.csv.gz",
+      "rows": 81749,
+      "first_source_row": 1,
+      "last_source_row": 81749,
+      "compressed_bytes": 2729067,
+      "decoded_bytes": 33554322,
+      "compressed_sha256": "074e29130c5df5b079ab5a987b14a84c9f18d15f9e1843a235d520a4903ef8b7",
+      "decoded_sha256": "f872fb38e238124f6589062d5d60e641f09c210f69f615f57e09dc2f71146a5c"
+    },
+    {
+      "file": "records-002.csv.gz",
+      "rows": 81785,
+      "first_source_row": 81750,
+      "last_source_row": 163534,
+      "compressed_bytes": 2731520,
+      "decoded_bytes": 33554218,
+      "compressed_sha256": "39cf8195634217f5aad336bf6f4923bcc3ced0eac3fa3bf807292ab9f3f79754",
+      "decoded_sha256": "cf24ace825fe9338c8d10a48c45f4cc8a1b45d7bd201faad1fb17fdbd6f3ed80"
+    },
+    {
+      "file": "records-003.csv.gz",
+      "rows": 82093,
+      "first_source_row": 163535,
+      "last_source_row": 245627,
+      "compressed_bytes": 2746959,
+      "decoded_bytes": 33553918,
+      "compressed_sha256": "71d7fa4f1415fdac8c2a110af4569f80dfebe73b63341333f41d736a5b2f6512",
+      "decoded_sha256": "1170b5152b87e91b21415129200323de7afe30f1254ae83e66c54d93e7bff10e"
+    },
+    {
+      "file": "records-004.csv.gz",
+      "rows": 82093,
+      "first_source_row": 245628,
+      "last_source_row": 327720,
+      "compressed_bytes": 2775456,
+      "decoded_bytes": 33554423,
+      "compressed_sha256": "018aff5050c16030af54cb1a16579c0a9c6954dd5608b4d5be0d1882e94a6f6a",
+      "decoded_sha256": "27944c5c0d9305a511edb9b692474a4724f8f1170c172fdde216365b06a3bb21"
+    },
+    {
+      "file": "records-005.csv.gz",
+      "rows": 81977,
+      "first_source_row": 327721,
+      "last_source_row": 409697,
+      "compressed_bytes": 2850479,
+      "decoded_bytes": 33554322,
+      "compressed_sha256": "e506d9dfff7dbeb59b64c40bbe17431591cb1abf050c5a3445030461ecbb8cfc",
+      "decoded_sha256": "9231574f62c6f15e7523a5a9ad2c970c39c5315f7b48df215ed1a7eaf518241a"
+    },
+    {
+      "file": "records-006.csv.gz",
+      "rows": 82194,
+      "first_source_row": 409698,
+      "last_source_row": 491891,
+      "compressed_bytes": 2849912,
+      "decoded_bytes": 33554080,
+      "compressed_sha256": "0535e0f12b94afb175aba0483ada48a393cdd07768ec34b43b06019205671bdc",
+      "decoded_sha256": "597e400a6cb53348bab663453809c4114e69882984ce64889b1e5235bc578ece"
+    },
+    {
+      "file": "records-007.csv.gz",
+      "rows": 82377,
+      "first_source_row": 491892,
+      "last_source_row": 574268,
+      "compressed_bytes": 2847267,
+      "decoded_bytes": 33553992,
+      "compressed_sha256": "80af31b8a6c96b0997645ac7bfeba9c64f4aadcbb1a1e784de9ea052714fcd5c",
+      "decoded_sha256": "c69518c2e1f0ad69b282b6128821a55f3122fe4dcecfbf411c79267c50f1f382"
+    },
+    {
+      "file": "records-008.csv.gz",
+      "rows": 33732,
+      "first_source_row": 574269,
+      "last_source_row": 608000,
+      "compressed_bytes": 1166563,
+      "decoded_bytes": 13739721,
+      "compressed_sha256": "e9154a9059e847ab9a9c0e9310335e7a43dc70cf0c731baa0b9bc0b19dc37fd2",
+      "decoded_sha256": "0ef695b35b7bf92b1b8ca9d9cb7e3d1555eea071fee3e6806f9d30aeed7f544a"
+    }
+  ],
+  "reporting_sources": [
+    {
+      "file": "simulations/paired_comparison_metrics.R",
+      "sha256": "64ad13c0eb380850e79f5f2ae0562f568b571916e2aef5f3d2c58c43513f4586"
+    },
+    {
+      "file": "simulations/original_wdsm/original_survey_reporting.R",
+      "sha256": "774e657263d23bedce30808004c6cd26204efec648f3ee1620b81089589f3cbd"
+    }
+  ],
+  "regeneration_scope": "Summary aggregation only, using unchanged reporting functions; no simulation, fitting, RNG or count generation"
+}

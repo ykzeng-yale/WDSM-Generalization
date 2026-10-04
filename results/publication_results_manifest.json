@@ -251,15 +251,15 @@
     },
     {
       "file": "results/README.md",
-      "sha256": "d23f2f9c1b846cabb09f3b70fe7e5829a2071597e9ccb41b559f2d10e715ff04"
+      "sha256": "c36d5e097fe60d572736a6c28d0a5f6e5780176ef9b2f24e704990ad36016ef9"
     },
     {
       "file": "results/principal_iid/README.md",
-      "sha256": "16c47bd498516194b5f2d7ef9a2dfab9a018ce145c149cdfdd1cf55c2f482200"
+      "sha256": "50bf4f72b485b582f6f7013fef9fafecad61c00e39214993e85f9d3b0d051e2a"
     },
     {
       "file": "results/lenis/README.md",
-      "sha256": "375bc72b887617f1ca5c9d1db1d1223a229a68a6ae575c94a5a9a957fc76ae51"
+      "sha256": "4760b0239df176642362560c03519f6840fbbda7f73bfe3e15c7e22e32acdb41"
     },
     {
       "file": "results/lenis/saved_inference/README.md",
@@ -280,6 +280,275 @@
       "rows": 16000,
       "sha256": "5fb42b1817fc00f7c2c84e51dd0b510274eabab67d7dbd8501d21432fe80978c",
       "source_sha256": "23d023aa4b052c4a87838537a7aae7fcf8bfddc257f0fcb03f650e24d3d5cd1e"
+    },
+    {
+      "file": "results/original_wdsm/records/manifest.json",
+      "sha256": "83d6160422010aca933211bba1f404300b036f50759770923105d5e3427b8194",
+      "rows": 608000,
+      "scope": "Archive manifest; row count describes records in its parts, not additional observations"
+    },
+    {
+      "file": "results/original_wdsm/records/records-001.csv.gz",
+      "rows": 81749,
+      "sha256": "074e29130c5df5b079ab5a987b14a84c9f18d15f9e1843a235d520a4903ef8b7",
+      "decoded_sha256": "f872fb38e238124f6589062d5d60e641f09c210f69f615f57e09dc2f71146a5c",
+      "compressed_bytes": 2729067,
+      "decoded_bytes": 33554322,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-002.csv.gz",
+      "rows": 81785,
+      "sha256": "39cf8195634217f5aad336bf6f4923bcc3ced0eac3fa3bf807292ab9f3f79754",
+      "decoded_sha256": "cf24ace825fe9338c8d10a48c45f4cc8a1b45d7bd201faad1fb17fdbd6f3ed80",
+      "compressed_bytes": 2731520,
+      "decoded_bytes": 33554218,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-003.csv.gz",
+      "rows": 82093,
+      "sha256": "71d7fa4f1415fdac8c2a110af4569f80dfebe73b63341333f41d736a5b2f6512",
+      "decoded_sha256": "1170b5152b87e91b21415129200323de7afe30f1254ae83e66c54d93e7bff10e",
+      "compressed_bytes": 2746959,
+      "decoded_bytes": 33553918,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-004.csv.gz",
+      "rows": 82093,
+      "sha256": "018aff5050c16030af54cb1a16579c0a9c6954dd5608b4d5be0d1882e94a6f6a",
+      "decoded_sha256": "27944c5c0d9305a511edb9b692474a4724f8f1170c172fdde216365b06a3bb21",
+      "compressed_bytes": 2775456,
+      "decoded_bytes": 33554423,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-005.csv.gz",
+      "rows": 81977,
+      "sha256": "e506d9dfff7dbeb59b64c40bbe17431591cb1abf050c5a3445030461ecbb8cfc",
+      "decoded_sha256": "9231574f62c6f15e7523a5a9ad2c970c39c5315f7b48df215ed1a7eaf518241a",
+      "compressed_bytes": 2850479,
+      "decoded_bytes": 33554322,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-006.csv.gz",
+      "rows": 82194,
+      "sha256": "0535e0f12b94afb175aba0483ada48a393cdd07768ec34b43b06019205671bdc",
+      "decoded_sha256": "597e400a6cb53348bab663453809c4114e69882984ce64889b1e5235bc578ece",
+      "compressed_bytes": 2849912,
+      "decoded_bytes": 33554080,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-007.csv.gz",
+      "rows": 82377,
+      "sha256": "80af31b8a6c96b0997645ac7bfeba9c64f4aadcbb1a1e784de9ea052714fcd5c",
+      "decoded_sha256": "c69518c2e1f0ad69b282b6128821a55f3122fe4dcecfbf411c79267c50f1f382",
+      "compressed_bytes": 2847267,
+      "decoded_bytes": 33553992,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/original_wdsm/records/records-008.csv.gz",
+      "rows": 33732,
+      "sha256": "e9154a9059e847ab9a9c0e9310335e7a43dc70cf0c731baa0b9bc0b19dc37fd2",
+      "decoded_sha256": "0ef695b35b7bf92b1b8ca9d9cb7e3d1555eea071fee3e6806f9d30aeed7f544a",
+      "compressed_bytes": 1166563,
+      "decoded_bytes": 13739721,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/manifest.json",
+      "sha256": "bbba36f87b202e209d9162067c323fbb78eac79ce22d44add9fa30bc8c5cf3e2",
+      "rows": 1800000,
+      "scope": "Archive manifest; row count describes records in its parts, not additional observations"
+    },
+    {
+      "file": "results/lenis/records/records-001.csv.gz",
+      "rows": 99861,
+      "sha256": "8cf67b1191c54ca92215b7feb9496a1e7406dbcdfb6b0997302057a8780a9653",
+      "decoded_sha256": "549c3f36af7e20653b75f299c27ff5a83ac25e2b9dae0e626270136853d82aea",
+      "compressed_bytes": 4919605,
+      "decoded_bytes": 33554391,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-002.csv.gz",
+      "rows": 99764,
+      "sha256": "d2e09cfd012e02196c17e76cd9ae71540df399900be81f417245a58eee7dbd55",
+      "decoded_sha256": "56b023a40040471bc4911db55bac34f6d27e81dbcdd524232cdae9d685f0b01b",
+      "compressed_bytes": 4912308,
+      "decoded_bytes": 33554359,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-003.csv.gz",
+      "rows": 99515,
+      "sha256": "9793c5bdc9d715424d8024489394acc64eefdb46fcb709afcfaabd295688907e",
+      "decoded_sha256": "dbd89211304f42a7f3e6b00dfabf4a59bb8012e0874e2701a0fe5bf2b5011402",
+      "compressed_bytes": 4903784,
+      "decoded_bytes": 33554409,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-004.csv.gz",
+      "rows": 99519,
+      "sha256": "1b5287961b32fac47caa5828b55417ac72e71d1e9de0cc7fcf4eedba35d4f0c8",
+      "decoded_sha256": "577e0edd02482a6ea7abf98fad119f423c3611c939d43ec2a3cc45eafc9ea235",
+      "compressed_bytes": 4903618,
+      "decoded_bytes": 33554188,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-005.csv.gz",
+      "rows": 99519,
+      "sha256": "8e410fa587cafc213d7707d822c8d6410e24a1a2d28cf3adddf8d6bf45af36a3",
+      "decoded_sha256": "4deaf41fdaa652c6fc0fab3522593caa302ef96b479dd3e6ebf57d0a792dd4a7",
+      "compressed_bytes": 4904135,
+      "decoded_bytes": 33554193,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-006.csv.gz",
+      "rows": 99517,
+      "sha256": "234612038b3f69da5afe18f17df8e0383ba648460606c2601053ba3ed9188618",
+      "decoded_sha256": "e3153a7e244b2db16d7b276ce3f58500724b5563def722be7ed1e9de63f9aafb",
+      "compressed_bytes": 4903363,
+      "decoded_bytes": 33554210,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-007.csv.gz",
+      "rows": 99525,
+      "sha256": "232361d1cfc1ed611152d2e5060285a9991d9f1149eb016f91a7ad485ae7c20c",
+      "decoded_sha256": "a6968ccb9438eb4f19fa3916699a4e29da54d5776a5ec23f448d58db47e81f49",
+      "compressed_bytes": 4901699,
+      "decoded_bytes": 33554321,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-008.csv.gz",
+      "rows": 99519,
+      "sha256": "4a2ce8dbd0ad011533eb620edb1a9ef88be8d626259a8c148b54bdb298f1648c",
+      "decoded_sha256": "08db8b6c1adbdccda006a807d4c69e0f218ad81edacbc37c4be61e0babe0d71a",
+      "compressed_bytes": 4901658,
+      "decoded_bytes": 33554223,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-009.csv.gz",
+      "rows": 99521,
+      "sha256": "5cb8ada1fe4527084b3d70b665d11086b62b999c5922393107255f070f507dc7",
+      "decoded_sha256": "cc784b75a6438b7ab1ebb21a5d65e3a566667d9e0dc87b77edee088394472d74",
+      "compressed_bytes": 4903996,
+      "decoded_bytes": 33554255,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-010.csv.gz",
+      "rows": 99519,
+      "sha256": "863a6644bc99003c488f97b8baaf109ef30a08aa9f94487b8ee177577b22d6e0",
+      "decoded_sha256": "226e5a9e4a6733dde78b0f86b37eb36e817956c47c090abef18994482aa6a256",
+      "compressed_bytes": 4903877,
+      "decoded_bytes": 33554370,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-011.csv.gz",
+      "rows": 99520,
+      "sha256": "7f8e943ab90c80743d83e0994a1a842ef152f02ada705cdbf7f04c03f52e1129",
+      "decoded_sha256": "3bfdb1233ea8d0505191ae3c5a2a10156eff1cdaa2a9d652fb84b1f80d09ad58",
+      "compressed_bytes": 4903450,
+      "decoded_bytes": 33554310,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-012.csv.gz",
+      "rows": 99512,
+      "sha256": "d02c188efba1930ccf73c6201682cb13a0292d161a2022e8f5b842d8df558be1",
+      "decoded_sha256": "a7a9fed26c852620d259f506919af4a0f32fc8ecdf6fa555870d11538d742f28",
+      "compressed_bytes": 4905303,
+      "decoded_bytes": 33554267,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-013.csv.gz",
+      "rows": 99530,
+      "sha256": "1a6582fa69e3a48ef1b29d6039a1a81608d4349191774b295902fa5c83473e92",
+      "decoded_sha256": "1dd1a55442d8f5de6f7d2d63c016cb882de01850fdc48039aedf01c732ee0f58",
+      "compressed_bytes": 4902922,
+      "decoded_bytes": 33554366,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-014.csv.gz",
+      "rows": 99525,
+      "sha256": "48e705e3b812d9438e0a1a366af058d78fc74889febd9b58235da7558640d3ab",
+      "decoded_sha256": "03d810698c65d5980a8efa83a8bfbe3cfbe9a66e6c81077d82cff8b68ac11bfe",
+      "compressed_bytes": 4901715,
+      "decoded_bytes": 33554113,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-015.csv.gz",
+      "rows": 99522,
+      "sha256": "f2b02c2572f2761ff7cb13db1e039b741d24ac38221dc96de6caec2e9d4a6280",
+      "decoded_sha256": "aef35f82abb20a24c6267a1e7aecf3f7fde37efdf482d61623a2768d26c3c10d",
+      "compressed_bytes": 4902372,
+      "decoded_bytes": 33554116,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-016.csv.gz",
+      "rows": 99520,
+      "sha256": "4d72586e6ff83edb424c1ae72dea97b03bdd52ee64b3d15e4fac05421bed7d44",
+      "decoded_sha256": "8f6e6b28bb518043cda50c94323a8ad3689615c71f9050f5b5f1b1dd43080497",
+      "compressed_bytes": 4904274,
+      "decoded_bytes": 33554422,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-017.csv.gz",
+      "rows": 99517,
+      "sha256": "569b7a83319b4bdd40fadf850acc2dc01387561683a8162fec0d363ec9510814",
+      "decoded_sha256": "8a5da02f4a326572573ba52e389121a175be95b7b7d4c9315507baf874b5059b",
+      "compressed_bytes": 4904031,
+      "decoded_bytes": 33554345,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-018.csv.gz",
+      "rows": 99530,
+      "sha256": "260ec750417912f975e25553f30d0d8d1df9c64f249029ea2c4474f0b29c5e21",
+      "decoded_sha256": "4bf795b2bd87df131571ea9662e4d71def7402871734256e123d30ceadc3ee14",
+      "compressed_bytes": 4902461,
+      "decoded_bytes": 33554202,
+      "omitted_local_provenance_columns": []
+    },
+    {
+      "file": "results/lenis/records/records-019.csv.gz",
+      "rows": 8045,
+      "sha256": "e6545e96e386ae8f783623dee622c58013cf1d9ee9b72ea712c88b08af0bdef8",
+      "decoded_sha256": "b57442a0ed148885c2442b7ad453965e14d940bd020394e748642bd9f166112b",
+      "compressed_bytes": 396881,
+      "decoded_bytes": 2714138,
+      "omitted_local_provenance_columns": []
+    }
+  ],
+  "compact_archives": [
+    {
+      "study": "original_wdsm",
+      "manifest": "results/original_wdsm/records/manifest.json",
+      "reaggregation_command": "Rscript simulations/reaggregate_compact_archive.R original_wdsm NEW_OUTPUT_DIR",
+      "scope": "Saved synthetic estimator records and summary aggregation, no raw-data/model regeneration"
+    },
+    {
+      "study": "lenis",
+      "manifest": "results/lenis/records/manifest.json",
+      "reaggregation_command": "Rscript simulations/reaggregate_compact_archive.R lenis NEW_OUTPUT_DIR",
+      "scope": "Saved synthetic estimator records and summary aggregation, no raw-data/model regeneration"
     }
   ]
 }

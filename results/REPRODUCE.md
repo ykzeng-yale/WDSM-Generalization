@@ -1,5 +1,10 @@
 # Reproducing the aggregate results
 
+This page covers the historical `primary/`, `supplement/`, `first_stage/` and
+`bounded_wdsm/` archives. Current principal iid, original WDSM and Lenis compact
+record commands and their execution scope are in the
+[results index and reproduction matrix](README.md).
+
 These commands reproduce preserved historical archives. The optional
 estimated-weight cells in `first_stage/` are outside the current supplied-weight
 WM framework; reproducing their arithmetic is not validation of that framework
@@ -132,4 +137,4 @@ This is a separate computation, not necessary for the saved-aggregate check. The
 
 ## Source-version boundary
 
-`results/provenance/*_snapshot.json` records historical relative-file SHA256 mappings. Those fingerprints document which source versions produced the results; the older source archives and raw per-replication records are not included in this aggregate-only export. Later documentation, provenance handling or new interfaces can differ in the current checkout. The deterministic check establishes compatibility of current benchmark helpers with the saved aggregate calculations; it does not claim a new current-source run occurred or certify every historical source byte is present. A bit-for-bit historical execution requires its matching source archive and runtime. Independent reviewers checked the full retained records before this aggregate export was prepared.
+`results/provenance/*_snapshot.json` records historical relative-file SHA256 mappings. Those fingerprints document which source versions produced the results; the older source archives and raw per-replication records for `primary/`, `supplement/` and `first_stage/` are not included in those aggregate-only exports. This exclusion does not describe the compact estimator records in the bounded, principal iid, original WDSM or Lenis archives. Later documentation, provenance handling or new interfaces can differ in the current checkout. The deterministic check establishes compatibility of current benchmark helpers with the saved aggregate calculations; it does not claim a new current-source run occurred or certify every historical source byte is present. A bit-for-bit historical execution requires its matching source archive and runtime. Independent reviewers checked the full retained records before this aggregate export was prepared.

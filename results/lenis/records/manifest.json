@@ -1,0 +1,362 @@
+{
+  "format": "wm_compact_csv_archive_v1",
+  "study": "lenis",
+  "scope": "Synthetic estimator-level records only; no participant samples, fitted models, graphs or count matrices",
+  "source_identity": "Corrected complete Lenis-inspired comparison: 72000 weighted-quick records replaced; 1728000 other records retained",
+  "source_csv_bytes": 606685906,
+  "source_csv_sha256": "ebb0e3aab0144ecaefe35b7343b4c5c9c41b076b1bdbf4d260cadab05bd4fe6b",
+  "rows": 1800000,
+  "planned_cells": 1800,
+  "requested_replicates_per_cell": 1000,
+  "schema": [
+    {
+      "name": "population_scenario",
+      "type": "integer"
+    },
+    {
+      "name": "multiplier",
+      "type": "integer"
+    },
+    {
+      "name": "response",
+      "type": "character"
+    },
+    {
+      "name": "replicate",
+      "type": "integer"
+    },
+    {
+      "name": "scenario",
+      "type": "character"
+    },
+    {
+      "name": "estimand",
+      "type": "character"
+    },
+    {
+      "name": "selected_n",
+      "type": "integer"
+    },
+    {
+      "name": "respondent_n",
+      "type": "integer"
+    },
+    {
+      "name": "method",
+      "type": "character"
+    },
+    {
+      "name": "target",
+      "type": "numeric"
+    },
+    {
+      "name": "estimate",
+      "type": "numeric"
+    },
+    {
+      "name": "raw_estimate",
+      "type": "numeric"
+    },
+    {
+      "name": "variance",
+      "type": "numeric"
+    },
+    {
+      "name": "lower",
+      "type": "numeric"
+    },
+    {
+      "name": "upper",
+      "type": "numeric"
+    },
+    {
+      "name": "source_coverage",
+      "type": "numeric"
+    },
+    {
+      "name": "status",
+      "type": "character"
+    },
+    {
+      "name": "point_status",
+      "type": "character"
+    },
+    {
+      "name": "interval_status",
+      "type": "character"
+    },
+    {
+      "name": "warning_count",
+      "type": "integer"
+    },
+    {
+      "name": "error",
+      "type": "character"
+    },
+    {
+      "name": "inference_scope",
+      "type": "character"
+    },
+    {
+      "name": "pairing_id",
+      "type": "character"
+    }
+  ],
+  "unique_record_key": [
+    "population_scenario",
+    "multiplier",
+    "response",
+    "estimand",
+    "scenario",
+    "method",
+    "replicate"
+  ],
+  "pairing_group": [
+    "population_scenario",
+    "multiplier",
+    "response",
+    "estimand",
+    "replicate"
+  ],
+  "pairing_identity": "Original source pairing_id retained verbatim; not recreated from replicate number",
+  "missing_value_token": "NA",
+  "empty_character_fields": "Preserved as empty strings, distinct from NA",
+  "status_counts": {
+    "status": {
+      "ok": 1799952,
+      "failed": 48
+    },
+    "point_status": {
+      "ok": 1799952,
+      "unavailable": 48
+    },
+    "interval_status": {
+      "ok": 1799952,
+      "unavailable": 48
+    }
+  },
+  "error_counts": [
+    {
+      "error": "Stratum (8) has only one PSU at stage 1",
+      "rows": 24
+    },
+    {
+      "error": "Stratum (7) has only one PSU at stage 1",
+      "rows": 24
+    }
+  ],
+  "multiline_records": 0,
+  "max_part_decoded_bytes": 33554432,
+  "encoding": "UTF-8",
+  "header_bytes": 294,
+  "header_sha256": "cfb470d85f65d630ee70424b96388a9fddbf30f3b9f10ef2301cddaf93c6fccb",
+  "record_serialization": "Original logical CSV record bytes and order retained; exact original header repeated in each part",
+  "source_reconstruction": "Decompress ordered parts; concatenate part 1 and all later parts after removing their identical first header line",
+  "parts": [
+    {
+      "file": "records-001.csv.gz",
+      "rows": 99861,
+      "first_source_row": 1,
+      "last_source_row": 99861,
+      "compressed_bytes": 4919605,
+      "decoded_bytes": 33554391,
+      "compressed_sha256": "8cf67b1191c54ca92215b7feb9496a1e7406dbcdfb6b0997302057a8780a9653",
+      "decoded_sha256": "549c3f36af7e20653b75f299c27ff5a83ac25e2b9dae0e626270136853d82aea"
+    },
+    {
+      "file": "records-002.csv.gz",
+      "rows": 99764,
+      "first_source_row": 99862,
+      "last_source_row": 199625,
+      "compressed_bytes": 4912308,
+      "decoded_bytes": 33554359,
+      "compressed_sha256": "d2e09cfd012e02196c17e76cd9ae71540df399900be81f417245a58eee7dbd55",
+      "decoded_sha256": "56b023a40040471bc4911db55bac34f6d27e81dbcdd524232cdae9d685f0b01b"
+    },
+    {
+      "file": "records-003.csv.gz",
+      "rows": 99515,
+      "first_source_row": 199626,
+      "last_source_row": 299140,
+      "compressed_bytes": 4903784,
+      "decoded_bytes": 33554409,
+      "compressed_sha256": "9793c5bdc9d715424d8024489394acc64eefdb46fcb709afcfaabd295688907e",
+      "decoded_sha256": "dbd89211304f42a7f3e6b00dfabf4a59bb8012e0874e2701a0fe5bf2b5011402"
+    },
+    {
+      "file": "records-004.csv.gz",
+      "rows": 99519,
+      "first_source_row": 299141,
+      "last_source_row": 398659,
+      "compressed_bytes": 4903618,
+      "decoded_bytes": 33554188,
+      "compressed_sha256": "1b5287961b32fac47caa5828b55417ac72e71d1e9de0cc7fcf4eedba35d4f0c8",
+      "decoded_sha256": "577e0edd02482a6ea7abf98fad119f423c3611c939d43ec2a3cc45eafc9ea235"
+    },
+    {
+      "file": "records-005.csv.gz",
+      "rows": 99519,
+      "first_source_row": 398660,
+      "last_source_row": 498178,
+      "compressed_bytes": 4904135,
+      "decoded_bytes": 33554193,
+      "compressed_sha256": "8e410fa587cafc213d7707d822c8d6410e24a1a2d28cf3adddf8d6bf45af36a3",
+      "decoded_sha256": "4deaf41fdaa652c6fc0fab3522593caa302ef96b479dd3e6ebf57d0a792dd4a7"
+    },
+    {
+      "file": "records-006.csv.gz",
+      "rows": 99517,
+      "first_source_row": 498179,
+      "last_source_row": 597695,
+      "compressed_bytes": 4903363,
+      "decoded_bytes": 33554210,
+      "compressed_sha256": "234612038b3f69da5afe18f17df8e0383ba648460606c2601053ba3ed9188618",
+      "decoded_sha256": "e3153a7e244b2db16d7b276ce3f58500724b5563def722be7ed1e9de63f9aafb"
+    },
+    {
+      "file": "records-007.csv.gz",
+      "rows": 99525,
+      "first_source_row": 597696,
+      "last_source_row": 697220,
+      "compressed_bytes": 4901699,
+      "decoded_bytes": 33554321,
+      "compressed_sha256": "232361d1cfc1ed611152d2e5060285a9991d9f1149eb016f91a7ad485ae7c20c",
+      "decoded_sha256": "a6968ccb9438eb4f19fa3916699a4e29da54d5776a5ec23f448d58db47e81f49"
+    },
+    {
+      "file": "records-008.csv.gz",
+      "rows": 99519,
+      "first_source_row": 697221,
+      "last_source_row": 796739,
+      "compressed_bytes": 4901658,
+      "decoded_bytes": 33554223,
+      "compressed_sha256": "4a2ce8dbd0ad011533eb620edb1a9ef88be8d626259a8c148b54bdb298f1648c",
+      "decoded_sha256": "08db8b6c1adbdccda006a807d4c69e0f218ad81edacbc37c4be61e0babe0d71a"
+    },
+    {
+      "file": "records-009.csv.gz",
+      "rows": 99521,
+      "first_source_row": 796740,
+      "last_source_row": 896260,
+      "compressed_bytes": 4903996,
+      "decoded_bytes": 33554255,
+      "compressed_sha256": "5cb8ada1fe4527084b3d70b665d11086b62b999c5922393107255f070f507dc7",
+      "decoded_sha256": "cc784b75a6438b7ab1ebb21a5d65e3a566667d9e0dc87b77edee088394472d74"
+    },
+    {
+      "file": "records-010.csv.gz",
+      "rows": 99519,
+      "first_source_row": 896261,
+      "last_source_row": 995779,
+      "compressed_bytes": 4903877,
+      "decoded_bytes": 33554370,
+      "compressed_sha256": "863a6644bc99003c488f97b8baaf109ef30a08aa9f94487b8ee177577b22d6e0",
+      "decoded_sha256": "226e5a9e4a6733dde78b0f86b37eb36e817956c47c090abef18994482aa6a256"
+    },
+    {
+      "file": "records-011.csv.gz",
+      "rows": 99520,
+      "first_source_row": 995780,
+      "last_source_row": 1095299,
+      "compressed_bytes": 4903450,
+      "decoded_bytes": 33554310,
+      "compressed_sha256": "7f8e943ab90c80743d83e0994a1a842ef152f02ada705cdbf7f04c03f52e1129",
+      "decoded_sha256": "3bfdb1233ea8d0505191ae3c5a2a10156eff1cdaa2a9d652fb84b1f80d09ad58"
+    },
+    {
+      "file": "records-012.csv.gz",
+      "rows": 99512,
+      "first_source_row": 1095300,
+      "last_source_row": 1194811,
+      "compressed_bytes": 4905303,
+      "decoded_bytes": 33554267,
+      "compressed_sha256": "d02c188efba1930ccf73c6201682cb13a0292d161a2022e8f5b842d8df558be1",
+      "decoded_sha256": "a7a9fed26c852620d259f506919af4a0f32fc8ecdf6fa555870d11538d742f28"
+    },
+    {
+      "file": "records-013.csv.gz",
+      "rows": 99530,
+      "first_source_row": 1194812,
+      "last_source_row": 1294341,
+      "compressed_bytes": 4902922,
+      "decoded_bytes": 33554366,
+      "compressed_sha256": "1a6582fa69e3a48ef1b29d6039a1a81608d4349191774b295902fa5c83473e92",
+      "decoded_sha256": "1dd1a55442d8f5de6f7d2d63c016cb882de01850fdc48039aedf01c732ee0f58"
+    },
+    {
+      "file": "records-014.csv.gz",
+      "rows": 99525,
+      "first_source_row": 1294342,
+      "last_source_row": 1393866,
+      "compressed_bytes": 4901715,
+      "decoded_bytes": 33554113,
+      "compressed_sha256": "48e705e3b812d9438e0a1a366af058d78fc74889febd9b58235da7558640d3ab",
+      "decoded_sha256": "03d810698c65d5980a8efa83a8bfbe3cfbe9a66e6c81077d82cff8b68ac11bfe"
+    },
+    {
+      "file": "records-015.csv.gz",
+      "rows": 99522,
+      "first_source_row": 1393867,
+      "last_source_row": 1493388,
+      "compressed_bytes": 4902372,
+      "decoded_bytes": 33554116,
+      "compressed_sha256": "f2b02c2572f2761ff7cb13db1e039b741d24ac38221dc96de6caec2e9d4a6280",
+      "decoded_sha256": "aef35f82abb20a24c6267a1e7aecf3f7fde37efdf482d61623a2768d26c3c10d"
+    },
+    {
+      "file": "records-016.csv.gz",
+      "rows": 99520,
+      "first_source_row": 1493389,
+      "last_source_row": 1592908,
+      "compressed_bytes": 4904274,
+      "decoded_bytes": 33554422,
+      "compressed_sha256": "4d72586e6ff83edb424c1ae72dea97b03bdd52ee64b3d15e4fac05421bed7d44",
+      "decoded_sha256": "8f6e6b28bb518043cda50c94323a8ad3689615c71f9050f5b5f1b1dd43080497"
+    },
+    {
+      "file": "records-017.csv.gz",
+      "rows": 99517,
+      "first_source_row": 1592909,
+      "last_source_row": 1692425,
+      "compressed_bytes": 4904031,
+      "decoded_bytes": 33554345,
+      "compressed_sha256": "569b7a83319b4bdd40fadf850acc2dc01387561683a8162fec0d363ec9510814",
+      "decoded_sha256": "8a5da02f4a326572573ba52e389121a175be95b7b7d4c9315507baf874b5059b"
+    },
+    {
+      "file": "records-018.csv.gz",
+      "rows": 99530,
+      "first_source_row": 1692426,
+      "last_source_row": 1791955,
+      "compressed_bytes": 4902461,
+      "decoded_bytes": 33554202,
+      "compressed_sha256": "260ec750417912f975e25553f30d0d8d1df9c64f249029ea2c4474f0b29c5e21",
+      "decoded_sha256": "4bf795b2bd87df131571ea9662e4d71def7402871734256e123d30ceadc3ee14"
+    },
+    {
+      "file": "records-019.csv.gz",
+      "rows": 8045,
+      "first_source_row": 1791956,
+      "last_source_row": 1800000,
+      "compressed_bytes": 396881,
+      "decoded_bytes": 2714138,
+      "compressed_sha256": "e6545e96e386ae8f783623dee622c58013cf1d9ee9b72ea712c88b08af0bdef8",
+      "decoded_sha256": "b57442a0ed148885c2442b7ad453965e14d940bd020394e748642bd9f166112b"
+    }
+  ],
+  "reporting_sources": [
+    {
+      "file": "simulations/paired_comparison_metrics.R",
+      "sha256": "64ad13c0eb380850e79f5f2ae0562f568b571916e2aef5f3d2c58c43513f4586"
+    },
+    {
+      "file": "simulations/lenis/lenis_reporting.R",
+      "sha256": "05a27325fb492e8c1ae255507b266df414447770f836719af28212d85de74463"
+    },
+    {
+      "file": "simulations/lenis/design.json",
+      "sha256": "3dae0a6a531a4b5cb168cf73b9b8dac3f7867423c5939d126e4b54ef9e241ea5"
+    }
+  ],
+  "regeneration_scope": "Summary aggregation only, using unchanged reporting functions; no simulation, fitting, RNG or count generation"
+}

@@ -49,10 +49,56 @@ high coverage. Pointwise Monte Carlo diagnostics flag266 undercoverage cells,
 familywise tests nor correctness decisions. No blanket method superiority or
 forced93–97% coverage criterion is imposed.
 
-Hashes and source links are in `provenance.json` and `artifact_hashes.csv`.
-The code reporting entry accepts analyst-supplied estimator-record CSVs and
-reconstructs the full plan without fits. This compact export does not include
-those608,000 per-replication records, so its CSVs alone cannot recompute empirical
-variances or paired MCSE from individual replications. Reproduction from new
-synthetic samples uses the explicit generation/run commands and their external
-source dependencies; the public direct-run branch has not been executed here.
+The [record archive](records/manifest.json) contains all 608,000 per-replication
+synthetic estimator records in eight gzipped CSV parts (20,697,223 compressed
+bytes in total). Each decoded part is at most 32 MiB. The 23-column schema retains
+the original estimates, variances, intervals, status/error fields, interval
+scope and actual dataset pairing IDs. Numbers and row order are preserved as
+original CSV bytes, with the same header repeated in each part. The manifest
+pins every compressed and decoded part and the reconstructed source CSV.
+Participant samples, fitted models, matching graphs and bootstrap count arrays
+are excluded. Historical aggregate hashes and source links remain in
+`provenance.json` and `artifact_hashes.csv`; the new archive has its own manifest.
+
+From the repository root, with R packages `jsonlite` and `digest` installed:
+
+```sh
+Rscript simulations/reaggregate_compact_archive.R original_wdsm /tmp/wm-original-summary
+```
+
+The output directory must be new, with an existing parent outside the checkout.
+The wrapper authenticates the full original CSV stream, reads explicit column
+types, and calls the unchanged `ows_report` and `wm_paired_comparison_metrics`.
+It writes `metrics.csv`, `audit.csv`, `point_success_diagnostics.csv`,
+`failure_records.csv`, `report.rds` and `aggregation_receipt.json`. It uses only
+the public compact records, with no model fits or private execution files.
+Recomputed RB, empirical variance, RE, paired MCSE, coverage and denominator
+audits can be compared with the existing summaries. Original CSV decimal
+serialization permits small roundoff differences from native RDS-based
+summaries; the previous comparison used a declared 1e-12 numeric tolerance,
+with status, missingness and denominators exact. Display labels in
+`all_cells.csv` add no statistical calculations. The 64 main rows select CorCor
+and methods WDSM_M3, WM_PS_M3, WM_DSM_M3, WM_X6_M3, PSM_M1, PGM_M1, DSM_M1 and
+SWPSM_full across the eight design/overlap/estimand combinations.
+
+The public archive command was executed once on all 608,000 records. All 608
+metric, audit and diagnostic rows and the 49 common metric fields in
+`all_cells.csv` and the 64-row `main_comparison.csv` agreed with the accepted
+outputs. The largest absolute numeric difference was 2.203e-13; the audit CSV
+was byte-identical. Comparison allowed absolute differences no greater than
+max(1e-12, 1e-10 times the larger absolute value), with text, missingness and
+denominators preserved. This validates summary reconstruction from the public
+archive, separately from the producer comparison below.
+
+Reproduction from new synthetic samples uses the separate generation/run
+commands and external source dependencies. The public producer was executed
+for replicate 1 in all four design/overlap settings: 608 method records and 32
+source cases. Of these, 456 historical input/count-paired records met the
+comparison tolerance. The 152 PoorOverlap retrospective records retained
+point/raw/target compatibility; 56 intervals independent of the supplied WM
+count matrix also matched. The other 96 historical shared-count intervals are
+unpaired descriptive comparisons because the last two count rows differed.
+The strict all 608 comparison failure is retained. All 96 within-run WDSM/WM-DSM
+reductions passed. This is qualified software integration evidence, not a
+fresh 1,000-replication study or complete historical graph/draw identity; see
+the [producer README](../../simulations/original_wdsm/README.md).
