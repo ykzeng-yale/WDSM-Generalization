@@ -1,0 +1,1 @@
+Completed Lenis-inspired synthetic comparison. All 1,800 method-setting summaries and audit rows are retained; plots are in `figures/`. This extends the benchmark and does not claim exact numerical replication of the published paper. See [results index](../README.md).

@@ -219,3 +219,7 @@ NHANES's full upstream merge/pregnancy processing and NSDUH's agency raw cohort
 remain caller-prepared; count matrices and participant/fitted objects are not
 distributed. [Application source provenance](applications/SOURCE_PROVENANCE.json)
 distinguishes these authored code exports from external source files and data.
+
+## Complete synthetic result archive (2026-10-03)
+
+The latest completed principal iid, original WDSM saved-inference, Lenis full comparison and Lenis saved-inference results are now in the [results index](results/README.md), with compact replicate records, figures, audits and a [SHA-256 manifest](results/publication_results_manifest.json). Manuscripts and participant data remain excluded. The index states execution and reproducibility limits.

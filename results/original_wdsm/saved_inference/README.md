@@ -1,0 +1,1 @@
+Saved PS/X6 analytic versus original fixed-reuse refit comparison, with identical original points and samples. Coverage, failures and paired variance diagnostics are retained. See [results index](../../README.md).

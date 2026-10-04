@@ -1,0 +1,1 @@
+Completed principal iid study. See [results index](../README.md) for counts, code, reporting definitions and reproducibility scope. Formal plots are in `figures/`; compressed per-replicate results are in `bound_records.csv.gz`.
