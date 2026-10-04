@@ -2,6 +2,12 @@
 
 Development extension of the `wdsmatch` R package. This repository contains package source, reproducible synthetic simulations and validation code. The manuscript and research source documents are maintained separately and are not included here.
 
+The [synthetic results archive](results/README.md) includes a public-record
+command to reproduce the principal study's summary tables. The
+[MEPS 2009 workflow](applications/meps2009/README.md) provides source preparation,
+matching, separate refit and contribution inference, and saved-graph balance;
+its participant-level inputs and outputs remain private.
+
 The current Weighted Matching framework uses supplied, known probability weights `W = w_Z(X)`, including `w(X)`. These supplied weights may vary between individuals. Matching scores, coordinate scales and outcome corrections may be estimated. Estimation error in the weights is outside this framework. Historical optional weight-fitting APIs and study artifacts retained from the earlier development snapshot are identified below; they are not current WM theory or validation claims.
 
 The matching engine matches each query to exactly `M` opposite-arm donors using Euclidean coordinates. Fixed-map functions accept supplied coordinates; `wm_wdsm_fit()` constructs fitted, arm-specific double scores; `wm_model_fit()` accepts finite lists of propensity and arm-specific prognostic models. Weights enter the target population, the query contributions and, for the original rule, each donor-set normalization. The original `wdsmatchATE()` and `wdsmatchATT()` interfaces remain available.
