@@ -1,0 +1,293 @@
+{
+  "frozen_utc": "2026-10-03T03:05:48.425838+00:00",
+  "frozen_before_complete_record_counts": true,
+  "source": {
+    "path": "source_selected.csv.gz",
+    "sha256": "b6cba338ac665e7f46cbe755016a202b6bbfb2fc3c129dd683aa70e2edad9ed9",
+    "decoded_sha256": "2fe7c07f7b764c9cc36b404fb5f6db8b110df4d74111fdb0cc4a12b844a42a00"
+  },
+  "dictionary": {
+    "path": "source_selected_dictionary.json",
+    "sha256": "fb5da9953f042e1aae2c9c69de5e4f69e20f72ffb0a195c8099466a0b8fd0a9c"
+  },
+  "target": "Supplied-weight standardized complete-record analysis population for each declared White-comparator pair; not all national adults and not exact author reproduction. Adjusted observed-outcome disparity, not a causal intervention on race.",
+  "pair_order": [
+    "Asian",
+    "Hispanic"
+  ],
+  "group_rules": {
+    "White": "HISPANX==2 and RACEX==1",
+    "Asian": "HISPANX==2 and RACEX==4",
+    "Hispanic": "HISPANX==1"
+  },
+  "base_filters_order": [
+    "pair_race",
+    "AGE42X>=18",
+    "SAQWT09F>0",
+    "TOTEXP09>=0"
+  ],
+  "Z": "White=1, comparator=0",
+  "Y": "TOTEXP09 unchanged including zero",
+  "W": "SAQWT09F unchanged, no response-weight estimation or multiplication by PERWT09F",
+  "fields_order": [
+    "AGE42X",
+    "SEX",
+    "MARRY42X",
+    "BMINDX53",
+    "PCS42",
+    "MCS42",
+    "RTHLTH42",
+    "DIABDX",
+    "HIBPDX",
+    "ASTHDX",
+    "MIDX",
+    "STRKDX",
+    "POVCAT09",
+    "EDUCYR",
+    "INSCOV09",
+    "REGION42",
+    "ACTLIM53",
+    "SOCLIM53",
+    "COGLIM53"
+  ],
+  "fields": {
+    "AGE42X": {
+      "type": "continuous",
+      "valid_levels": null,
+      "source_label": "AGE - R4/2 (EDITED/IMPUTED)",
+      "source_format": "-1 = '-1 INAPPLICABLE'\n  0 - 4 = '0 - 4 AGE'\n  5 - 17 = '5 - 17 AGE'\n  18 - 24 = '18 - 24 AGE'\n  25 - 44 = '25 - 44 AGE'\n  45 - 64 = '45 - 64 AGE'\n  65 - 85 = '65 - 85 AGE'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=AGE42X",
+      "reference": null
+    },
+    "SEX": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "SEX",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 MALE'\n  2 = '2 FEMALE'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=SEX",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "MARRY42X": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10
+      ],
+      "source_label": "MARITAL STATUS - R4/2 (EDITED/IMPUTED)",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 MARRIED'\n  2 = '2 WIDOWED'\n  3 = '3 DIVORCED'\n  4 = '4 SEPARATED'\n  5 = '5 NEVER MARRIED'\n  6 = '6 UNDER 16 - INAPPLICABLE'\n  7 = '7 MARRIED IN ROUND'\n  8 = '8 WIDOWED IN ROUND'\n  9 = '9 DIVORCED IN ROUND'\n  10 = '10 SEPARATED IN ROUND'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=MARRY42X",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "BMINDX53": {
+      "type": "continuous",
+      "valid_levels": null,
+      "source_label": "ADULT BODY MASS INDEX (>17) - RD 5/3",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -1 = '-1 INAPPLICABLE'\n  8.4 - 156 = '8.4 - 156.0 BODY MASS INDEX'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=BMINDX53",
+      "reference": null
+    },
+    "PCS42": {
+      "type": "continuous",
+      "valid_levels": null,
+      "source_label": "SAQ:PHY COMPONENT SUMMRY SF-12V2 IMPUTED",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -1 = '-1 INAPPLICABLE'\n  7.12 - 73.91 = '7.12 - 73.91'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=PCS42",
+      "reference": null
+    },
+    "MCS42": {
+      "type": "continuous",
+      "valid_levels": null,
+      "source_label": "SAQ:MNT COMPONENT SUMMRY SF-12V2 IMPUTED",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -1 = '-1 INAPPLICABLE'\n  1.45 - 74.85 = '1.45 - 74.85'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=MCS42",
+      "reference": null
+    },
+    "RTHLTH42": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "source_label": "PERCEIVED HEALTH STATUS - RD 4/2",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 EXCELLENT'\n  2 = '2 VERY GOOD'\n  3 = '3 GOOD'\n  4 = '4 FAIR'\n  5 = '5 POOR'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=RTHLTH42",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "DIABDX": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "DIABETES DIAGNOSIS (>17)",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=DIABDX",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "HIBPDX": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "HIGH BLOOD PRESSURE DIAG (>17)",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=HIBPDX",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "ASTHDX": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "ASTHMA DIAGNOSIS",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=ASTHDX",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "MIDX": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "HEART ATTACK (MI) DIAG (>17)",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=MIDX",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "STRKDX": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "STROKE DIAGNOSIS (>17)",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=STRKDX",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "POVCAT09": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "source_label": "FAMILY INC AS % OF POVERTY LINE - CATEGO",
+      "source_format": "1 = '1 POOR/NEGATIVE'\n  2 = '2 NEAR POOR'\n  3 = '3 LOW INCOME'\n  4 = '4 MIDDLE INCOME'\n  5 = '5 HIGH INCOME'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=POVCAT09",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "EDUCYR": {
+      "type": "continuous",
+      "valid_levels": null,
+      "source_label": "YEARS OF EDUC WHEN FIRST ENTERED MEPS",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  0 = '0 NO SCHOOL/KINDERGARTEN ONLY'\n  1 - 8 = '1 - 8 ELEMENTARY GRADES 1 - 8'\n  9 - 11 = '9 - 11 HIGH SCHOOL GRADES 9 - 11'\n  12 = '12 GRADE 12'\n  13 = '13 1 YEAR COLLEGE'\n  14 = '14 2 YEARS COLLEGE'\n  15 = '15 3 YEARS COLLEGE'\n  16 = '16 4 YEARS COLLEGE'\n  17 = '17 5+ YEARS COLLEGE'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=EDUCYR",
+      "reference": null
+    },
+    "INSCOV09": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2,
+        3
+      ],
+      "source_label": "HEALTH INSURANCE COVERAGE INDICATOR 09",
+      "source_format": "1 = '1 ANY PRIVATE'\n  2 = '2 PUBLIC ONLY'\n  3 = '3 UNINSURED'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=INSCOV09",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "REGION42": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "source_label": "CENSUS REGION - R4/2",
+      "source_format": "-1 = '-1 INAPPLICABLE'\n  1 = '1 NORTHEAST'\n  2 = '2 MIDWEST'\n  3 = '3 SOUTH'\n  4 = '4 WEST'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=REGION42",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "ACTLIM53": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "ANY LIMITATION WORK/HOUSEWRK/SCHL-RD 5/3",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=ACTLIM53",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "SOCLIM53": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "SOCIAL LIMITATIONS - RD 5/3",
+      "source_format": "-9 = '-9 NOT ASCERTAINED'\n  -8 = '-8 DK'\n  -7 = '-7 REFUSED'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=SOCLIM53",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    },
+    "COGLIM53": {
+      "type": "categorical",
+      "valid_levels": [
+        1,
+        2
+      ],
+      "source_label": "COGNITIVE LIMITATIONS - RD 5/3",
+      "source_format": "-8 = '-8 DK'\n  -1 = '-1 INAPPLICABLE'\n  1 = '1 YES'\n  2 = '2 NO'",
+      "codebook_url": "https://meps.ahrq.gov/mepsweb/data_stats/download_data_files_codebook.jsp?PUFId=H129&varName=COGLIM53",
+      "reference": "smallest observed valid code within the fixed pair complete-record cohort"
+    }
+  },
+  "continuous_validity": {
+    "AGE42X": {
+      "min": 0,
+      "max": 85,
+      "integer": true
+    },
+    "BMINDX53": {
+      "min": 8.4,
+      "max": 156
+    },
+    "PCS42": {
+      "min": 7.12,
+      "max": 73.91
+    },
+    "MCS42": {
+      "min": 1.45,
+      "max": 74.85
+    },
+    "EDUCYR": {
+      "min": 0,
+      "max": 17,
+      "integer": true
+    }
+  },
+  "missingness_policy": "Exclude a base-eligible row if any of the 19 fields has an official missing/inapplicable code; retain all reasons and raw codes. MARRY42X=6 is inapplicable. An unknown or out-of-codebook code is a validation error, not an added exclusion. No imputation, clipping, winsorization or recoding negative codes to no. Source imputation flags retained.",
+  "design_policy": "One common main-effects design per pair for all future methods. Continuous fields unchanged. Categorical fields exported as source code plus label; numeric design uses one-hot indicators for every observed valid level except smallest observed reference. Zero-count source levels documented, not represented by unidentified all-zero coefficients. Constant fields documented without adding unidentified columns. Same schema for every method on a pair; no interaction/nonlinear term selection, no scoring or fitting. Matching distance/scaling is a later declared algorithm choice.",
+  "summaries": "For each pair, overall and each race: n,sumW, weight ESS; covariate weighted mean and population-denominator SD or per-level weighted proportion. No outcome means or effects.",
+  "execution": "One preprocessing run after this frozen contract; no counts-based specification change; no statistical models or matching."
+}
