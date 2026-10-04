@@ -65,8 +65,9 @@ rejected. Larger or more efficient integrations require a separate procedure.
 
 Monte Carlo standard errors are empirical diagnostics, not rigorous error
 bounds or evidence that rare influential configurations have been sampled.
-A component with no nonzero samples is marked unresolved; its observed zero
-MCSE is uninformative. The exact inequality alpha >= M squared is reported
+A component with no nonzero samples, or with positive samples but zero
+empirical variance, is marked unresolved; its observed zero MCSE is
+uninformative. The exact inequality alpha >= M squared is reported
 as a diagnostic. Numerical estimates are never clipped to satisfy it, and
 previously published numerical tables are not used as exact lookup values.
 }

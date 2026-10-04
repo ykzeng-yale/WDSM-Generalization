@@ -227,7 +227,8 @@ wm_geometry <- function(M, d, draws = 4096L, seed = NULL, chunk_size = 256L) {
   dimnames(result$covariance) <- list(names_overlap, names_overlap)
   alpha <- sum(result$beta)
   zero_hits <- result$nonzero == 0
-  component_precision <- ifelse(zero_hits, "unresolved_zero_hits", "monte_carlo_estimate")
+  component_precision <- ifelse(zero_hits, "unresolved_zero_hits",
+    ifelse(result$beta_mcse == 0, "unresolved_zero_empirical_variance", "monte_carlo_estimate"))
   point_count <- 2 * M - overlap
   sphere_dimension <- d * point_count
   normalization <- data.frame(overlap = overlap, point_count = point_count,
@@ -238,7 +239,7 @@ wm_geometry <- function(M, d, draws = 4096L, seed = NULL, chunk_size = 256L) {
   structure(list(M = M, d = d, overlap = overlap, beta = result$beta,
     alpha = alpha, beta_mcse = result$beta_mcse, alpha_mcse = result$alpha_mcse,
     covariance = result$covariance, method = "uniform_sphere_monte_carlo",
-    precision_status = if (any(zero_hits)) "unresolved_components" else "monte_carlo_estimate",
+    precision_status = if (any(grepl("^unresolved", component_precision))) "unresolved_components" else "monte_carlo_estimate",
     component_precision = component_precision, draws = draws, requested_draws = draws,
     seed = seed, chunk_size = chunk_size, requested_chunk_size = requested_chunk,
     definition = definition, normalization = normalization,
@@ -247,6 +248,6 @@ wm_geometry <- function(M, d, draws = 4096L, seed = NULL, chunk_size = 256L) {
       jensen_lower_bound = M^2, below_jensen = alpha < M^2,
       rng_used = TRUE, coupled_components = TRUE,
       gaussian_allocation_cap = 1000000, coordinate_work_cap = 50000000,
-      note = "MCSE is empirical, not a rigorous error bound. Zero-hit component MCSEs are uninformative. Estimates are not projected onto the Jensen bound.")),
+      note = "MCSE is empirical, not a rigorous error bound. Zero-hit components and positive-hit components with zero empirical variance remain unresolved; their zero MCSEs are uninformative. Estimates are not projected onto the Jensen bound.")),
     class = c("wm_geometry", "list"))
 }

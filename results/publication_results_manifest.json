@@ -239,9 +239,9 @@
     },
     {
       "file": "simulations/lenis/lenis_no_saved_adapter.R",
-      "sha256": "e86d835e6ea1daf7ec8e8deaf67056232c9e8744eb12942ec97d17e48e067f58",
+      "sha256": "610fa4e4c87321e33ec3777985a70f3fd5da8c89df7693ac9d91a95896107a20",
       "source_sha256": "1caef3bc3f8fc726162d1b0bee76e12b5428352b22b0857bfe51d7ca40f011b6",
-      "change": "Comment header only; calculations unchanged."
+      "change": "Comment header and raw-PS section-reference label only; calculations unchanged."
     },
     {
       "file": "simulations/original_wdsm/summarize_saved_augmentation.R",
@@ -251,7 +251,7 @@
     },
     {
       "file": "results/README.md",
-      "sha256": "c36d5e097fe60d572736a6c28d0a5f6e5780176ef9b2f24e704990ad36016ef9"
+      "sha256": "2a95d5456dbc3f4bb376f247a1829d1ec2bfce1bbc35ceb440dae60b2ae578c7"
     },
     {
       "file": "results/principal_iid/README.md",

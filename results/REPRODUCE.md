@@ -43,7 +43,7 @@ The reconstructed `geometry.rds` contains the saved fields required by the bench
 
 ## Package and selected synthetic replications
 
-Install the package with `R CMD INSTALL .`. For a full source check, first install all suggested dependencies listed in `DESCRIPTION` (currently `testthat`, `knitr` and `rmarkdown`), then run `R CMD check --no-manual .`; checking the PDF manual separately requires a TeX toolchain. The package's declared R dependencies are listed in `DESCRIPTION`.
+Install the package with `R CMD INSTALL .`. For a full source check, first install all suggested dependencies listed in `DESCRIPTION`, then run `R CMD check --no-manual .`; checking the PDF manual separately requires a TeX toolchain. The package's declared R dependencies are listed in `DESCRIPTION`.
 
 To exercise the exact declared DGP/seed indexing on the current source without running a full production study, use new output names:
 

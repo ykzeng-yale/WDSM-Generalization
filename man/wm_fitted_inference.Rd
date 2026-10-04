@@ -57,7 +57,7 @@ wm_fitted_inference(fit, nuisance_influence = NULL,
   supported, under at least one stated scalar/full-X sampling-law alternative.
   The separate
   \code{"scalar_psm"} branch accepts PATE or PATT and uses the same
-  fitted probability in each used direction under the S12 conditions.
+  fitted probability in each used direction under the Supplement S11 conditions.
   \code{"regular_joint_d_gt2"} requires PATE and equal used dimensions d>2
   under the bounded known-weight regular baseline joint-sheet conditions below.
   \code{"critical_planar"} requires corrected PATE and both used dimensions exactly two.}
@@ -810,6 +810,6 @@ inference <- wm_fitted_inference(point, covariance_scope = "scalar_psm",
   scalar_model = model)
 if (inference$available) wm_bootstrap(inference, B = 999)
 # The target propensity is under P, not the observed law Q. These calls
-# do not verify S12 identification, centering, scalar-chart or root conditions.
+# do not verify Supplement S11 identification, centering, scalar-chart or root conditions.
 }
 }

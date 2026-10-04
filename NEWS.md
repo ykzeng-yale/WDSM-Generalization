@@ -1,5 +1,10 @@
 # wdsmatch 0.3.0.9000
 
+* Mark angular geometry components with zero empirical Monte Carlo variance
+  as unresolved, including components with positive hits. Preserve their
+  numerical estimates, MCSEs and covariance. Synchronize raw scalar inference
+  references with Supplement S11.
+
 * Add the common prepared-input, supplied-refit and WM application driver,
   deterministic selected39 ECLS decoding/construction and three case schemas.
   Complete saved-bundle reproduction retains all72 rows,12600 available draws

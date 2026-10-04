@@ -332,7 +332,7 @@ lns_augment <- function(bound, wm, saved_stack) {
   coefficients <- bound$compact$full_x_coefficients
   scope <- paste("Saved original Lenis No-response finite-population dependent-design comparison.",
     "Known W supplied once; correct full-X reference mean/current centering is a working inference premise.",
-    "No iid nominal-calibration, cluster/stratum, S12 raw-PS, transport or nested-law claim.",
+    "No iid nominal-calibration, cluster/stratum, Supplement S11 raw-PS, transport or nested-law claim.",
     "No refit, matching or bootstrap count/draw generation; no automatic variance agreement.")
   stacks <- assemblies <- rows <- list()
   for (family in c("PS", "DSM", "X6")) {

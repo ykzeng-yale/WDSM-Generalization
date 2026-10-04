@@ -913,6 +913,33 @@
         "numerical_limits": "Controlled donor integration error propagated; floating-point error not certified. Statistical consistency requires propagated integration error to vanish.",
         "population_assumptions_Normal_pivot_original_refit_or_coverage_certified_by_tests": false
       }
+    },
+    "round2_geometry_precision_delta": {
+      "scope": "Angular geometry precision-status and documentation correction only; statistical estimates, MCSEs, covariance and random generation unchanged.",
+      "source_sha256": {
+        "R/wm_geometry.R": "df9a927631d381d64cf0b2e1fee6603e2b59b2a0c0eaf49e01b5742f2a80eceb",
+        "man/wm_geometry.Rd": "b3b61000cd53192dbfa28155e8599e04a178ecdee98ee751fb51288df04ee609",
+        "tests/testthat/test-wm-geometry-precision.R": "eb1734425432282e0cc70dc5685a5dccad463c3f5312bac59c096c1e738cde42"
+      },
+      "validation_command": "Rscript --vanilla -e 'pkgload::load_all(\".\", quiet=TRUE); testthat::test_file(\"tests/testthat/test-wm-geometry-precision.R\", reporter=\"summary\", stop_on_failure=TRUE)'",
+      "runtime": "R 4.4.2",
+      "validation_scope": "Mocked integration summaries: positive-hit zero variance, zero hits and positive variance; numeric fields and diagnostics preserved.",
+      "before_fix": {
+        "failed_expectations": 2,
+        "other_expectations_passed": 22
+      },
+      "after_fix": {
+        "exit_code": 0,
+        "expectations": 24,
+        "failed": 0,
+        "skipped": false,
+        "errors": false,
+        "test_warnings": 0
+      },
+      "full_package_check_rerun": false,
+      "historical_package_check_source_pins_preserved": true,
+      "simulations_or_integrations_run": false,
+      "numerical_or_population_accuracy_certified": false
     }
   }
 }
