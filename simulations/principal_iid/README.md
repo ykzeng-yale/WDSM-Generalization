@@ -66,6 +66,20 @@ not a second sampling-variance method or a substitute for the original refit.
 The original numerical solver controls and accuracy checks are unchanged.
 A numerical root check does not certify an exact statistical root or the
 population assumptions. No failed slot is dropped, zero-filled or redrawn.
+
+The PS callers retain the fixed acceptance interval
+`(.Machine$double.eps, 1-.Machine$double.eps)` for all fitted probabilities.
+This is a finite-data double-precision rule, separate from statistical
+overlap. Under this unbounded Gaussian model its pass probability tends to
+zero along a consistent propensity-root sequence, so the exact-root
+statistical result is not an eventual-availability guarantee for the frozen
+implementation. A numerical realization of the unbounded result would
+additionally need a compatible precision, threshold and root/graph-error
+regime. This limitation does not identify a cause of the reported
+finite-sample undercoverage. The archived algorithm, probabilities and failure
+records remain unchanged; there is no clipping or silent replacement of a
+failed dataset or count draw.
+
 All 200 prediction-fit attempts and their coefficients/errors are retained;
 the public refit API may stop at its first callback error, in which case its
 later scalar positions are explicitly unattempted and its full interval is

@@ -86,6 +86,18 @@ coefficient-accuracy sequence. A calculated interval is conditional on
 the statistical and numerical-root requirements; no exact-root
 certificate or scalar refit-bootstrap guarantee is supplied.
 
+The existing logistic fitter requires every fitted probability to lie
+strictly between \code{.Machine$double.eps} and
+\code{1 - .Machine$double.eps}. This fixed numerical acceptance rule is
+separate from statistical overlap and can reject a finite regular root.
+For an unbounded Gaussian propensity index its pass probability tends to
+zero along a consistent root sequence; the bounded scalar inference model
+above is a separate statistical contract. This finite-data double-precision
+routine does not assert eventual numerical availability for an unbounded
+index. Such a numerical realization additionally needs a compatible
+precision, threshold and root/graph-error regime. Failed propensity fits
+remain named failures, without probability clipping or silent data redraw.
+
 Malformed arguments, including an invalid weight-model record or bandwidth,
 raise an error before fitting. After a point has been computed, runtime
 inference failures retain that point and return an unavailable interval

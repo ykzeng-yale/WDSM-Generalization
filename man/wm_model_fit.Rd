@@ -146,6 +146,18 @@ not exceed 1e-10, and the maximum scaled Newton step must not exceed
 min(1e-9,1/n). An exhausted root fit raises a \code{wm_wdsm_fit_error} with
 its recorded attempts. Rank failures and saturated fits remain failures.
 
+Every fitted propensity coordinate must lie strictly between
+\code{.Machine$double.eps} and \code{1 - .Machine$double.eps}. This is a
+fixed numerical acceptance rule, not statistical uniform overlap. It can
+reject a finite regular root; one unbounded Gaussian propensity index is
+enough for its pass probability to tend to zero along a consistent root
+sequence. Exact-root statistical results therefore do not establish eventual
+availability of this finite-data double-precision calculation. A numerical
+realization of an unbounded result additionally needs a compatible precision,
+threshold and root/graph-error regime. No probability clipping or silent
+dataset/count-draw replacement repairs a failure. PS-free model lists do not
+invoke this particular guard and retain their other numerical conditions.
+
 \code{"full_x"} sets graph transport to zero conditionally on correct
 full-X population correction means. It uses the complete contribution and
 nuisance covariance from \code{\link{wm_fitted_inference}}, with root-n

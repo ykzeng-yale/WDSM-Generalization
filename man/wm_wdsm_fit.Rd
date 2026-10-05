@@ -78,6 +78,17 @@ the two standardized scores, both squared scores, and their interaction.
 Regressions must be identifiable, pooled score variances positive, and fitted
 propensities numerically nonsaturated.
 
+Every fitted propensity must lie strictly between
+\code{.Machine$double.eps} and \code{1 - .Machine$double.eps}. This fixed
+numerical acceptance rule is separate from statistical overlap and can reject
+a finite regular root. For an unbounded Gaussian propensity index, its pass
+probability tends to zero along a consistent root sequence. The statistical
+result for exact roots does not establish eventual availability of this
+finite-data double-precision calculation. A numerical realization of that
+unbounded result would additionally need a compatible precision, threshold
+and root/graph-error regime. The existing guard and failure accounting remain;
+probabilities are not clipped and datasets or count draws are not silently redrawn.
+
 Matching uses exact Euclidean distance on these two-dimensional coordinates,
 with original row index breaking exact ties by default. The optional
 \code{"source_random"} policy follows donor arm zero then one and ascending

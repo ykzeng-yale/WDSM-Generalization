@@ -12,6 +12,11 @@ The current Weighted Matching framework uses supplied, known probability weights
 
 The matching engine matches each query to exactly `M` opposite-arm donors using Euclidean coordinates. Fixed-map functions accept supplied coordinates; `wm_wdsm_fit()` constructs fitted, arm-specific double scores; `wm_model_fit()` accepts finite lists of propensity and arm-specific prognostic models. Weights enter the target population, the query contributions and, for the original rule, each donor-set normalization. The original `wdsmatchATE()` and `wdsmatchATT()` interfaces remain available.
 
+The [theory and method guide](docs/theory_method_guide.md) maps the existing
+matching, correction, variance and refit APIs to their complete nuisance inputs
+and statistical conditions. It distinguishes corrected full-X PS matching from
+raw scalar PSM and contribution inference from original fixed-reuse refitting.
+
 For iid observations with law Q and fixed weights W=w_Z(X), the target law is dP/dQ=W/E_Q(W). PATE averages the causal effect under P; PATT averages it among treated individuals under P. Weights may depend on treatment and covariates, with covariate-only weights as a special case. Recovering an external population using sampling or response weights requires the corresponding identification assumptions. Balancing weights also define a target through this law; their name alone does not establish identification or the required residual centering.
 
 ## Installation
@@ -59,6 +64,18 @@ wdsm_att <- wm_wdsm_fit(Y, Z, W, ps_design, pg_design,
 ```
 
 The default `inference = "none"` withholds standard errors and intervals. Set `inference = "full_x"` to request the conditional fitted-score variance, including all PS/PG/standardization/correction influences and their covariance with matching contributions. Correct full-X correction means, independent observations, identification, the complete regular root and the applicable baseline/current score geometry must be justified. The finite-moment d>=2 full-X alternative in `?wm_fitted_inference` permits unbounded outcomes and nuisance influences, retaining bounded smooth correct predictions, finite `2+delta` moments of the full influence's conditional design mean, and uniformly bounded conditional `2+delta` residual and centered-influence moments. The separate complete Gaussian route permits unbounded supplied weights and correct full-X predictions under exact design/noise-projection graph determination, integrated uniform current-graph moments, prediction derivative/Hessian envelopes, the actual slope limit and complete influence conditions. Its source double-score chart/minor and propensity-interaction restrictions remain application premises; a misspecified PS minor needs separate verification. Every PS/PG/centering/scaling/correction equation and covariance block remains. Selecting an option or obtaining a converged fit does not verify the population or numerical-root/graph conditions. Other own-field/estimated-transport routes retain their bounded assumptions. The examples illustrate the interface. Weights and optional offsets are known; estimated-weight uncertainty, unrestricted learned maps and cluster/stratum sampling dependence remain outside this wrapper's scope.
+
+The WDSM, model-list and legacy propensity fitters require every fitted
+probability to lie strictly between
+`.Machine$double.eps` and `1-.Machine$double.eps`. This fixed numerical
+acceptance rule is separate from statistical overlap and can reject a finite
+regular root. For an unbounded Gaussian propensity index, its pass probability
+tends to zero along a consistent root sequence. The exact-root statistical
+result therefore does not establish eventual availability of this finite-data
+double-precision implementation. An asymptotically faithful numerical
+realization would need a compatible precision, threshold and root/graph-error
+regime. Fits and requested replicates that fail remain failures; probabilities
+are not clipped and datasets or count draws are not silently redrawn.
 
 No bootstrap is run by this fitting wrapper. The common `wm_bootstrap()` interface supports the original count-refit calculation with `method = "fixed_reuse"`, supplied counts, and an explicit callback that returns complete refitted mean predictions. Passing the nested matching fit without that callback keeps its predictions fixed and does not account for the complete fitted-score pipeline. Contribution and count-refit procedures can have different finite-sample variances. Legacy `wdsmatchATE()` and `wdsmatchATT()` interfaces remain unchanged.
 
