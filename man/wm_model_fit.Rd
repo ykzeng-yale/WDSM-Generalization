@@ -253,7 +253,14 @@ the common fitted-inference interface's scalar branches. The source_random
 policy remains point-only and does not receive inference arguments.
 
 No bootstrap is run. A fixed-map bootstrap of the nested \code{fit} does not
-account for this complete fitted pipeline. Known offsets and supplied weights
+account for this complete fitted pipeline. Pass the whole retained wrapper to
+\code{wm_bootstrap}: contribution replication uses its declared full-X or
+explicitly prepared public inference, and \code{method="fixed_reuse"} with
+counts and \code{refit=NULL} refits the default complete quadratic pipeline
+with the same full-n counts, weights and controls while retaining the original
+graph and reuse. Local-polynomial or quadratic-QR correction requires an
+explicit compatible refit callback for that method. Preparation or successful
+replication does not verify any sampling/refit-law premise. Known offsets and supplied weights
 are held fixed; their estimation uncertainty and dependent cluster/stratum
 inference are outside this wrapper's scope.
 }
@@ -282,4 +289,4 @@ its quadratic correction. Default outputs and legacy dispatch are unchanged.
 
 }
 \seealso{\code{\link{wm_wdsm_fit}}, \code{\link{wm_match}},
-  \code{\link{wm_fit}}, \code{\link{wm_fitted_inference}}}
+  \code{\link{wm_fit}}, \code{\link{wm_bootstrap}}, \code{\link{wm_fitted_inference}}}

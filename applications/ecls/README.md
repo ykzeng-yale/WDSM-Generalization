@@ -70,8 +70,13 @@ nonresponse multiplier or estimated-weight model is added.
 
 ## Construct the corrected selected data
 
+Install `digest` and `jsonlite` before this step. Run the following block from
+the repository root; both the ECLS constructor and common prepared-input
+adapter must be loaded.
+
 ```r
 source("applications/ecls/construct_selected_ecls.R")
+source("applications/common/prepared_input.R")
 decoder_receipt <- jsonlite::fromJSON("/your/local/new-decoded-directory/semantic_decoding_receipt.json",
                                     simplifyVector=FALSE)
 constructed <- wm_ecls_read_views(
@@ -109,6 +114,28 @@ reference-category records. All9 PATE intervals stayed unavailable; PATT's200
 control refits remained available. The code preserves those failures rather
 than reducing B or dropping columns. It does not promise the same count pattern
 for a separately supplied stream, or nominal coverage in this real dataset.
+
+The original participant/count archives are not distributed. For a new analysis,
+declare a new stream and generate the full-row multinomial counts once after
+checking the adapter's retained row order:
+
+```r
+RNGkind("Mersenne-Twister", "Inversion", "Rejection")
+set.seed(20261005)
+count_start <- .Random.seed
+counts <- rmultinom(200, a$n, rep(1 / a$n, a$n))
+count_ids <- a$id
+count_provenance <- list(seed = 20261005, RNGkind = RNGkind(),
+  R_version = R.version.string, start_state = count_start,
+  end_state = .Random.seed, protocol = "Multinomial(n;1/n,...,1/n)",
+  matrix_sha256 = digest::digest(counts, algo = "sha256"))
+```
+
+Bind those rows, counts and provenance in the common driver as described in
+[`APPLICATION_PIPELINE.md`](../APPLICATION_PIPELINE.md). This creates a new
+count stream; it does not reproduce the historical 69-column failure pattern.
+Do not redraw columns that lose model support or compute intervals from only
+successful columns.
 
 The scale-score fields C1R4RSCL/C1R4MSCL/C6R4MSCL are not theta scores. The
 [NCES2010-052 theta erratum](https://nces.ed.gov/pubs2010/2010052.pdf) does not

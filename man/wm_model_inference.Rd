@@ -8,7 +8,7 @@ wm_model_inference(object, covariance_scope,
   max_influence_elements = 5e7, quadratic_control = NULL)
 }
 \arguments{
-\item{object}{A retained \code{wm_model_fit} result. The complete nuisance influence
+\item{object}{A retained \code{wm_model_fit} or \code{wm_wdsm_fit} result. The complete nuisance influence
 matrix, or its complete named estimating equations and Jacobian, and the required
 prediction/reference derivatives must already be retained. A point-only
 quadratic fit that omitted its influence matrix is not refitted.}

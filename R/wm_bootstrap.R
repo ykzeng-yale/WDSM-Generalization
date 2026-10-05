@@ -10,6 +10,10 @@
 #'   or complete corrected Gaussian variance in regular_joint_d_gt2, or prepared
 #'   nested quadratic conditional-law inputs with replication_available = TRUE.
 #'   For fixed_reuse, an ordinary self-normalized \code{wm_match} result.
+#'   A retained \code{wm_wdsm_fit} or \code{wm_model_fit} is also accepted:
+#'   contribution replication uses its declared full-X or explicitly prepared
+#'   public inference; fixed_reuse refits the default complete quadratic
+#'   prediction pipeline with the supplied counts unless a callback is supplied.
 #' @param B Positive integer number of draws, at least two for fixed_reuse.
 #'   With supplied counts,
 #'   infer their number of columns when B is omitted; explicit B must agree.
@@ -40,6 +44,9 @@
 #'   mean0 and, for PATE, mean1 predictions. Only used with fixed_reuse.
 #'   NULL retains the original predictions; supplied callbacks perform any
 #'   intended nuisance refitting without changing graph, weights or reuse.
+#'   For a fitted wrapper, NULL instead refits its retained default PS/PG,
+#'   pooled center/variance and complete quadratic correction; other correction
+#'   methods require an explicit compatible callback.
 #' @return A list with \code{root_n_draws}, multiplier or raw mixture draws on the
 #'   root-n scale; \code{draws}, estimates shifted by those draws divided by
 #'   \code{sqrt(n)}; exact \code{conditional_root_n_variance} and
@@ -134,6 +141,10 @@ wm_bootstrap <- function(object, B = 999L, seed = NULL, conf.level = 0.95,
                          chunk_size = 65536L, counts = NULL,
                          method = c("contribution", "fixed_reuse"), refit = NULL) {
   method <- match.arg(method)
+  if (inherits(object, "wm_wdsm_fit") || inherits(object, "wm_model_fit")) {
+    return(.wm_fitted_wrapper_bootstrap(object, B, missing(B), seed, conf.level,
+      interval, chunk_size, counts, method, refit))
+  }
   if (inherits(object, "wm_fitted_inference") &&
       identical(object$status, "model_quadratic_contrast_inputs_ready")) {
     if (method != "contribution" || !is.null(refit)) {

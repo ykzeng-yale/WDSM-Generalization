@@ -24,6 +24,11 @@ wm_bootstrap_refit <- function(object, counts, refit = NULL, conf.level = 0.95) 
     stop("counts must be an n-by-B multinomial count matrix with B >= 2 and column sums n.",
          call. = FALSE)
   }
+  if (!is.null(rownames(counts)) &&
+      !identical(rownames(counts), as.character(seq_len(n)))) {
+    stop("Count row labels must be original observation indices 1,...,n in order.",
+         call. = FALSE)
+  }
   if (!is.null(refit) && !is.function(refit)) {
     stop("refit must be NULL or a function of one multiplicity vector.", call. = FALSE)
   }

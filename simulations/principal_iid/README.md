@@ -89,6 +89,24 @@ separate.
 
 ## Commands
 
+The published experiment is bound to its original source inventory. Use a
+separate frozen checkout for fresh truth/case generation; current package
+development includes later diagnostic/interface changes and intentionally
+does not rewrite that inventory. From the current repository root:
+
+```sh
+git worktree add --detach ../wm-principal-frozen f4acca0689b25625b0494c5daf965bc38e4a59bc
+cd ../wm-principal-frozen
+```
+
+All 53 declared source hashes match this public commit. The commands below run
+inside that checkout and load its `R/` sources directly; they do not require
+replacing an installed package. The frozen checkout restores the declared
+producer identity, not a guarantee of exact statistical roots, numerical
+availability or coverage. The current numerical qualification above still
+applies. To reconstruct the existing public summary tables without fitting,
+use `results/reproduce_principal_iid.py` from the current checkout instead.
+
 Use R 4.4.2 with `digest` and `jsonlite` already installed, and Python 3 with its
 standard library. The scripts install nothing. Set numerical threads before R:
 

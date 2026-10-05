@@ -61,8 +61,8 @@
 
 .wm_mi_structure <- function(object) {
   object <- .wm_reciprocal_list(object, "object")
-  if (!inherits(object, "wm_model_fit")) {
-    stop("object must be a retained wm_model_fit result.", call. = FALSE)
+  if (!inherits(object, "wm_model_fit") && !inherits(object, "wm_wdsm_fit")) {
+    stop("object must be a retained wm_model_fit or wm_wdsm_fit result.", call. = FALSE)
   }
   fit <- .wm_reciprocal_list(object$fit, "object$fit")
   if (!inherits(fit, "wm_match") || !identical(fit$method, "self_normalized")) {

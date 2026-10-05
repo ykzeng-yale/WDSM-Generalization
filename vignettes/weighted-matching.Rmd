@@ -1,0 +1,158 @@
+---
+title: "Weighted Matching: estimation and inference"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Weighted Matching: estimation and inference}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(wdsmatch)
+```
+
+`wdsmatch` implements fixed-count matching with supplied positive probability
+weights. The original self-normalized donor share is
+`W_j / sum(W_selected)`. Each query has exactly `M` distinct opposite-arm
+donors, with reuse permitted across queries. PATE uses the all-row weighted
+target; PATT uses the treated weighted target and only the control imputation.
+
+This tutorial runs small synthetic interface examples. It is not a coverage
+experiment or a verification of the assumptions needed for causal
+identification, residual centering, geometry or fitted-score inference. Weights
+are known functions of treatment and covariates; they are not estimated or
+refitted. No dependent-survey cluster/stratum inference is supplied.
+
+## Prepare rows and weights
+
+```{r data}
+set.seed(928)
+n <- 400L
+X <- cbind(x1 = runif(n, -1, 1), x2 = runif(n, -1, 1))
+Z <- rbinom(n, 1, plogis(-0.2 + 0.5 * X[, "x1"] - 0.3 * X[, "x2"]))
+W <- exp(0.3 * Z + 0.2 * X[, "x1"])
+Y <- 1 + X[, "x1"] + 0.4 * X[, "x2"] +
+  Z * (0.8 + X[, "x2"]) + runif(n, -0.5, 0.5)
+```
+
+All inputs keep the same original rows. Multiplying every W by a common
+positive constant leaves the target ratios and self-normalized donor shares
+unchanged. The matching engine uses Euclidean coordinates as supplied; choose
+and retain the intended scaling explicitly. It does not duplicate rows using W.
+
+## Supplied coordinates and fitted correction
+
+```{r fixed-map}
+fixed_ate <- wm_fit(Y, Z, W, scores0 = X, M = 3,
+                    estimand = "PATE", regression = "polynomial", degree = 2)
+fixed_att <- wm_fit(Y, Z, W, scores0 = X, M = 3,
+                    estimand = "PATT", regression = "polynomial", degree = 2)
+c(PATE = fixed_ate$estimate, PATT = fixed_att$estimate)
+```
+
+`wm_fit()` uses a complete weighted polynomial or the specified tensor spline
+in each arm's own matching variables. For supplied predictions, use `wm_match()`
+instead. `scores1` can specify a different PATE matching map; PATT needs only
+`scores0`. Both APIs retain the graph, donor shares and weighted incoming reuse.
+Basis size/allocation guards remain, and the positive-degree polynomial builder
+supports up to 100 coordinates. A supplied-map theoretical result does not
+remove these computational limits.
+
+The ordinary row variance/contribution calculation requires its documented
+strong graph-field residual centering and feasible-correction conditions. A
+distinct-map reciprocal inference calculation has a separate bounded contract.
+An available point or SE does not establish those premises.
+
+## Fitted arm-specific double scores
+
+Declare the intended intercept and covariate columns explicitly:
+
+```{r fitted-dsm}
+D <- cbind(intercept = 1, X)
+dsm <- wm_wdsm_fit(Y, Z, W, ps_design = D, pg0_design = D,
+                   pg1_design = D, M = 3, estimand = "PATE",
+                   inference = "full_x")
+dsm_att <- wm_wdsm_fit(Y, Z, W, ps_design = D, pg0_design = D,
+                       M = 3, estimand = "PATT", inference = "full_x")
+c(PATE = dsm$estimate, PATT = dsm_att$estimate)
+```
+
+The wrapper fits a shared probability-weighted PS, separate ordinary arm PG
+models, pooled score centers/scales and supplied-W complete quadratic
+correction. Its matching maps are `(PS, PG0)` and `(PS, PG1)`; PATT omits unused
+treated prediction blocks. Set `ps_weighting="unit"` for the original unweighted
+PS-fitting convention while retaining W in the estimator and correction.
+
+`inference="none"` is the point-only default. The explicit `"full_x"` request
+includes the full joint PS/PG/scaling/correction influence and covariance,
+conditional on correct full-X predictions and the applicable actual-root,
+current-graph, moment and numerical-transfer conditions. A correct PS alone
+does not establish this route. Finite model lists can be fitted with
+`wm_model_fit()`; their matching dimension and complete nuisance dimension
+are different. Raw scalar PSM uses a separate documented `scalar_psm` route,
+not the corrected double-score statistic.
+
+## Contribution replication
+
+```{r contribution}
+contribution <- wm_bootstrap(dsm, B = 99, seed = 17,
+                              method = "contribution", conf.level = 0.95)
+contribution$conf.int
+```
+
+This public fitted-wrapper call binds the retained complete inference inputs
+and applies the selected contribution operator. It does not refit nuisance
+models or rebuild the matching graph. Ordinary Gaussian contribution intervals
+use their analytic conditional variance; B controls generated draws, not that
+analytic variance. Other covariance scopes can be prepared explicitly with
+`wm_model_inference()` or `wm_fitted_inference()`. Critical generally
+non-Gaussian routes have different interval options and are not selected by
+this example.
+
+## Original fixed-reuse count refitting
+
+Generate the counts once and share them across intended comparisons:
+
+```{r refit}
+set.seed(29)
+counts <- rmultinom(49, n, rep(1 / n, n))
+refit_ate <- wm_bootstrap(dsm, method = "fixed_reuse", counts = counts)
+refit_att <- wm_bootstrap(dsm_att, method = "fixed_reuse", counts = counts)
+rbind(PATE = refit_ate$conf.int, PATT = refit_att$conf.int)
+refit_ate$variance_divisor
+```
+
+For default quadratic fitted wrappers, this call refits the complete retained
+PS/PG/scaling/correction pipeline using the same full-n multiplicities in every
+active block. W, the original donors and incoming reuse remain fixed. Replicate
+PATE/PATT denominators use the corresponding counted target weights. The
+original variance convention is divisor B, and intervals are centered on the
+original point. Contribution and refit variances need not agree in finite data.
+
+For a nested `wm_match` object, `refit=NULL` holds predictions fixed. Supply a
+callback returning `mean0` and, for PATE, `mean1` to implement the intended
+complete refit or a separately proved compatible prediction-only procedure.
+Nondefault local-polynomial/QR corrections require such an explicit callback;
+they are not silently replaced by quadratic fits.
+
+Every prescribed column must succeed. A support/fit failure stops the
+calculation; do not delete the column, fill it with zero or redraw it. Fixed-B
+replication has Monte Carlo variation. Sampling validity and a growing-B result
+need their stated refit, agreement, moment and all-draw numerical conditions.
+
+## Options and reproducibility
+
+Use `?wm_match`, `?wm_fit`, `?wm_wdsm_fit`, `?wm_model_fit`,
+`?wm_bootstrap` and `?wm_bootstrap_refit` for argument and return contracts.
+Weights remain supplied and known in the current framework. The logistic
+fitters reject probabilities outside their fixed numerical acceptance interval;
+that finite-data check does not establish asymptotic numerical availability
+under an unbounded propensity index.
+
+Record `sessionInfo()`, the actual package/source commit, target, M, maps,
+scaling, models, count stream and failed draws. The source repository supplies
+separate principal-study, WDSM and Lenis recipes and saved-result replay.
+Those workflows are excluded from the installed package. Reproducing a frozen
+producer requires its specified checkout rather than silently updating its
+source hashes to the latest package.

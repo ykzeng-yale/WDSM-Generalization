@@ -23,7 +23,10 @@ supplies the scoped nested quadratic Gaussian-mixture law described below.
 Mixed scalar/higher-dimensional graphs and other generic scalar scopes
 are unsupported.
 For fixed-reuse replication, an ordinary self-normalized \code{wm_match}
-result with supplied matching maps of any dimension.}
+result with supplied matching maps of any dimension. Retained
+\code{wm_wdsm_fit} and \code{wm_model_fit} wrappers are also supported:
+contribution replication requires their declared full-X or explicitly prepared
+public inference, while fixed-reuse replication uses the retained original fit.}
 \item{B}{Positive integer number of draws, at least two for fixed-reuse replication.
 For supplied counts, B is
 inferred from their number of columns when omitted. An explicit B must equal
@@ -59,7 +62,11 @@ columns. The array alone cannot verify its multinomial draw law.}
 \item{method}{\code{"contribution"} (default) or \code{"fixed_reuse"}.}
 \item{refit}{Optional function of one full-n multiplicity vector returning a
 list of mean0 and, for PATE, mean1 predictions. Only supported with
-\code{method = "fixed_reuse"}. NULL retains the original predictions.
+\code{method = "fixed_reuse"}. For a \code{wm_match} or \code{wm_fit}, NULL
+retains the original predictions. For a fitted \code{wm_wdsm_fit} or
+\code{wm_model_fit} wrapper, NULL refits the retained default complete quadratic
+prediction pipeline using each supplied count vector. Other correction methods
+require an explicit compatible callback.
 The callback performs any intended nuisance refitting without changing the
 original graph, individual weights or weighted reuse.}
 }
@@ -80,6 +87,38 @@ covariance-only local-index graphs; the original estimator graph and point are
 retained.
 }
 \details{
+Pass a fitted wrapper directly, for example
+\code{wm_bootstrap(fitted, method = "fixed_reuse", counts = counts)}.
+For its default quadratic correction and \code{refit = NULL}, the adapter
+refits every declared PS and used-arm PG model, pooled centers and variances,
+and complete weighted quadratic correction with the same full-n multiplicities.
+PS fits retain their declared probability or unit fitting weights, PG fits use
+multiplicity only, and corrections use multiplicity times supplied weight.
+Known offsets, individual weights, original matching graph and incoming loads
+remain fixed. Original solver controls and accuracy-only refinement are used;
+any failed prescribed refit stops the whole calculation. No graph is rebuilt.
+Local-polynomial and quadratic-QR corrections have no automatic count-refit
+adapter; supply their justified compatible callback explicitly. Neither this
+execution nor a converged refit verifies the sampling/refit-law or simultaneous
+numerical-success premises.
+
+For \code{wm_bootstrap(fitted, method = "contribution")}, an initial
+\code{inference = "full_x"} request is bound through
+\code{wm_model_inference} to the retained complete nuisance root, predictions
+and graph. There is no model fit or matching rerun. A point-only wrapper requires
+an explicit supported inference handoff before contribution replication;
+uncertainty is not inferred from a point alone. An existing public
+\code{wm_fitted_inference} component from \code{wm_model_inference} retains its
+declared covariance/mixture scope and unchanged downstream option checks.
+Its source \code{fit} must be exactly the wrapper's retained original fit;
+replacing the inference with another fit's valid object is rejected before
+replication, including the advanced mixture branches.
+Pass the whole initial fitted wrapper, rather than its historical private
+\code{inference} component. Contribution replication and original nonlinear
+prediction refits remain different procedures and their finite-data variances
+need not coincide. Returned wrapper metadata records the refit mode and source
+class; population assumptions remain unverified.
+
 For a nested quadratic preparation from \code{wm_model_inference}, the default
 contribution dispatch uses its literal untruncated Gaussian-mixture law. If the
 retained contrast influence satisfies

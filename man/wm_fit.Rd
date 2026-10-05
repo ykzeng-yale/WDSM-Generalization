@@ -44,7 +44,9 @@ wm_fit(Y, Z, weights, scores0, scores1 = NULL, M = 3L,
   \item{degree}{Nonnegative total polynomial degree, including all
   interactions through that degree and an intercept. Supply one number for
   all used arms, or two numbers in control, treated order for PATE. Ignored
-  for splines.}
+  for splines. The positive-degree polynomial constructor supports matching
+  dimension at most 100; degree zero does not use that recursion limit.
+  Basis-size and allocation guards still apply.}
   \item{spline_order}{Explicit integer B-spline order at least two.
   The piecewise polynomial degree is one less than this order. One number,
   or two in control, treated order for PATE. Required for splines.}

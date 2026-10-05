@@ -9,3 +9,8 @@ local-runtime/
 scratch/
 logs/
 results/raw/
+reproduction/
+vignettes/*.html
+vignettes/*.R
+inst/doc/
+check/

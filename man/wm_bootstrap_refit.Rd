@@ -6,7 +6,7 @@ wm_bootstrap_refit(object, counts, refit = NULL, conf.level = 0.95)
 }
 \arguments{
 \item{object}{A self-normalized \code{wm_match} or \code{wm_fit} result. Variance estimation need not have been enabled.}
-\item{counts}{An n-by-B matrix of nonnegative integer multinomial counts, with each column summing to n and B at least two. Each arm must have positive total multiplicity in every column. For example, use \code{rmultinom(B, n, rep(1/n, n))}. Supplying counts permits exact paired comparisons.}
+\item{counts}{An n-by-B matrix of nonnegative integer multinomial counts, with each column summing to n and B at least two. Each arm must have positive total multiplicity in every column. Optional row names must be literal original indices 1,...,n in order. For example, use \code{rmultinom(B, n, rep(1/n, n))}. Supplying counts permits exact paired comparisons.}
 \item{refit}{NULL to hold predictions fixed, or a function accepting one length-n multiplicity vector and returning a list with finite length-n \code{mean0} and, for PATE, \code{mean1}. The callback must implement the intended nuisance-fitting rule, including any score refitting, standardization and bias-correction fit, and predict at the original n rows. PATT uses only \code{mean0}. Raw matching requires NULL.}
 \item{conf.level}{Confidence level strictly between zero and one.}
 }
@@ -24,6 +24,12 @@ For PATE, a replicate is the sum of \eqn{m_i W_i(q_{1i}^*-q_{0i}^*) + m_i(2Z_i-1
 For the original retrospective WDSM protocol, the callback refits PS using multiplicity times individual weight, arm-specific PG using multiplicity, and the complete quadratic bias correction using multiplicity times individual weight on refitted standardized double scores. Externally supplied scores stay fixed if that was the original analysis. The callback must not rebuild the original matching graph or reuse coefficients.
 
 The returned Monte Carlo variance uses divisor B, and the normal Wald interval is centered on the original estimate. All replicates must succeed; failed fits raise an error and are not discarded. The function itself draws no random numbers; any callback randomness is controlled by the caller.
+
+For a retained fitted-score wrapper, use
+\code{wm_bootstrap(fitted, method="fixed_reuse", counts=counts)}.
+Its default quadratic adapter performs the full same-count prediction refit;
+this low-level function continues to require an ordinary \code{wm_match} or
+\code{wm_fit}, and NULL here continues to hold its predictions fixed.
 
 This is an exact replication algorithm, not an automatic inference theorem. Valid inference additionally requires the relevant nuisance-refit expansion and agreement between sampling and replication variance. Empirical equivalence to another implementation does not establish those conditions. Weights remain fixed; estimated-weight uncertainty is not refitted. Influence corrections already attached to the object are not added to these refitted replicates. Stabilized, potential-mean and split-block procedures use different representations and are not accepted.
 

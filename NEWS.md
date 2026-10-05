@@ -1,3 +1,22 @@
+# wdsmatch 0.3.0
+
+* Accept retained `wm_wdsm_fit` and `wm_model_fit` results in `wm_bootstrap`.
+  Contribution replication binds declared complete public fitted inference.
+  Default quadratic fixed-reuse replication refits the complete retained
+  PS/PG/scaling/correction pipeline under each supplied count column, preserving
+  the original point, graph, known weights, reuse and target denominator.
+  Nondefault correction methods require an explicit compatible callback.
+* Permit the protected `wm_model_inference` post-fit handoff for WDSM wrappers.
+  Reject mismatched prepared source fits and noncanonical labeled count order;
+  failed columns remain failures and are never deleted or redrawn.
+* Add independent weighted estimator/reduction and full fitted-wrapper
+  integration tests, an executable HTML tutorial, cross-platform package-check
+  CI and package citation metadata. Existing point/analytic variance routines
+  and frozen study results remain unchanged.
+* Reorganize the landing README and study/application indexes. Document the
+  principal producer's frozen source checkout and repair ECLS loading/count
+  prerequisites. Historical source/check records retain their original scope.
+
 # wdsmatch 0.3.0.9000
 
 * Mark angular geometry components with zero empirical Monte Carlo variance

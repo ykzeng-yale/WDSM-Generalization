@@ -258,6 +258,10 @@
 #' outcomes. Score maps, weights and target identification obey the fixed-map
 #' contract in \code{\link{wm_match}}.
 #'
+#' The positive-degree complete polynomial constructor supports matching
+#' dimension at most 100; degree zero does not use that recursion limit.
+#' The declared basis-size and allocation guards apply in either case.
+#'
 #' Matching tie options are forwarded to \code{wm_match()};
 #' \code{tie_rule = "source_random"} requires an explicit \code{tie_seed}
 #' and \code{variance = FALSE}, and supports point/replicate algebra only.

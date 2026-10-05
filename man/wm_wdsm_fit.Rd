@@ -156,7 +156,17 @@ No bounded branch is extended merely by assuming Gaussian outcomes.
 
 No bootstrap is run. The original count-refit procedure and the corrected
 one-step multinomial procedure are distinct methods; their finite-sample
-variances need not coincide. They are not newly connected to this wrapper.
+variances need not coincide. Pass this retained wrapper directly to
+\code{wm_bootstrap}. With \code{method="fixed_reuse"}, supplied counts and
+\code{refit=NULL} refit its complete declared PS/PG/pooled-scaling/quadratic
+prediction pipeline using the same full-n counts, original weights and solver
+controls while the original graph and incoming loads remain fixed.
+With \code{method="contribution"}, a full-X request is bound through the public
+\code{wm_model_inference} handoff without refitting. Point-only output requires
+an explicit supported handoff before contribution inference. Do not pass this
+wrapper's initial private \code{inference} component directly; pass the whole
+wrapper or an explicitly prepared public inference object. These adapters
+retain the respective sampling, numerical-root and refit-law premises.
 The nested fixed-map \code{fit} object should not be passed to a fixed-map
 bootstrap and interpreted as inference accounting for all estimated scores.
 The existing \code{wdsmatchATE} and \code{wdsmatchATT} interfaces are unchanged.
@@ -179,4 +189,5 @@ finite and strictly positive; availability is conditional on the documented
 premises, not evidence that those premises hold in the data.
 }
 \seealso{\code{\link{wm_match}}, \code{\link{wm_fit}},
+  \code{\link{wm_bootstrap}}, \code{\link{wm_model_inference}},
   \code{\link{wdsmatchATE}}, \code{\link{wdsmatchATT}}}

@@ -10,3 +10,7 @@
 ^local-runtime$
 ^data-raw$
 ^README\.md$
+^docs$
+^\.github$
+^CITATION\.cff$
+^CONTRIBUTING\.md$

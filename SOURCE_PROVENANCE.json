@@ -941,5 +941,12 @@
       "simulations_or_integrations_run": false,
       "numerical_or_population_accuracy_certified": false
     }
+  },
+  "current_package_release": {
+    "version": "0.3.0",
+    "checks": "docs/software_validation.json",
+    "changes": "Protected fitted-wrapper contribution and original complete same-count refit handoff; labeled-count validation; publication documentation and executable tutorial. Existing point/analytic variance arithmetic and frozen simulation results unchanged.",
+    "prior_receipts": "All other validation/provenance fields retain their named historical sources and execution scopes; they are not overwritten by this release.",
+    "statistical_scope": "Supplied known W only. Finite software verification does not certify causal assumptions, current-root/geometry premises, asymptotic numerical availability, original refit agreement or coverage in a new application."
   }
 }
