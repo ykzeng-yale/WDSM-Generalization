@@ -253,11 +253,11 @@ test_that("private full-slope counts reject the new scope even when observed R i
   fit <- wm_match(c(0, 1), c(0, 1), c(1, 1),
     scores0 = cbind(c(0, 1), c(0, 2), c(0, 3)), M = 1,
     mean0 = c(0, 0), mean1 = c(0, 0), variance = FALSE)
-  reference <- wdsmatch:::.wm_wdsm_fitted_variance(fit,
+  reference <- WeightedMatching:::.wm_wdsm_fitted_variance(fit,
     cbind(p = c(-4, 4)), c(p = 0), c(p = 0), "regular_joint_d_gt2")
   expect_equal(reference$reciprocal_numerator, 0)
   expect_true(reference$available)
-  expect_error(wdsmatch:::.wm_wdsm_fitted_count(reference, matrix(1, 2, 2)),
+  expect_error(WeightedMatching:::.wm_wdsm_fitted_count(reference, matrix(1, 2, 2)),
                "cannot use ordinary full-slope count")
 })
 

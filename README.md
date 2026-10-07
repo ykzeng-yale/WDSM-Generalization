@@ -1,10 +1,10 @@
-# Weighted Matching
+# WeightedMatching
 
 [![R CMD check](https://github.com/ykzeng-yale/WDSM-Generalization/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ykzeng-yale/WDSM-Generalization/actions/workflows/R-CMD-check.yaml)
 
 R software for fixed-count nearest-neighbor matching with supplied positive
-probability weights. The package is named **`wdsmatch`** and retains the original
-`wdsmatchATE()` and `wdsmatchATT()` interfaces. The general WM interfaces support
+probability weights. **`WeightedMatching`** is an independent R package for the
+general WM framework. Its `wm_*` interfaces support
 PATE and PATT, a chosen positive integer `M`, supplied matching maps of any fixed
 dimension, and different maps for the two treatment arms.
 
@@ -16,9 +16,10 @@ cluster/stratum inference are outside the current framework.
 
 ## Install
 
-This repository contains version 0.3.1 of `wdsmatch`. The GitHub source version
-is separate from the previously published CRAN version. Installing it
-updates an existing package of that name. R 3.6.0 or later is required; package
+This repository contains version 0.1.0 of `WeightedMatching`. It installs
+separately from the original WDSM package, `wdsmatch` 0.2.1, and does not replace
+that package or export its `wdsmatchATE()`/`wdsmatchATT()` interfaces.
+R 3.6.0 or later is required; package
 dependencies and optional dependencies are listed in [DESCRIPTION](DESCRIPTION).
 
 ```sh
@@ -28,7 +29,7 @@ R CMD INSTALL .
 ```
 
 ```r
-library(wdsmatch)
+library(WeightedMatching)
 ```
 
 The simulation, application and validation workflows use additional dependencies
@@ -42,7 +43,7 @@ outcome correction. Its donor-normalized weights and matching graph are retained
 in the returned object.
 
 ```r
-library(wdsmatch)
+library(WeightedMatching)
 set.seed(928)
 n <- 400
 X <- matrix(runif(2 * n), n, 2)
@@ -69,11 +70,17 @@ tutorial, first install `knitr` and `rmarkdown`, make Pandoc available, then run
 
 ```sh
 R CMD build .
-R CMD INSTALL wdsmatch_0.3.1.tar.gz
+R CMD INSTALL WeightedMatching_0.1.0.tar.gz
 ```
 
 After this built-archive installation, run
-`vignette("weighted-matching", package="wdsmatch")`.
+`vignette("weighted-matching", package="WeightedMatching")`.
+
+For an original WDSM comparison, install `wdsmatch` separately and call
+`wdsmatch::wdsmatchATE()` or `wdsmatch::wdsmatchATT()`. Use aligned inputs,
+score fitting, distance, donor count, correction and inference when comparing
+results. `help(package="WeightedMatching")` lists this package's interfaces;
+`citation("WeightedMatching")` returns its software citation.
 
 ## Choose an estimator and inference route
 
@@ -174,7 +181,7 @@ Build and check the source package after installing its suggested dependencies:
 
 ```sh
 R CMD build .
-R CMD check --no-manual wdsmatch_0.3.1.tar.gz
+R CMD check --no-manual WeightedMatching_0.1.0.tar.gz
 ```
 
 The executable HTML vignette requires Pandoc to build. The reference manual

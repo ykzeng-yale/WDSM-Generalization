@@ -28,7 +28,7 @@ test_that("QR quadratic predictions retain the complete near-coincident polynomi
     beta <- stats::lm.wfit(reference[donors, ], y[donors], w[donors],
                           singular.ok = FALSE)$coefficients
     expected <- as.vector(reference %*% beta)
-    out <- wdsmatch:::.wm_quad_qr_arm(y, z, w, s, arm, 1e-10)
+    out <- WeightedMatching:::.wm_quad_qr_arm(y, z, w, s, arm, 1e-10)
     result[[as.character(arm)]] <- out
     expect_equal(out$mean, expected, tolerance = 2e-8)
     expect_identical(out$basis_columns, 10L)
@@ -39,9 +39,9 @@ test_that("QR quadratic predictions retain the complete near-coincident polynomi
     expect_lt(out$normalized_correction_moment, 1e-12)
     expect_false(out$numerical_error_rate_verified)
     # Raw coefficient rank rejection is the actual source-level problem.
-    expect_error(wdsmatch:::.wm_ns_ols(raw[donors, ], y[donors], w[donors],
+    expect_error(WeightedMatching:::.wm_ns_ols(raw[donors, ], y[donors], w[donors],
                                      "raw", 1e-10), "singular|unidentified")
-    rescaled <- wdsmatch:::.wm_quad_qr_arm(y, z, 11 * w, s, arm, 1e-10)
+    rescaled <- WeightedMatching:::.wm_quad_qr_arm(y, z, 11 * w, s, arm, 1e-10)
     expect_equal(rescaled$mean, out$mean, tolerance = 1e-12)
   }
   # Check the original donor fractions and target denominators independently.
@@ -61,7 +61,7 @@ test_that("QR quadratic predictions retain the complete near-coincident polynomi
                  tolerance = 1e-12)
   }
   duplicate <- cbind(x[, 1], x[, 1], x[, 2])
-  expect_error(wdsmatch:::.wm_quad_qr_arm(y, z, w, duplicate, 0L, 1e-10),
+  expect_error(WeightedMatching:::.wm_quad_qr_arm(y, z, w, duplicate, 0L, 1e-10),
                "singular or unresolved")
 })
 
@@ -116,7 +116,7 @@ test_that("common API preserves the original quadratic point and graph", {
 
   # Rejected options fail before any model fit or matching operation.
   local_mocked_bindings(.wm_wdsm_fit_stack = function(...) stop("UNEXPECTED_FIT"),
-                        .package = "wdsmatch")
+                        .package = "WeightedMatching")
   arguments$inference <- "full_x"
   expect_error(do.call(wm_model_fit, c(arguments,
     list(correction = list(method = "quadratic_qr")))), "requires inference='none'")

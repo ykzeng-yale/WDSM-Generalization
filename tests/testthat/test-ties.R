@@ -2,7 +2,7 @@ test_that("boundary allocation retains closer donors and spreads exact ties", {
   A <- c(rep(0, 20), rep(1, 60))
   D <- cbind(c(0, rep(1,19),rep(0,60)), 0)
   set.seed(96); before <- .Random.seed; kind <- RNGkind()
-  fit <- wdsmatch:::wdsm_make_matches(A,D,D,M=3,estimand="PATT",tie_seed=2024)
+  fit <- WeightedMatching:::wdsm_make_matches(A,D,D,M=3,estimand="PATT",tie_seed=2024)
   expect_identical(.Random.seed,before)
   expect_identical(RNGkind(),kind)
   choices <- fit$matches_0[A==1]
@@ -10,12 +10,12 @@ test_that("boundary allocation retains closer donors and spreads exact ties", {
     1L %in% j && all(A[j]==0), logical(1))))
   expect_gt(length(unique(vapply(choices,paste,collapse=",",character(1)))),1L)
   expect_gt(length(unique(unlist(choices))),3L)
-  expect_identical(fit$matches_0,wdsmatch:::wdsm_make_matches(A,D,D,M=3,
+  expect_identical(fit$matches_0,WeightedMatching:::wdsm_make_matches(A,D,D,M=3,
     estimand="PATT",tie_seed=2024)$matches_0)
-  expect_false(identical(fit$matches_0,wdsmatch:::wdsm_make_matches(A,D,D,M=3,
+  expect_false(identical(fit$matches_0,WeightedMatching:::wdsm_make_matches(A,D,D,M=3,
     estimand="PATT",tie_seed=2025)$matches_0))
   expect_identical(fit$tie_diagnostics$arms[[1]]$randomized_recipients,60L)
-  expect_error(wdsmatch:::wdsm_make_matches(A,D,D,M=30,estimand="PATT"))
+  expect_error(WeightedMatching:::wdsm_make_matches(A,D,D,M=30,estimand="PATT"))
   expect_identical(.Random.seed,before)
 })
 
@@ -26,10 +26,10 @@ test_that("tie helper restores a missing seed and nondefault RNG kind", {
     else if(exists(".Random.seed",.GlobalEnv))rm(".Random.seed",envir=.GlobalEnv)},add=TRUE)
   RNGkind("L'Ecuyer-CMRG");set.seed(19);before <- .Random.seed;kind <- RNGkind()
   A<-rep(0:1,each=10);D<-matrix(0,20,2)
-  invisible(wdsmatch:::wdsm_make_matches(A,D,D,M=5))
+  invisible(WeightedMatching:::wdsm_make_matches(A,D,D,M=5))
   expect_identical(RNGkind(),kind);expect_identical(.Random.seed,before)
   rm(".Random.seed",envir=.GlobalEnv)
-  invisible(wdsmatch:::wdsm_make_matches(A,D,D,M=5))
+  invisible(WeightedMatching:::wdsm_make_matches(A,D,D,M=5))
   expect_false(exists(".Random.seed",.GlobalEnv,inherits=FALSE))
   expect_identical(RNGkind(),kind)
 })
@@ -43,9 +43,9 @@ test_that("public PATE and PATT fixed-match replicates agree with a discrete ora
   ps<-plogis(.3*X$x1+.2*X$x2)
   pg<-cbind(X$x1-.4*X$x2,X$x1+.4*X$x2)
   for(estimand in c("PATE","PATT")) for(M in c(1L,3L,5L)) {
-    scores<-wdsmatch:::estimate_scores(Y,X,A,w,ps,pg,NULL,NULL,
+    scores<-WeightedMatching:::estimate_scores(Y,X,A,w,ps,pg,NULL,NULL,
       "prospective",estimand,use.bias.correction=FALSE)
-    point<-wdsmatch:::wdsm_point(Y,A,w,scores,M,estimand,tie_seed=2024)
+    point<-WeightedMatching:::wdsm_point(Y,A,w,scores,M,estimand,tie_seed=2024)
     target<-if(estimand=="PATE")seq_len(n) else which(A==1)
     K<-numeric(n);contrasts<-numeric(n)
     for(i in target) {

@@ -70,7 +70,7 @@ for (factor in c(1e-200, 1e200)) {
 }
 
 stopifnot(requireNamespace("Matching", quietly = TRUE),
-          requireNamespace("wdsmatch", quietly = TRUE))
+          requireNamespace("WeightedMatching", quietly = TRUE))
 external_cases <- 0L
 max_point_error <- max_variance_error <- 0
 index <- seq_len(48)
@@ -81,7 +81,7 @@ for (dimension in c(1L, 2L, 5L)) for (M in c(1L, 3L)) {
   S <- all_scores[, seq_len(dimension), drop = FALSE]
   for (estimand in c("PATE", "PATT")) {
     ref <- ai06_variance_reference(Y, Z, S, M = M, J = 1L, estimand = estimand)
-    wm <- wdsmatch::wm_match(Y, Z, rep(1, length(Y)), S,
+    wm <- WeightedMatching::wm_match(Y, Z, rep(1, length(Y)), S,
       M = M, estimand = estimand, variance = FALSE)
     same(wm$estimate, ref$estimate, "WM raw point reduction")
     wm_donors <- matrix(wm$graph$edges$donor, ncol = M, byrow = TRUE)
@@ -110,7 +110,8 @@ for (dimension in c(1L, 2L, 5L)) for (M in c(1L, 3L)) {
 result <- list(passed = TRUE, deterministic_checks = checks,
   external_variance_configurations = external_cases,
   matching_version = as.character(utils::packageVersion("Matching")),
-  wdsmatch_version = as.character(utils::packageVersion("wdsmatch")),
+  # Historical receipt key retained; the current package is WeightedMatching.
+  wdsmatch_version = as.character(utils::packageVersion("WeightedMatching")),
   native_variance_settings = "standard version, ties=TRUE, no boundary ties, Var.calc=1",
   max_absolute_point_error = max_point_error,
   max_absolute_variance_error = max_variance_error,

@@ -113,7 +113,7 @@ later models, matching assumptions, bootstrap validity or analysis results.
 ## Analysis and inference phases
 
 `run_analysis.R` runs the declared MEPS analysis from the complete-record
-directory above. Install this release of `wdsmatch` and the `digest` and
+directory above. Install this release of `WeightedMatching` and the `digest` and
 `jsonlite` packages first. It uses the normal R library search path; no library
 is installed or selected by the runner. Public source/namespace function
 identities must agree, including the adopted complete-contribution covariance

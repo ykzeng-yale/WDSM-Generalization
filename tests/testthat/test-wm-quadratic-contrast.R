@@ -135,7 +135,7 @@ for (target in c("PATE", "PATT")) test_that(paste("nested quadratic inputs retai
     # After retaining this actual fit, preparation/evaluation uses no fit solver.
     local_mocked_bindings(.wm_wdsm_fit_stack = function(...) stop("UNEXPECTED_FIT"),
       .wm_model_stack = function(...) stop("UNEXPECTED_FIT"),
-      .wm_ns_ols = function(...) stop("UNEXPECTED_OUTCOME_FIT"), .package = "wdsmatch")
+      .wm_ns_ols = function(...) stop("UNEXPECTED_OUTCOME_FIT"), .package = "WeightedMatching")
     again <- wm_model_inference(object, scope, quadratic_control = control)
     expect_true(again$inference$contrast_inputs$evaluate(-h)$available)
     # Reuse this one fitted object for the common all-draw API; no extra fit/DGP.
@@ -230,7 +230,7 @@ for (target in c("PATE", "PATT")) test_that(paste("nested quadratic inputs retai
     # A failed slot, even with obsolete completion hints, is never zero-filled.
     # The next slot is evaluated and uses the original ordered innovations.
     fail_two <- function() {
-      calls <- 0L; actual <- wdsmatch:::.wm_qc_evaluate
+      calls <- 0L; actual <- WeightedMatching:::.wm_qc_evaluate
       local_mocked_bindings(.wm_qc_evaluate = function(context, contrast) {
         calls <<- calls + 1L
         if (calls == 2L) return(list(available = FALSE, failure_stage = "zero_contrast",
@@ -238,7 +238,7 @@ for (target in c("PATE", "PATT")) test_that(paste("nested quadratic inputs retai
           completion_reason = "exact_zero_contrast"))
         if (calls == 3L) stop("Forced arithmetic error")
         actual(context, contrast)
-      }, .package = "wdsmatch")
+      }, .package = "WeightedMatching")
       answer <- wm_bootstrap(source, B = 4L, seed = 820, chunk_size = 2L)
       expect_identical(calls, 4L)
       answer
@@ -330,21 +330,21 @@ test_that("quadratic numerical covariance gates retain representable full moment
   # The old sum-before-division overflows, despite a representable covariance.
   expect_true(is.infinite(drop(crossprod(1e154 * centered)) / n))
   local_mocked_bindings(.wm_wdsm_fit_stack = function(...) stop("UNEXPECTED_FIT"),
-    wm_match = function(...) stop("UNEXPECTED_GRAPH"), .package = "wdsmatch")
-  answer <- wdsmatch:::.wm_qc_prepare(object, control, 5e7)
+    wm_match = function(...) stop("UNEXPECTED_GRAPH"), .package = "WeightedMatching")
+  answer <- WeightedMatching:::.wm_qc_prepare(object, control, 5e7)
   expect_true(answer$available)
   expect_true(all(is.finite(answer$full_score_covariance)))
   expect_equal(answer$full_score_covariance[1L, 1L] / 1e308,
     mean(centered^2), tolerance = 1e-13)
   object$nuisance$nuisance_influence[, 1L] <- 1e155 * signal
   object$nuisance$estimating_equations <- object$nuisance$nuisance_influence
-  failed <- wdsmatch:::.wm_qc_prepare(object, control, 5e7)
+  failed <- WeightedMatching:::.wm_qc_prepare(object, control, 5e7)
   expect_false(failed$available)
   expect_identical(failed$failure_stage, "score_covariance")
 })
 
 test_that("quadratic numerical QR failures retain all columns and return unavailable", {
-  factor <- wdsmatch:::.wm_qc_qr
+  factor <- WeightedMatching:::.wm_qc_qr
   expect_equal(crossprod(factor(diag(c(1, 2)))$R), diag(c(4, 1)))
   expect_error(factor(diag(c(1, Inf))), "nonfinite")
   expect_error(factor(cbind(1:4, 1:4)), "unresolved")
@@ -355,11 +355,11 @@ test_that("quadratic numerical QR failures retain all columns and return unavail
   expect_error(factor(diag(2)), "LAPACK failure")
   object <- wm_qc_numeric_fixture()
   control <- list(method = "nested_contrast", small_ps = "small", large_ps = "large")
-  prepared <- wdsmatch:::.wm_qc_prepare(object, control, 5e7)
+  prepared <- WeightedMatching:::.wm_qc_prepare(object, control, 5e7)
   context <- environment(prepared$evaluate)$retained
   context$V <- context$V * 1e150
   context$information_map <- context$information_map * 1e150
-  failed <- wdsmatch:::.wm_qc_evaluate(context, .6e-150)
+  failed <- WeightedMatching:::.wm_qc_evaluate(context, .6e-150)
   expect_false(failed$available)
   expect_identical(failed$failure_stage, "projection_qr")
   expect_identical(failed$contrast, .6e-150)
@@ -368,7 +368,7 @@ test_that("quadratic numerical QR failures retain all columns and return unavail
 test_that("quadratic numerical return gates include the unconditional row moment", {
   object <- wm_qc_numeric_fixture()
   control <- list(method = "nested_contrast", small_ps = "small", large_ps = "large")
-  prepared <- wdsmatch:::.wm_qc_prepare(object, control, 5e7)
+  prepared <- WeightedMatching:::.wm_qc_prepare(object, control, 5e7)
   context <- environment(prepared$evaluate)$retained
   # Isolate a large row component that is removed by conditional projection.
   # Finite conditional residual moments do not certify its full second moment.
@@ -379,15 +379,15 @@ test_that("quadratic numerical return gates include the unconditional row moment
   context$derivatives[["0"]][] <- 0
   context$phi[] <- 0
   context$H <- H; context$Omega <- crossprod(H, H / context$n)
-  context$contrast_qr <- wdsmatch:::.wm_qc_qr(H / sqrt(context$n))
+  context$contrast_qr <- WeightedMatching:::.wm_qc_qr(H / sqrt(context$n))
   context$Y <- as.vector(H) * 1e153 / context$w
-  accepted <- wdsmatch:::.wm_qc_evaluate(context, .6)
+  accepted <- WeightedMatching:::.wm_qc_evaluate(context, .6)
   expect_true(accepted$available)
   expect_true(is.finite(accepted$linear_root_variance))
   expect_true(is.finite(accepted$conditional_variance))
   expect_lt(accepted$conditional_variance / accepted$linear_root_variance, 1e-25)
   context$Y <- as.vector(H) * 1e155 / context$w
-  failed <- wdsmatch:::.wm_qc_evaluate(context, .6)
+  failed <- WeightedMatching:::.wm_qc_evaluate(context, .6)
   expect_false(failed$available)
   expect_identical(failed$failure_stage, "arithmetic")
 })
@@ -404,8 +404,8 @@ test_that("untruncated QR inputs agree with independent finite rows at nonzero r
   control <- list(method = "nested_contrast", small_ps = "small", large_ps = "large")
   local_mocked_bindings(.wm_wdsm_fit_stack = function(...) stop("UNEXPECTED_FIT"),
     .wm_model_stack = function(...) stop("UNEXPECTED_FIT"),
-    .wm_ns_ols = function(...) stop("UNEXPECTED_FIT"), .package = "wdsmatch")
-  prepared <- wdsmatch:::.wm_qc_prepare(object, control, 5e7)
+    .wm_ns_ols = function(...) stop("UNEXPECTED_FIT"), .package = "WeightedMatching")
+  prepared <- WeightedMatching:::.wm_qc_prepare(object, control, 5e7)
   value <- prepared$evaluate(.6)
   expect_true(value$available)
   # This literal grid has ties. Verify its path and information map separately,
@@ -435,14 +435,14 @@ test_that("untruncated QR inputs agree with independent finite rows at nonzero r
   far <- prepared$evaluate(sqrt(log(object$n + 1)) + 1)
   expect_true(far$available)
   expect_false(far$sampling_inference_available)
-  expect_error(wdsmatch:::.wm_qc_prepare(object,
+  expect_error(WeightedMatching:::.wm_qc_prepare(object,
     c(control, list(guard_exponent = NULL)), 5e7), "no longer supported")
   # A representable small contrast covariance is not compared with n^-2.
   small_covariance <- object
   small_covariance$nuisance$nuisance_influence[, 5L] <-
     small_covariance$nuisance$nuisance_influence[, 5L] * 1e-10
   small_covariance$nuisance$estimating_equations <- small_covariance$nuisance$nuisance_influence
-  small_inputs <- wdsmatch:::.wm_qc_prepare(small_covariance, control, 5e7)
+  small_inputs <- WeightedMatching:::.wm_qc_prepare(small_covariance, control, 5e7)
   expect_true(small_inputs$available)
   expect_gt(small_inputs$contrast_covariance[1L, 1L], 0)
   expect_lt(small_inputs$contrast_covariance[1L, 1L], object$n^-2)
@@ -452,7 +452,7 @@ test_that("tiny logistic contrasts use their finite high-precision value", {
   skip_if_not_installed("Rmpfr")
   object <- wm_qc_numeric_fixture()
   control <- list(method = "nested_contrast", small_ps = "small", large_ps = "large")
-  prepared <- wdsmatch:::.wm_qc_prepare(object, control, 5e7)
+  prepared <- WeightedMatching:::.wm_qc_prepare(object, control, 5e7)
   context <- environment(prepared$evaluate)$retained
   a <- drop(context$D %*% context$alpha) + context$offset
   direction <- drop(context$V - context$D %*% context$information_map)
@@ -460,7 +460,7 @@ test_that("tiny logistic contrasts use their finite high-precision value", {
   # It is not the derivative at zero and does not assert a general error bound.
   for (sign in c(-1, 1)) {
     step <- 1e-25 / sqrt(context$n)
-    value <- wdsmatch:::.wm_qc_logistic_contrast(a, sign * direction, step)
+    value <- WeightedMatching:::.wm_qc_logistic_contrast(a, sign * direction, step)
     aa <- Rmpfr::mpfr(a, 256L)
     dd <- Rmpfr::mpfr(sign * direction, 256L)
     tt <- Rmpfr::mpfr(step, 256L)
@@ -470,6 +470,6 @@ test_that("tiny logistic contrasts use their finite high-precision value", {
     expect_equal(value$divided_probability, exact, tolerance = 2e-13)
     expect_equal(value$large_probability, plogis(a + step * sign * direction))
   }
-  expect_error(wdsmatch:::.wm_qc_logistic_contrast(a, direction,
+  expect_error(WeightedMatching:::.wm_qc_logistic_contrast(a, direction,
     .Machine$double.xmin * .Machine$double.eps), "unrepresentable")
 })

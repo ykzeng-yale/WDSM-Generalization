@@ -77,7 +77,7 @@ test_that("finite model lists retain complete shared and arm-specific derivative
                tolerance = 1e-9)
 
   # Parameter perturbations evaluate the same object; they do not refit models.
-  evaluator <- wdsmatch:::.wm_model_nuisance_evaluate
+  evaluator <- WeightedMatching:::.wm_model_nuisance_evaluate
   numeric_A <- matrix(0, length(th), length(th))
   derivative_error <- 0
   for (j in seq_along(th)) {
@@ -125,9 +125,9 @@ test_that("finite model lists retain complete shared and arm-specific derivative
 })
 
 test_that("model layouts and resource guards retain the complete requested stack", {
-  specs <- wdsmatch:::.wm_model_specs
-  layout <- wdsmatch:::.wm_model_layout
-  budget <- wdsmatch:::.wm_model_allocation
+  specs <- WeightedMatching:::.wm_model_specs
+  layout <- WeightedMatching:::.wm_model_layout
+  budget <- WeightedMatching:::.wm_model_allocation
   D <- cbind(intercept = 1, x = seq(-1, 1, length.out = 8L))
   ps <- specs(list(one = list(design = D)), 8L, "ps", "ps_models")
   pg <- specs(list(one = list(design = D)), 8L, "pg", "pg0_models")
@@ -140,7 +140,7 @@ test_that("model layouts and resource guards retain the complete requested stack
                "supported fields")
   expect_error(specs(list(list(design = D, weighting = "estimated")), 8L, "ps", "ps_models"),
                "probability.*unit")
-  duplicated <- wdsmatch:::.wm_model_basis(cbind(D[, 2L], D[, 2L]))
+  duplicated <- WeightedMatching:::.wm_model_basis(cbind(D[, 2L], D[, 2L]))
   expect_identical(ncol(duplicated), 6L)
   expect_lt(qr(duplicated)$rank, ncol(duplicated))
 

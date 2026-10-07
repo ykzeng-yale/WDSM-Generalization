@@ -40,7 +40,7 @@ test_that("direct alpha draws preserve RNG and batch invariance and finite bound
                one$diagnostics$integrand_upper_bound / (2 * sqrt(257)))
   expect_equal(one$diagnostics$hoeffding_95_half_width,
                one$diagnostics$integrand_upper_bound * sqrt(log(40) / (2 * 257)))
-  expect_true("wm_geometry_alpha" %in% getNamespaceExports("wdsmatch"))
+  expect_true("wm_geometry_alpha" %in% getNamespaceExports("WeightedMatching"))
 })
 
 test_that("alpha geometry refuses invalid or unbounded requests", {

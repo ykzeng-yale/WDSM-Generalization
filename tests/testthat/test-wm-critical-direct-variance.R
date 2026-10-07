@@ -265,14 +265,14 @@ test_that("fixed four-shift Gaussian average matches independent M1/M2/M3 Wick r
   for (M in 1:3) for (Sigma in list(tcrossprod(L), diag(c(1, .4, .2)), matrix(0, 3L, 3L))) {
     reference <- .cp_wick_average_reference(M, E[1:2, ], E[3:4, ],
       pi * c(.3, .8), rbind(D0, D1) %*% dv_root(Sigma))
-    got <- wdsmatch:::.wm_cp_G_average(E, c(.3, .8), D0, D1, Sigma, M,
+    got <- WeightedMatching:::.wm_cp_G_average(E, c(.3, .8), D0, D1, Sigma, M,
       dv_numeric_control())
     expect_equal(got$value, reference$value, tolerance = 1e-10)
     if (M == 1L) expect_equal(got$value, reference$M1_closed, tolerance = 1e-11)
     if (M == 2L) expect_equal(got$value, reference$M2_closed, tolerance = 1e-10)
     expect_equal(got$Omega, rbind(D0, D1) %*% Sigma %*% t(rbind(D0, D1)), tolerance = 1e-13)
     expect_equal(got$omega_square_root %*% got$omega_square_root, got$Omega, tolerance = 1e-11)
-    expect_equal(wdsmatch:::.wm_cp_G_average(E %*% rotation, c(.3, .8),
+    expect_equal(WeightedMatching:::.wm_cp_G_average(E %*% rotation, c(.3, .8),
       D0, D1, Sigma, M, dv_numeric_control())$value, reference$value, tolerance = 1e-10)
     expect_identical(got$factor_columns, 4L); expect_identical(got$SPD_dimension, 6L)
     expect_identical(got$exact_arithmetic_geometric_error, 0)
@@ -349,7 +349,7 @@ test_that("direct raw finite convention is centered and no support rate is impos
   expect_gt(max(abs(raw$Sigma - crossprod(a$influence) / nrow(a$influence))), 1)
   expect_null(out$critical$support)
   expect_true(raw$numerically_available)
-  covariance <- wdsmatch:::.wm_cp_direct_psd(diag(c(1, 1e-15)), "tiny-positive", 1e-10)
+  covariance <- WeightedMatching:::.wm_cp_direct_psd(diag(c(1, 1e-15)), "tiny-positive", 1e-10)
   expect_equal(covariance$root[2L, 2L], sqrt(1e-15), tolerance = 1e-15)
   expect_identical(covariance$positive_eigenvalues_discarded, 0L)
   expect_null(covariance$support_threshold)
@@ -416,7 +416,7 @@ test_that("signed raw variance and analytic failures are retained without rescue
   # Internal scalar arithmetic only: this does not modify a public fit or
   # assert that an artificial finite negative block satisfies population laws.
   calculation <- out; calculation$diagonal_root_n_variance <- -100
-  signed <- wdsmatch:::.wm_cp_direct_one(calculation, kernel, out$raw_Sigma, out$raw_C, "literal")
+  signed <- WeightedMatching:::.wm_cp_direct_one(calculation, kernel, out$raw_Sigma, out$raw_C, "literal")
   expect_true(signed$numerically_available); expect_true(signed$negative_raw_root_n_variance)
   expect_lt(signed$raw_root_n_variance, 0); expect_false(signed$Gaussian_interval_authorized)
   budget <- a; budget$control$maximum_analytic_matrix_products <- 1L
@@ -430,8 +430,8 @@ test_that("signed raw variance and analytic failures are retained without rescue
   expect_true(all(failed$pair_diagnostics$status == "numerical_evaluation_failed"))
   expect_match(paste(failed$pair_diagnostics$error, collapse = " "), "conditioning")
   expect_true(is.na(failed$raw_root_n_variance))
-  expect_error(wdsmatch:::.wm_cp_direct_psd(diag(c(1, -.1)), "invalid", 1e-10), "PSD precision")
-  rounded <- wdsmatch:::.wm_cp_direct_psd(diag(c(1, -1e-14)), "roundoff", 1e-10)
+  expect_error(WeightedMatching:::.wm_cp_direct_psd(diag(c(1, -.1)), "invalid", 1e-10), "PSD precision")
+  rounded <- WeightedMatching:::.wm_cp_direct_psd(diag(c(1, -1e-14)), "roundoff", 1e-10)
   expect_gt(max(rounded$negative_roundoff_correction), 0)
   expect_false(rounded$roundoff_included)
   wrong <- a; wrong$control$support <- "smooth_stack_threshold"
@@ -439,7 +439,7 @@ test_that("signed raw variance and analytic failures are retained without rescue
   wrong <- a; wrong$control$direct_variance <- "unsupported"
   expect_error(dv_fit_inference(wrong), "direct_variance must")
   # High M cannot silently trim coefficient terms to meet a declared budget.
-  expect_error(wdsmatch:::.wm_cp_G_average(matrix(c(1, 0, 1, 0, 0, 1, 0, 1), 4L, 2L),
+  expect_error(WeightedMatching:::.wm_cp_G_average(matrix(c(1, 0, 1, 0, 0, 1, 0, 1), 4L, 2L),
     c(1, 1), matrix(0, 2L, 1L), matrix(0, 2L, 1L), matrix(0, 1L, 1L),
     1000L, dv_numeric_control()), "work budget")
 })

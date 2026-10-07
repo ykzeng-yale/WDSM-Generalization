@@ -65,7 +65,7 @@ test_that("finite Hermite geometry agrees with independent Gaussian moments", {
   E <- qr.Q(qr(matrix(c(1, .2, .6, .1, .3, 1.1, -.2, .9), 4, 2)))
   rotation <- matrix(c(cos(.4), sin(.4), -sin(.4), cos(.4)), 2, 2)
   for (M in 1:3) {
-    rule <- wdsmatch:::.wm_cp_hermite(M)
+    rule <- WeightedMatching:::.wm_cp_hermite(M)
     expect_equal(sum(rule$weights), 1, tolerance = 1e-13)
     for (k in 0:(2 * rule$order - 1)) {
       exact <- if (k %% 2) 0 else gamma((k + 1) / 2) / sqrt(pi)
@@ -74,9 +74,9 @@ test_that("finite Hermite geometry agrees with independent Gaussian moments", {
     for (u in c(0, .2, -1)) {
       c0 <- u * c(.3, -.2); c1 <- u * c(-.1, .4)
       ref <- cp_G_moment_reference(E, c(.3, .8), c0, c1, M)
-      got <- wdsmatch:::.wm_cp_G(E, c(.3, .8), c0, c1, M, rule)
+      got <- WeightedMatching:::.wm_cp_G(E, c(.3, .8), c0, c1, M, rule)
       expect_equal(got$value, ref, tolerance = 1e-10)
-      expect_equal(wdsmatch:::.wm_cp_G(E %*% rotation, c(.3, .8), c0, c1, M, rule)$value,
+      expect_equal(WeightedMatching:::.wm_cp_G(E %*% rotation, c(.3, .8), c0, c1, M, rule)$value,
         ref, tolerance = 1e-10)
       expect_identical(got$quadrature_error_exact_arithmetic, 0)
       expect_false(got$roundoff_included)
@@ -204,7 +204,7 @@ test_that("whole reciprocal function matches exhaustive finite donor/pair sums",
     expect_false(out$assumptions_verified); expect_false(out$application_verified)
     expect_true(is.na(out$root_n_variance)); expect_true(all(is.na(out$conf.int)))
     for (u in list(c(0, 0), c(.3, -.2), c(-1, .5))) {
-      got <- wdsmatch:::.wm_cp_evaluate(out$critical$kernel, u)
+      got <- WeightedMatching:::.wm_cp_evaluate(out$critical$kernel, u)
       ref <- cp_R_reference(a, u)
       expect_lte(abs(got$R - ref), got$quadrature_error_bound + 1e-10)
       expect_false(got$roundoff_included)
@@ -233,13 +233,13 @@ test_that("support and cone retain raw inputs including singular and zero rank",
   for (schur in c(-1, 0, 1)) {
     arithmetic <- out
     arithmetic$diagonal_root_n_variance <- s$q + schur + 2 * R0 / out$fit$gamma^2
-    z <- wdsmatch:::.wm_cp_schur(arithmetic, c(0, 0))
+    z <- WeightedMatching:::.wm_cp_schur(arithmetic, c(0, 0))
     expect_equal(z$raw_D, schur, tolerance = 1e-12)
     expect_equal(z$D, max(schur, 0), tolerance = 1e-12)
     expect_equal(z$cone_adjustment, max(schur, 0) - schur, tolerance = 1e-12)
   }
   for (u in list(c(0, 0), c(.2, -.3))) {
-    z <- wdsmatch:::.wm_cp_schur(out, u)
+    z <- WeightedMatching:::.wm_cp_schur(out, u)
     expect_equal(z$raw_D, z$raw_V0 - s$q)
     expect_equal(z$D, max(z$raw_D, 0))
     expect_equal(z$cone_adjustment, z$D - z$raw_D)
@@ -391,7 +391,7 @@ test_that("auxiliary guards and all-B evaluation failures remain explicit", {
   out <- cp_fit_inference(a, original)
   # Deliberate runtime error injection checks retention/availability only;
   # expected numerical roots elsewhere use independent unmodified formulas.
-  ns <- asNamespace("wdsmatch"); name <- ".wm_cp_schur"
+  ns <- asNamespace("WeightedMatching"); name <- ".wm_cp_schur"
   previous <- get(name, envir = ns, inherits = FALSE)
   locked <- bindingIsLocked(name, ns)
   on.exit({

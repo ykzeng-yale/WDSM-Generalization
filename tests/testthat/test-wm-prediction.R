@@ -186,5 +186,5 @@ test_that("joint derivative matrices are validated and namespace export is prese
   valid <- wm_prediction_adjust(fit, U, U, -U,
                                  changing_scores = c(FALSE, FALSE))
   expect_identical(valid$prediction_adjustment$parameter_names, colnames(U))
-  expect_true("wm_prediction_adjust" %in% getNamespaceExports("wdsmatch"))
+  expect_true("wm_prediction_adjust" %in% getNamespaceExports("WeightedMatching"))
 })

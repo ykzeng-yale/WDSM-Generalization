@@ -1,5 +1,5 @@
 test_that("boundary volumes and surface additions have independent geometric fixtures", {
-  parts <- wdsmatch:::.wm_overlap_ball_parts
+  parts <- WeightedMatching:::.wm_overlap_ball_parts
   one <- parts(2, 1, 2, 1)
   expect_equal(exp(unlist(one)), c(I = 1, A = 3, B = 1, U = 5,
                                    s = 1, t = 1, p = 1, q = 1))
@@ -22,7 +22,7 @@ test_that("boundary volumes and surface additions have independent geometric fix
 })
 
 test_that("positive boundary polynomials retain each rank case and factorial choice", {
-  polynomial <- wdsmatch:::.wm_overlap_log_polynomial
+  polynomial <- WeightedMatching:::.wm_overlap_log_polynomial
   p <- as.list(log(c(I = 2, A = 3, B = 5, U = 10, s = 7, t = 11, p = 13, q = 17)))
   # Independently expanded: F=30; P_R=105+130; distinct=357+715+442;
   # common boundary leaves one private point on each side, giving 15.
@@ -36,19 +36,19 @@ test_that("positive boundary polynomials retain each rank case and factorial cho
   zero_parts$U <- 0
   expect_equal(exp(polynomial(zero_parts, 1, 0, 1)), 1)
   expect_equal(exp(polynomial(zero_parts, 1, 0, 2)), 0)
-  expect_false(anyNA(wdsmatch:::.wm_overlap_log_add(c(-Inf, log(2)), c(-Inf, log(3)))))
+  expect_false(anyNA(WeightedMatching:::.wm_overlap_log_add(c(-Inf, log(2)), c(-Inf, log(3)))))
 })
 
 test_that("M1 boundary integrands reduce to the full-position integral", {
   for (d in 1:3) {
     set.seed(317 + d)
     normal <- matrix(rnorm(47 * 2 * d), 47, 2 * d)
-    reduced <- wdsmatch:::.wm_overlap_angular_terms(normal, 1L, d)
-    full <- wdsmatch:::.wm_angular_component(normal, 1L, d, 0L)
+    reduced <- WeightedMatching:::.wm_overlap_angular_terms(normal, 1L, d)
+    full <- WeightedMatching:::.wm_angular_component(normal, 1L, d, 0L)
     expect_equal(reduced[, 1], full, tolerance = 1e-12)
     expect_equal(reduced[, 2:4, drop = FALSE], matrix(0, 47, 3))
   }
-  active <- wdsmatch:::.wm_overlap_active(3L, 1L)
+  active <- WeightedMatching:::.wm_overlap_active(3L, 1L)
   expect_false(active[2L, "root_root"])
   expect_false(active[1L, "shared_nonroot"])
 })
@@ -57,7 +57,7 @@ test_that("all boundary and overlap covariance is retained with common Gaussian 
   M <- 2L; d <- 2L; draws <- 79L
   set.seed(819)
   normal <- matrix(rnorm(draws * 6L), draws, byrow = TRUE)
-  terms <- wdsmatch:::.wm_overlap_angular_terms(normal, M, d)
+  terms <- WeightedMatching:::.wm_overlap_angular_terms(normal, M, d)
   beta <- cbind(rowSums(terms[, c(1, 3, 5, 7)]),
                  rowSums(terms[, c(2, 4, 6, 8)]))
   result <- wm_geometry_overlap(M, d, draws = draws, seed = 819, chunk_size = 13)
@@ -90,7 +90,7 @@ test_that("exact public reduction, internal 1d integration and chunking are expl
   expect_equal(small$beta, large$beta, tolerance = 1e-12)
   expect_equal(small$term_covariance, large$term_covariance, tolerance = 1e-12)
   expect_equal(large$chunk_size, 59)
-  numerical <- wdsmatch:::.wm_geometry_overlap_dispatch(2, 1, 7, 19, 3, exact_1d = FALSE)
+  numerical <- WeightedMatching:::.wm_geometry_overlap_dispatch(2, 1, 7, 19, 3, exact_1d = FALSE)
   expect_identical(numerical$method, "boundary_rank_monte_carlo")
   expect_identical(numerical$draws, 7L)
   expect_identical(.Random.seed, previous)

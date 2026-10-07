@@ -136,7 +136,7 @@ test_that("new floors differentiate the maximum and disclose exact constant-weig
 test_that("old conditional-weight-chart dispatch and default objects are unchanged", {
   a <- wm_score_weight_fixture()
   a$W[] <- 1
-  before <- do.call(wdsmatch:::.wm_gt_compute, a)
+  before <- do.call(WeightedMatching:::.wm_gt_compute, a)
   implicit <- do.call(wm_graph_transport, a)
   explicit <- do.call(wm_graph_transport,
     c(a, list(representation = "conditional_weight_chart")))
@@ -155,7 +155,7 @@ test_that("score-weight fitted specifications bind original coordinates and full
     raw_scores = a$raw_scores, tangents = a$tangents, cutoff = a$cutoff)
   parameters <- dimnames(a$tangents)[[3L]]
   validate <- function(s, scores = a$raw_scores) {
-    wdsmatch:::.wm_fi_transport_spec(s, scores, 12L, parameters, "transport0")
+    WeightedMatching:::.wm_fi_transport_spec(s, scores, 12L, parameters, "transport0")
   }
   good <- validate(spec)
   expect_identical(good$representation, "score_measurable_weight")

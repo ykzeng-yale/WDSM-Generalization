@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Thin in-memory application assembly. No function runs when this file is sourced.
-# The statistical equations are supplied by application_statistics.R / wdsmatch.
+# The statistical equations are supplied by application_statistics.R / WeightedMatching.
 wm_application_function_identity <- function(fn) {
   if (!is.function(fn)) stop("Runtime dependency must be a function")
   text <- function(x) paste(deparse(x, width.cutoff = 500L,
@@ -37,7 +37,7 @@ wm_application_default_modules <- function(component_source, modules = NULL) {
     "wdsm_case_fit_propensity")[[1L]]
   expected_provider <- wm_application_source_definitions(
     file.path(directory, "application_modules.R"),
-    "23233ec83ff188bd800e43e96a6db01ee2900fe5934a33745bafd51a1dcb896a",
+    "e29ce887be7500c031ba775304ef90bbe1d19fb27ab5bb7414b373d65bca309c",
     "wm_application_modules")[[1L]]
   provider <- get("wm_application_modules", envir = environment(wm_application_run), inherits = TRUE)
   if (!identical(wm_application_function_identity(provider),
@@ -50,8 +50,8 @@ wm_application_default_modules <- function(component_source, modules = NULL) {
       !is.list(modules$source) || !identical(names(modules$source), "wdsm_case_fit_propensity") ||
       !identical(wm_application_function_identity(modules$source$wdsm_case_fit_propensity),
         wm_application_function_identity(expected_solver)) ||
-      !identical(modules$common, asNamespace("wdsmatch")))
-    stop("Default modules must use the accepted solver and actual wdsmatch namespace; custom modules require a custom callback/recipe/dependencies")
+      !identical(modules$common, asNamespace("WeightedMatching")))
+    stop("Default modules must use the accepted solver and actual WeightedMatching namespace; custom modules require a custom callback/recipe/dependencies")
   modules
 }
 
@@ -209,7 +209,7 @@ wm_application_recipe_binding <- function(component_callback, component_recipe,
     recipe$runtime_dependencies$default_source_sha256 <- list(
       statistics = "a42b2fffc76bc7c6875c24031b032f88a33f0967f151494cb8925d274eab11cc",
       solver = "35a7cad805577c79ac1e66078fc838959310d8e3b43f65eb2e95d4020278890e",
-      provider = "23233ec83ff188bd800e43e96a6db01ee2900fe5934a33745bafd51a1dcb896a")
+      provider = "e29ce887be7500c031ba775304ef90bbe1d19fb27ab5bb7414b373d65bca309c")
     recipe$runtime_dependencies$actual_provider_sha256 <- wm_application_function_identity(
       get("wm_application_modules", envir = environment(wm_application_run), inherits = TRUE))
   }

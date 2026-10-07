@@ -1,5 +1,9 @@
 # Weighted Matching: theory and method guide
 
+The current software interfaces below belong to the independent
+`WeightedMatching` 0.1.0 package. The original `wdsmatch` 0.2.1 is a separately
+installed comparison package; its public interfaces are not exported here.
+
 The current framework treats supplied `W=w_Z(X)`, including `w(X)`, as known.
 For iid observed rows with law Q, the target law is `dP/dQ=W/E_Q(W)`.
 Identification of a causal PATE or PATT remains a separate requirement.

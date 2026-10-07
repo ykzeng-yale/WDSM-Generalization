@@ -169,7 +169,8 @@ wrapper or an explicitly prepared public inference object. These adapters
 retain the respective sampling, numerical-root and refit-law premises.
 The nested fixed-map \code{fit} object should not be passed to a fixed-map
 bootstrap and interpreted as inference accounting for all estimated scores.
-The existing \code{wdsmatchATE} and \code{wdsmatchATT} interfaces are unchanged.
+The original \code{wdsmatchATE} and \code{wdsmatchATT} interfaces remain
+in the separate \pkg{wdsmatch} package.
 }
 \value{
 A list of class \code{wm_wdsm_fit}, containing \code{estimate},
@@ -190,4 +191,4 @@ premises, not evidence that those premises hold in the data.
 }
 \seealso{\code{\link{wm_match}}, \code{\link{wm_fit}},
   \code{\link{wm_bootstrap}}, \code{\link{wm_model_inference}},
-  \code{\link{wdsmatchATE}}, \code{\link{wdsmatchATT}}}
+  \code{wdsmatchATE}, \code{wdsmatchATT}}

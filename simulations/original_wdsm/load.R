@@ -21,7 +21,7 @@ original_wdsm_output <- function(path, inputs) {
 original_wdsm_load <- function(directory, upstream) {
   directory <- normalizePath(directory, mustWork = TRUE)
   upstream <- normalizePath(upstream, mustWork = TRUE)
-  for (package in c("digest", "jsonlite", "sampling", "wdsmatch"))
+  for (package in c("digest", "jsonlite", "sampling", "WeightedMatching"))
     if (!requireNamespace(package, quietly = TRUE)) stop("Missing package: ", package)
   sha <- function(path) digest::digest(file = path, algo = "sha256", serialize = FALSE)
   provenance <- jsonlite::read_json(file.path(directory, "provenance.json"))
@@ -42,11 +42,11 @@ original_wdsm_load <- function(directory, upstream) {
   sys.source(file.path(upstream, "R", "wdsm_core_final.R"), original)
   sys.source(file.path(upstream, "R", "comparators_final.R"), original)
   original$comparator_final_check_dependencies()
-  wm <- asNamespace("wdsmatch")
+  wm <- asNamespace("WeightedMatching")
   expected_version <- unname(read.dcf(
     file.path(directory, "..", "..", "DESCRIPTION"), fields = "Version")[1L, 1L])
-  if (!identical(as.character(utils::packageVersion("wdsmatch")), expected_version))
-    stop("Install wdsmatch version ", expected_version, " from this source checkout.")
+  if (!identical(as.character(utils::packageVersion("WeightedMatching")), expected_version))
+    stop("Install WeightedMatching version ", expected_version, " from this source checkout.")
   required <- c("wm_match", ".wm_wdsm_controls", ".wm_wdsm_fit_stack",
                 ".wm_wdsm_prediction_stack", ".wm_wdsm_nuisance_stack",
                 ".wm_wdsm_fitted_pipeline")

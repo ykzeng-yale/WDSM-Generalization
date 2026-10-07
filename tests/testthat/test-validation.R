@@ -24,7 +24,7 @@ validation_run <- function(counts, estimand = "PATE", sampling = "retrospective"
   args$call <- quote(quote(wdsmatchATE()))
   args[c("model.ps", "model.pg")] <- list(NULL, NULL)
   args$bootstrap_counts <- counts
-  do.call(wdsmatch:::wdsm_run, args)
+  do.call(WeightedMatching:::wdsm_run, args)
 }
 
 test_that("valid fixed-score inputs reach both public estimators", {
@@ -151,11 +151,11 @@ test_that("an empty-arm draw stops with replicate context in all four paths", {
 test_that("printed interval levels follow alpha and retain legacy compatibility", {
   counts <- cbind(rep(1, 8), c(2, 0, 2, 0, 0, 2, 0, 2))
   fit <- validation_run(counts, alpha = 0.1)
-  expect_output(print(fit), "90% Wald CI", fixed = TRUE)
-  expect_output(summary(fit), "90% Wald CI", fixed = TRUE)
-  invisible(capture.output(visible <- withVisible(print(fit))))
+  expect_output(print.wdsmatch(fit), "90% Wald CI", fixed = TRUE)
+  expect_output(summary.wdsmatch(fit), "90% Wald CI", fixed = TRUE)
+  invisible(capture.output(visible <- withVisible(print.wdsmatch(fit))))
   expect_identical(visible$visible, FALSE)
   legacy <- fit
   legacy$alpha <- legacy$interval.type <- NULL
-  expect_output(print(legacy), "95% CI", fixed = TRUE)
+  expect_output(print.wdsmatch(legacy), "95% CI", fixed = TRUE)
 })

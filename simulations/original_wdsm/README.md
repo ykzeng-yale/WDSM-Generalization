@@ -18,7 +18,11 @@ and WM X6 uses a complete quadratic correction. Failed prescribed draws are
 retained and prevent a complete refit interval; no replacement samples/counts
 are drawn. See the design for shared-count coupling and the separate divisors.
 
-Install the package from this checkout into a separate existing R library.
+Install `WeightedMatching` from this checkout into a separate existing R library.
+The loader uses this package for the general WM methods and continues to source
+the original WDSM comparators from the pinned `SW_DSM` checkout. Historical
+result receipts retain their original package identity; no saved result is
+relabeled by this separation.
 Additional simulation dependencies are digest, jsonlite, sampling, Matching,
 boot, MatchIt, optmatch, marginaleffects and sandwich. The original runtime's
 reference versions are in `dependency_versions.json`.

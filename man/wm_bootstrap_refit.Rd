@@ -92,4 +92,4 @@ raw finite-sample sampling-variance convergence.
 \value{
 A list containing the original \code{estimate}, replicate \code{draws}, \code{root_n_draws}, Monte Carlo \code{variance} and \code{se}, centered normal \code{conf.int}, \code{variance_divisor}, \code{B}, \code{n}, \code{conf.level}, \code{method}, prediction-refitting status and an inference-contract description.
 }
-\seealso{\code{\link{wm_match}}, \code{\link{wm_bootstrap}}, \code{\link{wdsmatchATE}}}
+\seealso{\code{\link{wm_match}}, \code{\link{wm_bootstrap}}, \code{wdsmatchATE}}

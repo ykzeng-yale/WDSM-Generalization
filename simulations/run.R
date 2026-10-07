@@ -9,7 +9,7 @@ source(file.path(script_dir, "dgp.R"))
 if (length(args) == 6L) {
   source_files <- sort(list.files(file.path(args[6L], "R"), "\\.R$", full.names = TRUE))
   for (file in source_files) source(file)
-} else library(wdsmatch)
+} else library(WeightedMatching)
 config <- utils::read.csv(args[1L], stringsAsFactors = FALSE)
 required <- c("scenario", "n", "d", "M", "design", "seed")
 if (!all(required %in% names(config)) || anyDuplicated(config$scenario)) stop("invalid configuration")
@@ -32,7 +32,7 @@ metadata <- list(config = cfg, first = first, last = last,
                  config_file_md5 = tools::md5sum(args[1L]),
                  code_md5 = tools::md5sum(c(list.files(script_dir, "\\.R$", full.names = TRUE),
                    if (length(args) == 6L) source_files else character())),
-                 package_description = if (length(args) == 5L) utils::packageDescription("wdsmatch") else NULL,
+                 package_description = if (length(args) == 5L) utils::packageDescription("WeightedMatching") else NULL,
                  immutable_sha256_manifest = Sys.getenv("WDSM_RUN_MANIFEST", unset = NA_character_),
                  host = unname(Sys.info()["nodename"]),
                  allocation = Sys.getenv(c("SLURM_JOB_ID", "SLURM_ARRAY_JOB_ID", "SLURM_ARRAY_TASK_ID",

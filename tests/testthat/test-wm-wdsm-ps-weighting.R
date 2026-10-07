@@ -34,7 +34,7 @@ test_that("PS fitting weights are separated from effect and correction weights",
       expect_equal(edge$share, W[donors] / sum(W[donors]))
     }
     # Check the whole generated-score Jacobian by differentiating its equations.
-    evaluator <- wdsmatch:::.wm_wdsm_nuisance_evaluate
+    evaluator <- WeightedMatching:::.wm_wdsm_nuisance_evaluate
     h <- 1e-5
     numeric_J <- vapply(seq_along(st$parameter), function(j) {
       plus <- minus <- st$parameter
@@ -49,7 +49,7 @@ test_that("PS fitting weights are separated from effect and correction weights",
     v <- sin(seq_len(n)); v <- v - mean(v)
     stack_args <- args[setdiff(names(args), "M")]
     stack_args$ps_weighting <- mode
-    fit_stack <- wdsmatch:::.wm_wdsm_nuisance_stack
+    fit_stack <- WeightedMatching:::.wm_wdsm_nuisance_stack
     plus <- do.call(fit_stack, c(stack_args, list(multiplicity = 1 + h * v)))
     minus <- do.call(fit_stack, c(stack_args, list(multiplicity = 1 - h * v)))
     derivative <- (plus$parameter - minus$parameter) / (2 * h)

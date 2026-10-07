@@ -16,7 +16,7 @@ meps_decoded_sha <- function(path) {
 
 meps_runtime <- function(release_dir) {
   release_dir <- normalizePath(release_dir, mustWork = TRUE)
-  for (package in c("digest", "jsonlite", "wdsmatch"))
+  for (package in c("digest", "jsonlite", "WeightedMatching"))
     if (!requireNamespace(package, quietly = TRUE)) stop("Missing dependency: ", package)
   helper <- new.env(parent = globalenv())
   common <- file.path(release_dir, "applications", "common")
@@ -28,7 +28,7 @@ meps_runtime <- function(release_dir) {
   required <- c("wm_fitted_inference", "wm_bootstrap", ".wm_wdsm_nuisance_evaluate",
                 ".wm_reciprocal_agree")
   for (name in required) if (!exists(name, ns, inherits = FALSE))
-    stop("Installed wdsmatch lacks the complete-contribution API: ", name)
+    stop("Installed WeightedMatching lacks the complete-contribution API: ", name)
   # Bind the normal installed namespace to this public release. No namespace
   # modification, alternate library selection or private runtime overlay occurs.
   source_signatures <- list()
@@ -42,7 +42,7 @@ meps_runtime <- function(release_dir) {
       expected <- helper$wm_application_function_identity(eval(node[[3L]], baseenv()))
       if (!exists(name, ns, inherits = FALSE) ||
           !identical(helper$wm_application_function_identity(get(name, ns)), expected))
-        stop("Installed wdsmatch differs from this public release: ", name,
+        stop("Installed WeightedMatching differs from this public release: ", name,
              ". Install the current release before resuming; no fallback is used.")
       source_signatures[[name]] <- expected
     }

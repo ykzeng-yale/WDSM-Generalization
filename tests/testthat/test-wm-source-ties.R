@@ -41,7 +41,7 @@ test_that("the default exact-distance policy remains deterministic without RNG u
 
 test_that("source randomized donors, fractions and reindexed points agree for both targets", {
   args <- wm_tie_fixture()
-  source <- wdsmatch:::wdsm_make_matches
+  source <- WeightedMatching:::wdsm_make_matches
   for (estimand in c("PATE", "PATT")) for (M in c(1L, 3L, 5L)) {
     args$estimand <- estimand; args$M <- M
     args$mean1 <- if (estimand == "PATE") 1 + seq_len(12) / 3 else NULL
@@ -85,7 +85,7 @@ test_that("arbitrary map dimensions and restricted cells retain source stream or
   # Complete ties have known geometry in every dimension, including unequal maps.
   args$scores0 <- matrix(0, 12, 1)
   args$scores1 <- matrix(0, 12, 4)
-  common <- wdsmatch:::wdsm_make_matches(args$Z, matrix(0, 12, 2), matrix(0, 12, 2),
+  common <- WeightedMatching:::wdsm_make_matches(args$Z, matrix(0, 12, 2), matrix(0, 12, 2),
     M = 3L, tie_seed = 20260920L)
   fit <- do.call(wm_match, c(args, list(tie_rule = "source_random", tie_seed = 20260920L)))
   expected <- lapply(seq_len(12), function(i)
@@ -118,7 +118,7 @@ test_that("near boundaries use squared tolerance and draw only on oversized boun
   # Two control donors differ in squared distance by less than the source width.
   S <- cbind(c(1, 0, 1 + 2 * .Machine$double.eps, 0, 4, 0), 0)
   for (tol in c(0, 64 * .Machine$double.eps)) {
-    source <- wdsmatch:::wdsm_make_matches(Z, S, M = 1, estimand = "PATT",
+    source <- WeightedMatching:::wdsm_make_matches(Z, S, M = 1, estimand = "PATT",
       tie_seed = 7L, tie_tolerance = tol)
     fit <- wm_match(seq_len(6), Z, rep(1, 6), S, M = 1,
       estimand = "PATT", variance = FALSE, tie_rule = "source_random",
@@ -205,7 +205,7 @@ test_that("general nuisance and WDSM wrappers forward source policy without chan
     expect_identical(a$nuisance$parameter, b$nuisance$parameter)
     expect_identical(a$nuisance$mean0, b$nuisance$mean0)
     expect_identical(a$nuisance$mean1, b$nuisance$mean1)
-    source <- wdsmatch:::wdsm_make_matches(args$Z, b$nuisance$scores0,
+    source <- WeightedMatching:::wdsm_make_matches(args$Z, b$nuisance$scores0,
       b$nuisance$scores1, M = 3L, estimand = estimand, tie_seed = opts$tie_seed)
     rows <- if (estimand == "PATE") seq_len(b$n) else which(args$Z == 1L)
     for (i in rows) {

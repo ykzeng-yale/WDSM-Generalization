@@ -1,7 +1,7 @@
 test_that("angular geometry marks zero empirical variance unresolved without changing estimates", {
   fixture <- NULL
   local_mocked_bindings(.wm_geometry_mc = function(...) fixture,
-                        .package = "wdsmatch")
+                        .package = "WeightedMatching")
 
   cases <- list(
     list(beta = 2, mcse = 0, hits = 2,

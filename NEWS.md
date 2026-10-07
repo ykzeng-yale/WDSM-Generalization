@@ -1,3 +1,19 @@
+# WeightedMatching 0.1.0
+
+* Establish WeightedMatching as a separate package for general Weighted Matching.
+  The original wdsmatch package remains the independent WDSM implementation.
+* Expose the 25 wm_* interfaces under the new namespace, including supplied-map,
+  fitted-score, dimension-general matching and conditional inference interfaces.
+  The historical WDSM reference functions remain internal for regression checks;
+  the new package does not export wdsmatchATE/ATT or register wdsmatch S3 methods.
+* Update current documentation, examples and workflow namespace lookups. Preserve
+  the estimator and inference calculations and all frozen scientific results.
+
+## Historical development under the predecessor package identity
+
+The entries below record development before package separation. They are not
+WeightedMatching release numbers or changes to the original published wdsmatch.
+
 # wdsmatch 0.3.1
 
 * Add compact print and structured summary methods for supplied-map fits and

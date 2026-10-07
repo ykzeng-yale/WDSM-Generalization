@@ -20,3 +20,23 @@ calculations or historical studies indexed in [results/REPRODUCE.md](../results/
 They are retained for traceability and are not additional principal studies of
 the current paper. No cluster/stratum or estimated-weight inference follows
 from running a weighted benchmark.
+
+Current unpinned WM entry points use the separate `WeightedMatching` package.
+Original WDSM comparison functions remain sourced from their pinned upstream
+code; they are not replaced by a renamed package. Recorded results and source
+receipts retain the package names and versions that actually produced them.
+
+The principal iid producer and older bounded-calibration runners require their
+frozen source checkouts and historical package artifacts. In particular,
+`run_bounded_wdsm_calibration.R`, `prepare_bounded_wdsm_replay.R`,
+`fitted_wm_components.R`, `wdsm_fitted_pipeline_reference.R` and
+`bounded_wdsm_calibration.R` retain their original `wdsmatch` namespace and
+checksum admissions. Installing `WeightedMatching` does not satisfy those
+historical admissions. Do not change their pins or regenerate completed studies
+to accommodate the package separation. For the principal study, use its
+[documented frozen checkout](principal_iid/README.md); use the exact source and
+installed-artifact receipts named by each bounded-calibration config for that
+historical workflow. Current saved-fit callers of
+[`wm_saved_full_x_stack.R`](wm_saved_full_x_stack.md) pass
+`wm = asNamespace("WeightedMatching")` explicitly, because its frozen default
+remains historical.

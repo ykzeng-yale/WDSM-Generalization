@@ -10,7 +10,7 @@ is distributed. Follow the GPL-3 distribution's `COPYING` and author credits.
 
 ## Load the functions
 
-Install the adopted `wdsmatch` package source. From this code repository root:
+Install the adopted `WeightedMatching` package source. From this code repository root:
 
 ```r
 source("applications/common/case_propensity_solver.R")
@@ -24,7 +24,7 @@ modules <- wm_application_modules()
 ```
 
 Sourcing defines functions; it does not fit, match or draw counts. The explicit
-provider call checks installed `wdsmatch`/`digest` APIs. It also uses the current
+provider call checks installed `WeightedMatching`/`digest` APIs. It also uses the current
 package's unexported `.wm_ns_ols`/`.wm_ns_basis`; those are explicit version
 dependencies, not a stable future public API. Loading `balance_schema.json`
 requires `jsonlite`. Base R/stats supply other direct statistical dependencies.
@@ -34,7 +34,7 @@ The default driver authenticates the loaded solver/provider definitions against
 the pinned sibling `case_propensity_solver.R`/`application_modules.R` before
 calling the provider. It checks the eight loaded statistical definitions and
 their lexical helper resolution against the pinned `application_statistics.R`,
-and requires the actual `wdsmatch` namespace. Supplied alternate module functions
+and requires the actual `WeightedMatching` namespace. Supplied alternate module functions
 cannot use the default recipe.
 
 ## Explicit prepared inputs and counts
@@ -122,7 +122,7 @@ to doubles; no attributes, objects, missing values or absolute filesystem paths
 are allowed. Ordered vectors retain their declared order.
 
 The default recipe also binds the actual R version/platform and installed
-`wdsmatch` implementation: DESCRIPTION/NAMESPACE, every installed R/lazy-load
+`WeightedMatching` implementation: DESCRIPTION/NAMESPACE, every installed R/lazy-load
 and `libs` payload file, and canonical formals/body signatures for loaded
 namespace functions. The loaded solver/provider and eight application helpers
 are checked against source-only parsed function definitions. Signatures contain

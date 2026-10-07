@@ -12,7 +12,7 @@ test_that("fixed original reuse equals an independent six-unit imputation oracle
   raw_treated <- c(41/24, 135/88, 124/33)
   for (estimand in c("PATE", "PATT")) {
     expected_K <- c(raw_control, if (estimand == "PATE") raw_treated else rep(0, 3))
-    K <- wdsmatch:::wdsm_reuse(A, w, matches0, matches1, estimand)
+    K <- WeightedMatching:::wdsm_reuse(A, w, matches0, matches1, estimand)
     expect_equal(K, expected_K, tolerance = 1e-14)
     expect_equal(sum(K[A == 0]), sum(w[A == 1]), tolerance = 1e-14)
     for (bias_correction in c(FALSE, TRUE)) {
@@ -29,7 +29,7 @@ test_that("fixed original reuse equals an independent six-unit imputation oracle
       }
       target <- if (estimand == "PATE") 1:6 else which(A == 1)
       expected_point <- sum(w[target] * difference[target]) / sum(w[target])
-      actual <- wdsmatch:::wdsm_replicate(Y, A, w, K, rep(1, 6), mu0, mu1, estimand)
+      actual <- WeightedMatching:::wdsm_replicate(Y, A, w, K, rep(1, 6), mu0, mu1, estimand)
       expect_equal(actual, expected_point, tolerance = 1e-14)
       # A second, nonuniform count vector catches donor-denominator
       # renormalization and omitted residual contributions.
@@ -42,9 +42,9 @@ test_that("fixed original reuse equals an independent six-unit imputation oracle
         oracle <- (sum(m[A == 1]*w[A == 1]*(Y[A == 1]-mu0[A == 1])) -
           sum(m[A == 0]*expected_K[A == 0]*(Y[A == 0]-mu0[A == 0]))) / sum(m[A == 1]*w[A == 1])
       }
-      expect_equal(wdsmatch:::wdsm_replicate(Y, A, w, K, m, mu0, mu1, estimand), oracle,
+      expect_equal(WeightedMatching:::wdsm_replicate(Y, A, w, K, m, mu0, mu1, estimand), oracle,
         tolerance = 1e-14)
-      expect_equal(wdsmatch:::wdsm_replicate(Y, A, 100*w, 100*K, m, mu0, mu1, estimand), oracle,
+      expect_equal(WeightedMatching:::wdsm_replicate(Y, A, 100*w, 100*K, m, mu0, mu1, estimand), oracle,
         tolerance = 1e-13)
     }
   }
@@ -167,7 +167,7 @@ test_that("an empty-arm bootstrap draw fails with its index instead of becoming 
   for (estimand in c("PATE", "PATT")) {
     K <- c(11/5, 11/3, 122/15, if (estimand == "PATE") c(41/24, 135/88, 124/33) else rep(0, 3))
     pt <- list(Y = Y, Z = Z, weights = w, K = K, estimate = 1, estimand = estimand)
-    expect_error(wdsmatch:::wdsm_bootstrap(pt, boots = 2L,
+    expect_error(WeightedMatching:::wdsm_bootstrap(pt, boots = 2L,
       use.bias.correction = FALSE, bootstrap_counts = counts),
       "bootstrap replicate 2/2 failed: both treatment arms")
   }
@@ -180,7 +180,7 @@ test_that("dot formulas use exactly X and reproduce explicit formulas in every d
   Z <- rbinom(n, 1, plogis(0.35*X$X1 - 0.45*X$X2))
   Y <- 3*Z + X$X1 + 0.4*X$X2^2 + rnorm(n)
   w <- exp(0.3*X$X1 + 0.25*Z)
-  expanded_ps <- wdsmatch:::wdsm_validate_formula(Z ~ ., "Z", X)
+  expanded_ps <- WeightedMatching:::wdsm_validate_formula(Z ~ ., "Z", X)
   expect_setequal(all.vars(expanded_ps), c("Z", "X1", "X2"))
   expect_false("Y" %in% all.vars(expanded_ps))
   for (fun in list(wdsmatchATE, wdsmatchATT)) for (sampling in c("retrospective", "prospective")) {

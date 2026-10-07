@@ -8,7 +8,8 @@
 #'   side effect of printing a formatted summary to the console, including
 #'   the point estimate, standard error, confidence interval, number of
 #'   matches, and sample sizes.
-#' @export
+#' @keywords internal
+#' @noRd
 print.wdsmatch <- function(x, digits = 4, ...) {
   cat("\nWeighted Double Score Matching\n")
   cat("------------------------------\n")
@@ -36,7 +37,8 @@ print.wdsmatch <- function(x, digits = 4, ...) {
 #' @param ... Additional arguments (ignored).
 #' @return Invisibly returns the input object. Called for its side effect
 #'   of printing a formatted summary to the console.
-#' @export
+#' @keywords internal
+#' @noRd
 summary.wdsmatch <- function(object, ...) {
   print.wdsmatch(object, ...)
 }

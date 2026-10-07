@@ -1,20 +1,20 @@
 # SPDX-License-Identifier: GPL-3.0-only
 # Companion to the extracted application functions; no work runs at source time.
-# Loading this provider explicitly checks the installed wdsmatch API. It does
+# Loading this provider explicitly checks the installed WeightedMatching API. It does
 # not install packages, fit models, create counts, or choose a private library.
 wm_application_modules <- function() {
-  if (!requireNamespace("wdsmatch", quietly = TRUE))
-    stop("Install the validated wdsmatch source before using this application module.")
+  if (!requireNamespace("WeightedMatching", quietly = TRUE))
+    stop("Install the validated WeightedMatching source before using this application module.")
   if (!requireNamespace("digest", quietly = TRUE))
     stop("The extracted count-column checker requires the digest package.")
-  ns <- asNamespace("wdsmatch")
+  ns <- asNamespace("WeightedMatching")
   required <- c(".wm_ns_ols", ".wm_ns_basis", "wm_match",
                 "wm_bootstrap_refit", "wm_wdsm_fit")
   available <- vapply(required, function(name)
     exists(name, envir = ns, inherits = FALSE) &&
       is.function(get(name, envir = ns, inherits = FALSE)), logical(1))
   if (!all(available))
-    stop("Installed wdsmatch lacks required application functions: ",
+    stop("Installed WeightedMatching lacks required application functions: ",
          paste(required[!available], collapse = ", "))
   formals_required <- list(
     wm_match = c("Y", "Z", "weights", "scores0", "scores1", "M",
@@ -28,7 +28,7 @@ wm_application_modules <- function() {
     missing <- setdiff(formals_required[[name]],
                       names(formals(get(name, envir = ns, inherits = FALSE))))
     if (length(missing))
-      stop("Installed wdsmatch API differs for ", name, ": ",
+      stop("Installed WeightedMatching API differs for ", name, ": ",
            paste(missing, collapse = ", "))
   }
   if (!exists("wdsm_case_fit_propensity", mode = "function", inherits = TRUE))

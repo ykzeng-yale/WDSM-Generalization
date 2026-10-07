@@ -1,5 +1,10 @@
 # Contributing
 
+This checkout develops the independent `WeightedMatching` package, version
+0.1.0. The original `wdsmatch` 0.2.1 is a separately installed predecessor.
+Current public statistical interfaces use `wm_*`; legacy WDSM code retained
+internally for source comparisons is not a public replacement for that package.
+
 Use a minimal synthetic example when reporting an error. Include the package
 version, Git commit, `sessionInfo()`, target, matching coordinates/scaling, M,
 correction and inference method. Do not upload participant records, credentials
@@ -9,7 +14,7 @@ Install the suggested dependencies in DESCRIPTION, then run:
 
 ```sh
 R CMD build .
-R CMD check --no-manual wdsmatch_0.3.1.tar.gz
+R CMD check --no-manual WeightedMatching_0.1.0.tar.gz
 ```
 
 Building the executable HTML vignette requires Pandoc. Checking the PDF reference

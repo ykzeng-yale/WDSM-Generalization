@@ -1,5 +1,5 @@
 # Sourceable first-stage validation DGP and paired-run helpers.
-# Source package R files (or load wdsmatch) before calling the run helper.
+# Source package R files (or load WeightedMatching) before calling the run helper.
 
 .wm_fs_integer <- function(x, name, lower = 1L, upper = .Machine$integer.max) {
   if (!is.numeric(x) || is.complex(x) || length(x) != 1L ||

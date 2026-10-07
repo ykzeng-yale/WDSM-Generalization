@@ -53,7 +53,7 @@ test_that("post-fit inference is the exact common result and preserves point/roo
     object <- wm_model_handoff_fixture(estimand, lp); before <- object
     scope <- if (estimand == "PATE") "full_x" else "patt"
     transport <- if (estimand == "PATT") list(mode = "zero", basis = "current_centering") else NULL
-    args <- wdsmatch:::.wm_mi_bind(object)$arguments
+    args <- WeightedMatching:::.wm_mi_bind(object)$arguments
     direct <- do.call(wm_fitted_inference, c(args,
       list(covariance_scope = scope, transport0 = transport, conf.level = .9)))
     out <- wm_model_inference(object, scope, transport0 = transport, conf.level = .9)
@@ -77,7 +77,7 @@ test_that("post-fit inference is the exact common result and preserves point/roo
 })
 
 test_that("unavailable retained inputs stop before low-level inference without refitting", {
-  local_mocked_bindings(wm_fitted_inference = function(...) stop("LOW_LEVEL_WAS_CALLED"), .package = "wdsmatch")
+  local_mocked_bindings(wm_fitted_inference = function(...) stop("LOW_LEVEL_WAS_CALLED"), .package = "WeightedMatching")
   a <- wm_model_handoff_fixture()
   a$nuisance$nuisance_influence <- NULL
   a$nuisance$estimating_equations <- NULL
@@ -110,7 +110,7 @@ test_that("fitted sentinel binds only actual score-coordinate derivatives", {
   a <- wm_model_handoff_fixture(lp = TRUE); parameters <- a$nuisance$parameter_names
   spec <- list(mode = "estimate", representation = "score_measurable_weight",
     tangents = "fitted", cutoff = rep(1, a$n))
-  resolved <- wdsmatch:::.wm_mi_transport(spec, a, "0", parameters)
+  resolved <- WeightedMatching:::.wm_mi_transport(spec, a, "0", parameters)
   expect_identical(spec$tangents, "fitted")
   expect_identical(resolved$raw_scores, a$fit$graph$scores0)
   expect_identical(dim(resolved$tangents), c(12L, 2L, 2L))
@@ -119,24 +119,24 @@ test_that("fitted sentinel binds only actual score-coordinate derivatives", {
   expect_identical(resolved$cutoff, spec$cutoff)
   expect_null(resolved$bandwidth)
   bad <- spec; bad$representation <- "conditional_weight_chart"
-  expect_error(wdsmatch:::.wm_mi_transport(bad, a, "0", parameters), "not a raw-chart derivative", fixed = TRUE)
+  expect_error(WeightedMatching:::.wm_mi_transport(bad, a, "0", parameters), "not a raw-chart derivative", fixed = TRUE)
   bad <- spec; bad$raw_scores <- a$fit$graph$scores0
-  expect_error(wdsmatch:::.wm_mi_transport(bad, a, "0", parameters), "Omit raw_scores", fixed = TRUE)
+  expect_error(WeightedMatching:::.wm_mi_transport(bad, a, "0", parameters), "Omit raw_scores", fixed = TRUE)
   bad <- spec; bad$raw_to_matching <- function(s) s
-  expect_error(wdsmatch:::.wm_mi_transport(bad, a, "0", parameters), "no raw_to_matching", fixed = TRUE)
+  expect_error(WeightedMatching:::.wm_mi_transport(bad, a, "0", parameters), "no raw_to_matching", fixed = TRUE)
 })
 
 test_that("a caller raw-chart coordinate callback runs exactly once", {
   a <- wm_model_handoff_fixture(); calls <- 0L
   mapping <- function(x) { calls <<- calls + 1L; x }
-  B <- wdsmatch:::.wm_mi_tangents(a,"0",a$nuisance$parameter_names)
+  B <- WeightedMatching:::.wm_mi_tangents(a,"0",a$nuisance$parameter_names)
   spec <- list(mode="estimate", representation="conditional_weight_chart",
     raw_scores=a$fit$graph$scores0, tangents=B, cutoff=rep(1,a$n),
     raw_to_matching=mapping)
   # Isolate dispatch/validation: no transport numerical experiment is needed.
   local_mocked_bindings(wm_graph_transport=function(...) {
     stop("literal unavailable transport for callback-count test")
-  }, .package="wdsmatch")
+  }, .package="WeightedMatching")
   answer <- wm_model_inference(a,"distinct_rarity",transport0=spec,
     transport1=list(mode="zero",basis="fixed_map"))
   expect_identical(calls,1L)
@@ -166,13 +166,13 @@ test_that("API and protected-binding mistakes remain errors", {
 
 test_that("only recognized dispatch arithmetic errors become unavailable", {
   a <- wm_model_handoff_fixture()
-  local_mocked_bindings(wm_fitted_inference = function(...) stop("Fitted-variance arithmetic exceeded numerical range."), .package="wdsmatch")
+  local_mocked_bindings(wm_fitted_inference = function(...) stop("Fitted-variance arithmetic exceeded numerical range."), .package="WeightedMatching")
   out <- wm_model_inference(a, "full_x")
   expect_identical(out$fit, a$fit)
   expect_false(out$inference$available)
   expect_true(out$inference_handoff$dispatched)
   expect_true(all(is.na(out$conf.int)))
-  local_mocked_bindings(wm_fitted_inference = function(...) stop("protected binding changed"), .package="wdsmatch")
+  local_mocked_bindings(wm_fitted_inference = function(...) stop("protected binding changed"), .package="WeightedMatching")
   expect_error(wm_model_inference(a, "full_x"), "protected binding changed", fixed = TRUE)
 })
 
@@ -218,7 +218,7 @@ test_that("critical fitted sentinel preserves exact common result and direct-var
   captured <- NULL
   local_mocked_bindings(wm_fitted_inference=function(...) {
     captured <<- list(...); marker
-  }, .package="wdsmatch")
+  }, .package="WeightedMatching")
   out <- wm_model_inference(a,"critical_planar",zero,zero,control)
   expect_identical(out$inference,marker)
   expect_identical(out$root_n_variance,-.1)
@@ -227,9 +227,9 @@ test_that("critical fitted sentinel preserves exact common result and direct-var
   expect_identical(captured$nuisance_influence,a$nuisance$nuisance_influence)
   expect_true(all(captured$weight_derivative==0))
   expect_identical(captured$critical_control$tangents0,
-    wdsmatch:::.wm_mi_tangents(a,"0",a$nuisance$parameter_names))
+    WeightedMatching:::.wm_mi_tangents(a,"0",a$nuisance$parameter_names))
   expect_identical(captured$critical_control$tangents1,
-    wdsmatch:::.wm_mi_tangents(a,"1",a$nuisance$parameter_names))
+    WeightedMatching:::.wm_mi_tangents(a,"1",a$nuisance$parameter_names))
   expect_identical(captured$critical_control$direct_variance,"raw_only")
   expect_null(captured$critical_control$support)
   expect_identical(control$tangents0,"fitted")

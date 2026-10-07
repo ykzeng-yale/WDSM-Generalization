@@ -1,4 +1,4 @@
 library(testthat)
-library(wdsmatch)
+library(WeightedMatching)
 
-test_check("wdsmatch")
+test_check("WeightedMatching")

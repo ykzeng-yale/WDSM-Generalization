@@ -1,7 +1,7 @@
-Package: wdsmatch
+Package: WeightedMatching
 Type: Package
 Title: Weighted Matching for Causal Inference
-Version: 0.3.1
+Version: 0.1.0
 Authors@R: c(
     person("Yukang", "Zeng", email = "ykzeng2019@gmail.com", role = c("aut", "cre")),
     person("Guangyu", "Tong", role = "aut"),
@@ -15,8 +15,8 @@ Description: Implements fixed-count nearest-neighbor matching with positive
     weights, stabilized residual imputation, polynomial and tensor-spline bias
     correction, and contribution-based Gaussian multiplier inference. Includes
     marked geometric variance constants, qualified nuisance-influence
-    adjustments, and independent-block potential-mean estimators. Retains the
-    original weighted double score matching interfaces. Inference requires the
+    adjustments, and independent-block potential-mean estimators. Supports
+    weighted double score matching as a special case. Inference requires the
     stated independent-observation, identification, overlap, moment and
     nuisance-rate assumptions; individual weights alone do not specify a
     complex survey design.
@@ -36,6 +36,5 @@ Suggests:
     rmarkdown
 Config/testthat/edition: 3
 VignetteBuilder: knitr
-URL: https://github.com/ykzeng-yale/WDSM-Generalization,
-    https://cran.r-project.org/package=wdsmatch
+URL: https://github.com/ykzeng-yale/WDSM-Generalization
 BugReports: https://github.com/ykzeng-yale/WDSM-Generalization/issues

@@ -1,22 +1,53 @@
 # Software validation
 
-Version 0.3.1 adds compact WM print/summary methods, an explicit
+## Current package
+
+The current source is the independent `WeightedMatching` 0.1.0 package, with
+25 public `wm_*` statistical interfaces. The original `wdsmatch` 0.2.1 remains
+separately installed; its `wdsmatchATE()`/`wdsmatchATT()` functions and legacy
+S3 methods are not current `WeightedMatching` exports.
+
+The local macOS/R 4.4.2 `WeightedMatching` 0.1.0 archive passed
+`R CMD check --no-manual` with zero errors, warnings or notes: 5,172 test
+expectations passed, with no failures, warnings or skips. The source-bound
+receipt pins 117 package inputs and the checked archive, and records successful
+help/example checks and vignette execution, installation and rebuild.
+The package name, version, archive and input identities are recorded in
+[software_validation.json](software_validation.json). A check of the
+earlier `wdsmatch`-named development archive is not a check of the new package's
+installation, namespace separation or installed help. Unit tests, independent
+reference comparisons and public saved-result replay remain separate checks.
+
+Identity regression checks retain all 209 common function bodies and formals,
+12 exact supplied-map/seeded-contribution cases and two fitted-WDSM point cases
+against the earlier development archive. They establish finite software parity,
+not a new simulation performance result. The original CRAN `wdsmatch` 0.2.1 was
+restored separately; both package load orders were checked without export
+collision or replacement of its legacy S3 methods, and installing the new
+package left the original installed files unchanged.
+
+Linux/macOS/Windows CI is defined in `.github/workflows/R-CMD-check.yaml`;
+consult observed Actions results rather than treating its configuration as a
+completed test. Use `help(package="WeightedMatching")` for current interfaces.
+
+## Historical check before package separation
+
+The following describes the earlier `wdsmatch`-named 0.3.1 development source,
+before the independent package was established. Its check counts and source
+identities retain that historical scope; they do not certify the current
+`WeightedMatching` archive.
+
+Version 0.3.1 added compact WM print/summary methods, an explicit
 [user-options guide](user_options.md), and installed tests for the three scalar
 interfaces previously covered only by standalone validation scripts. Existing
 donor-normalized estimation, graph selection, analytic variance and replication
 routines are unchanged. The original synthetic scalar fixture is reused byte
 for byte; publication simulations and participant analyses were not rerun.
 
-The final source-bound package build/check receipt is recorded in
-`software_validation.json`. Unit tests, independent reference comparisons and
-public saved-result replay are separate checks. Linux/macOS/Windows CI is
-defined in `.github/workflows/R-CMD-check.yaml`; consult the observed Actions
-status rather than treating workflow configuration as a completed test.
-
-The current local macOS/R 4.4.2 source archive passes `R CMD check --no-manual`
+The earlier local macOS/R 4.4.2 source archive passed `R CMD check --no-manual`
 with zero errors, warnings and notes: 5,165 passed expectations, no failures,
 warnings or skips. The 119 package-input identities and source/archive binding
-are recorded in the receipt. Help usage/defaults, examples and the executed,
+were recorded in its historical receipt. Help usage/defaults, examples and the executed,
 installed and rebuilt HTML vignette passed. The additional 141 expectations
 cover retained summary statistics/intervals and scalar option/input contracts.
 All 27 exports have installed help and test-call bindings; this is not exhaustive

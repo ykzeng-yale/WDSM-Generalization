@@ -1,6 +1,6 @@
 # User options and predecessor matching interfaces
 
-`wdsmatch` implements a specified fixed-count weighted estimator. It is not a
+`WeightedMatching` 0.1.0 implements a specified fixed-count weighted estimator. It is not a
 drop-in replacement for every matching design in another package. Start with
 `wm_fit()` for supplied matching coordinates, `wm_wdsm_fit()` for fitted
 arm-specific double scores, or `wm_model_fit()` for finite fitted model lists.
@@ -44,7 +44,7 @@ of this paper's supplied-weight inference. No cluster-robust SE option is implie
 | `Matching::Match()` | `M`, `estimand`, `X`, observation `weights`, `Weight`/`Weight.matrix`, `replace`, `ties`, `caliper`, `exact`, `BiasAdjust`, `Var.calc` | Its observation-weighted path selects a donor-weight mass rather than simply M distinct records. `Weight` controls distance separately. Bias adjustment and Abadie–Imbens variance options are not WM bootstrap aliases. Unit weights recover ordinary donor counts, but distance, ties and correction still need alignment. |
 | `MatchIt::matchit(method="nearest")` | `ratio`, `replace`, `reuse.max`, `distance`/`link`, `mahvars`, `exact`, `antiexact`, `caliper`, `discard`, `reestimate`, `m.order`, `s.weights`, `normalize` | Provides a matched-design object, with nearest-neighbor ATT/ATC directions. Defaults differ from WM. Sampling weights can enter model fitting and later combine with matching weights; they do not automatically implement WM donor-set normalization. Calipers/discarding can alter the analyzed target. |
 | `dsmatchATE()` / `dsmatchATT()` (1.7.1) | `Y/X/A`, `method`, supplied PS/PG, model selectors/design matrices, `varest/boots/mc/ncpus` | ATE has no M argument or forwarding ellipsis. ATT can forward M on several Matching-backed paths; its DSM path forwards only without a caliper. Its retained correction/reuse calculations do not generally normalize M>1. Native comparisons therefore use M=1. ATE's DSM uses a common three-coordinate map; ATT's is two-coordinate. Fitted PS uses the linear predictor. These differ from WDSM's arm-specific probability/PG maps. |
-| Original `wdsmatchATE()` / `wdsmatchATT()` (0.2.1) | `Y/X/Z/weights`, optional `model.ps/model.pg` formulas or supplied scores, `M=5`, `sampling`, `use.bias.correction`, `varest/boots/alpha`, `tie.seed/tie.tolerance` | The legacy APIs and defaults remain available. Bootstrap uses the ambient `set.seed()` stream; there is no bootstrap `seed` formal. Score, correction, tie, PS-weighting and fixed-reuse choices must be retained for exact WDSM reductions. General WM defaults to M=3 and adds explicit maps/model lists and qualified contribution inference. |
+| Original `wdsmatch::wdsmatchATE()` / `wdsmatch::wdsmatchATT()` (0.2.1) | `Y/X/Z/weights`, optional `model.ps/model.pg` formulas or supplied scores, `M=5`, `sampling`, `use.bias.correction`, `varest/boots/alpha`, `tie.seed/tie.tolerance` | These APIs belong to the separately installed original `wdsmatch` package; `WeightedMatching` does not export or mask them. Bootstrap uses the ambient `set.seed()` stream; there is no bootstrap `seed` formal. Score, correction, tie, PS-weighting and fixed-reuse choices must be retained for exact WDSM reductions. General WM defaults to M=3 and adds explicit maps/model lists and qualified contribution inference. |
 
 These are intentionally unsupported in the general WM interface: optimal/full/
 genetic/cardinality matching, ATC/ATO targets, matching without replacement,
@@ -81,7 +81,7 @@ Primary references: [Matching manual](https://cran.r-project.org/web/packages/Ma
 [MatchIt reference](https://kosukeimai.github.io/MatchIt/reference/matchit.html),
 [nearest-neighbor options](https://kosukeimai.github.io/MatchIt/reference/method_nearest.html),
 [sampling-weight workflow](https://kosukeimai.github.io/MatchIt/articles/sampling-weights.html),
-and [wdsmatch manual](https://cran.r-project.org/web/packages/wdsmatch/wdsmatch.pdf).
+and the [original wdsmatch manual](https://cran.r-project.org/web/packages/wdsmatch/wdsmatch.pdf).
 The [dsmatch comparison](https://github.com/Yunshu7/dsmatch/tree/006a939ad84664eacf80f933ad3e4fc8fc12511d)
 is bound to the retained 1.7.1 source; it is not a claim
 about every future version. Installed help and [the method guide](theory_method_guide.md)

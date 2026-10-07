@@ -38,22 +38,8 @@
 #'   \code{\link{wdsmatchATE}}, with \code{estimate} targeting PATT and
 #'   \code{estimand} identifying PATT.
 #'
-#' @examples
-#' data(survey_obs)
-#' fit <- wdsmatchATT(
-#'   Y = survey_obs$Y,
-#'   X = survey_obs[, c("X1", "X2", "X3", "X4", "X5", "X6")],
-#'   Z = survey_obs$Z,
-#'   weights = survey_obs$survey_weight,
-#'   M = 3,
-#'   model.ps = Z ~ X1 + X2 + X3 + X4 + X5 + X6 + X1:X2,
-#'   model.pg = Y ~ X1 + X2 + X3 + X4 + X5 + X6 + X1:X2,
-#'   sampling = "retrospective",
-#'   varest = FALSE
-#' )
-#' fit
-#'
-#' @export
+#' @keywords internal
+#' @noRd
 wdsmatchATT <- function(Y, X, Z, weights, M = 5,
                         ps = NULL, pg = NULL,
                         model.ps = NULL, model.pg = NULL,

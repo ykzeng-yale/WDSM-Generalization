@@ -2,7 +2,7 @@
 
 `weighted_balance.R` contains the unchanged diagnostic functions used on the
 reviewed NHANES, ECLS-K and NSDUH saved matching graphs. It requires base R and an
-existing `wm_match` object from `wdsmatch`. Sourcing it defines functions;
+existing `wm_match` object from `WeightedMatching`. Sourcing it defines functions;
 it does not fit models, construct neighbors, draw counts or change the RNG.
 This module belongs to the application code and adds no package API.
 

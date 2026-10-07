@@ -6,7 +6,7 @@ the 19-method report, fitting, matching, or fixed-reuse count bootstrap.
 source("code-release/simulations/wm_saved_full_x_stack.R")
 source("code-release/simulations/original_wdsm/original_survey_saved_analytic_adapter.R")
 companion <- ows_saved_analytic_batch(
-  data, weighted, asNamespace("wdsmatch"),
+  data, weighted, asNamespace("WeightedMatching"),
   saved_stack = wm_saved_full_x_stack, alpha = .05, M = 3L
 )
 ```

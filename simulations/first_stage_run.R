@@ -35,7 +35,7 @@
     if (!length(source_files)) stop("source_package contains no R source files")
     for (file in source_files) source(file)
   } else {
-    library(wdsmatch)
+    library(WeightedMatching)
     source_root <- NULL
   }
   dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
@@ -61,7 +61,7 @@
       file.path(directory, "first_stage_benchmarks.R"), source_files)),
     design_md5 = tools::md5sum(file.path(directory, "first_stage_design.md")),
     source_root = source_root,
-    package_description = if (length(args) == 5L) utils::packageDescription("wdsmatch") else NULL,
+    package_description = if (length(args) == 5L) utils::packageDescription("WeightedMatching") else NULL,
     immutable_sha256_manifest = Sys.getenv("WDSM_RUN_MANIFEST", unset = NA_character_),
     host = unname(Sys.info()["nodename"]),
     allocation = Sys.getenv(c("SLURM_JOB_ID", "SLURM_ARRAY_JOB_ID", "SLURM_ARRAY_TASK_ID",

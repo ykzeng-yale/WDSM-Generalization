@@ -9,14 +9,18 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-library(wdsmatch)
+library(WeightedMatching)
 ```
 
-`wdsmatch` implements fixed-count matching with supplied positive probability
+`WeightedMatching` implements fixed-count matching with supplied positive probability
 weights. The original self-normalized donor share is
 `W_j / sum(W_selected)`. Each query has exactly `M` distinct opposite-arm
 donors, with reuse permitted across queries. PATE uses the all-row weighted
 target; PATT uses the treated weighted target and only the control imputation.
+
+This tutorial is for the independent `WeightedMatching` package. The original
+WDSM package, `wdsmatch` 0.2.1, installs separately; its `wdsmatchATE()` and
+`wdsmatchATT()` interfaces are not exported by this package.
 
 This tutorial runs small synthetic interface examples. It is not a coverage
 experiment or a verification of the assumptions needed for causal

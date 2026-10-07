@@ -141,7 +141,7 @@ test_that("model-list wrappers retain generic and legacy count-refit routes", {
     # Existing guarded constructor is a separate lower-level reference for the
     # generic p stack; independent explicit recipe is tested for legacy above.
     expected <- vapply(seq_len(ncol(counts)), function(j) {
-      current <- wdsmatch:::.wm_model_prediction_stack(a$Y, a$Z, a$W,
+      current <- WeightedMatching:::.wm_model_prediction_stack(a$Y, a$Z, a$W,
         ps_models = models, pg0_models = list(list(design = a$D)),
         pg1_models = if (pate) list(list(design = a$D)) else NULL,
         estimand = target, multiplicity = counts[, j])

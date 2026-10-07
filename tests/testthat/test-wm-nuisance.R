@@ -74,7 +74,7 @@ test_that("tensor B-splines reproduce endpoint values and bilinear surfaces", {
   expect_equal(fit$nuisance$predictions$mean0, m0, tolerance = 1e-10)
   expect_equal(fit$nuisance$predictions$mean1, m1, tolerance = 1e-10)
   spec <- fit$nuisance$models[[1]]$basis
-  basis <- wdsmatch:::.wm_fit_basis(s, spec)
+  basis <- WeightedMatching:::.wm_fit_basis(s, spec)
   expect_equal(rowSums(basis), rep(1, nrow(s)), tolerance = 1e-12)
   expect_equal(spec$knots[[1]], c(0, 0, 0.5, 1, 1))
   expect_equal(unname(spec$support), support)

@@ -8,7 +8,7 @@ or execution controller is included.
 
 ## Load and dependencies
 
-Distribute these three R files together within the GPL-3 `wdsmatch` code
+Distribute these three R files together within the GPL-3 `WeightedMatching` code
 distribution and its `COPYING` file. From the repository root, source the
 three application files into the same environment:
 
@@ -20,7 +20,7 @@ modules <- wm_application_modules()
 ```
 
 Sourcing only defines functions. The last explicit call checks installed
-`wdsmatch` and `digest` namespaces; it does not install packages, select a
+`WeightedMatching` and `digest` namespaces; it does not install packages, select a
 private library, fit a model or generate counts. Base R and `stats` supply the
 remaining direct dependencies. The provider requires these package functions:
 

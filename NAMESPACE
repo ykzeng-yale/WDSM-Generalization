@@ -1,16 +1,12 @@
 # Maintained with the installed man/*.Rd reference; see CONTRIBUTING.md.
 
-S3method(print,wdsmatch)
 S3method(print,wm_match)
 S3method(print,wm_wdsm_fit)
 S3method(print,wm_model_fit)
 S3method(print,summary_wm)
-S3method(summary,wdsmatch)
 S3method(summary,wm_match)
 S3method(summary,wm_wdsm_fit)
 S3method(summary,wm_model_fit)
-export(wdsmatchATE)
-export(wdsmatchATT)
 export(wm_match)
 export(wm_fit)
 export(wm_wdsm_fit)

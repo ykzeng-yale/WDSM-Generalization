@@ -17,7 +17,7 @@ test_that("one-dimensional overlap constants use the exact all-M formula", {
 })
 
 test_that("ball union volumes agree with independent interval, disk and sphere formulas", {
-  union <- wdsmatch:::.wm_ball_union_volume
+  union <- WeightedMatching:::.wm_ball_union_volume
   expect_equal(union(c(2, 2, 2, 0), c(1, 1, 1, 0), c(0, 2, 4, 0), 1),
                c(4, 5, 6, 0))
   expect_equal(union(1, 1, 0, 2), pi)
@@ -33,13 +33,13 @@ test_that("ball union volumes agree with independent interval, disk and sphere f
   expected <- pi * (r^2 + s^2) - intersection
   expect_equal(union(r, s, distance, 2), expected)
   expect_equal(union(s, r, distance, 2), expected)
-  expect_equal(wdsmatch:::.wm_log_ball_union(r * 1e100, s * 1e100, distance * 1e100, 3),
-               wdsmatch:::.wm_log_ball_union(r, s, distance, 3) + 3 * log(1e100))
+  expect_equal(WeightedMatching:::.wm_log_ball_union(r * 1e100, s * 1e100, distance * 1e100, 3),
+               WeightedMatching:::.wm_log_ball_union(r, s, distance, 3) + 3 * log(1e100))
   expect_error(union(-1, 1, 1, 2), "nonnegative")
 })
 
 test_that("angular factors and private-donor exclusions have exact fixtures", {
-  component <- wdsmatch:::.wm_angular_component
+  component <- WeightedMatching:::.wm_angular_component
   normals1 <- rbind(c(1, 0), c(1, 1), c(1, -1))
   expect_equal(component(normals1, 1L, 1L, 0L), c(pi / 2, pi, pi / 4))
   normals2 <- rbind(c(1, 0, 0, 0), c(1, 0, 1, 0), c(1, 0, -1, 0))
@@ -54,8 +54,8 @@ test_that("coupled MC moments include within-draw component covariance", {
   M <- 2L; d <- 2L; draws <- 73L
   set.seed(404)
   normals <- matrix(rnorm(draws * 2 * M * d), nrow = draws, byrow = TRUE)
-  values <- cbind(wdsmatch:::.wm_angular_component(normals, M, d, 0L),
-                  wdsmatch:::.wm_angular_component(normals, M, d, 1L))
+  values <- cbind(WeightedMatching:::.wm_angular_component(normals, M, d, 0L),
+                  WeightedMatching:::.wm_angular_component(normals, M, d, 1L))
   covariance <- stats::cov(values) / draws
   out <- wm_geometry(M, d, draws = draws, seed = 404, chunk_size = 17L)
   expect_equal(unname(out$beta), colMeans(values), tolerance = 1e-12)

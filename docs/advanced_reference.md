@@ -1,5 +1,13 @@
 # Earlier detailed API reference
 
+**Archived package identity:** the text below describes an earlier development
+checkout named `wdsmatch`. Its installation commands, version/check records and
+claims that `wdsmatchATE()`/`wdsmatchATT()` remain exported are historical.
+Current software is the independent `WeightedMatching` 0.1.0 package; install
+the original `wdsmatch` 0.2.1 separately for predecessor comparisons. Use the
+[current README](../README.md) and installed `WeightedMatching` R help for
+current commands and exports. The archived text is preserved below.
+
 This is the root README at commit `3bec4bd`, retained for detailed method branches
 and historical provenance. Its historical test counts and source checks keep
 their original scope. For current fitted-wrapper bootstrap dispatch, installation

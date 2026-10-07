@@ -11,11 +11,11 @@ root <- normalizePath(if (length(args)) args[1L] else ".", mustWork = TRUE)
 installed <- length(args) >= 3L && nzchar(args[3L])
 if (installed) {
   lib <- normalizePath(args[3L], mustWork = TRUE)
-  ns <- loadNamespace("wdsmatch", lib.loc = lib)
+  ns <- loadNamespace("WeightedMatching", lib.loc = lib)
   stopifnot(identical(normalizePath(getNamespaceInfo(ns, "path")),
-    normalizePath(file.path(lib, "wdsmatch"))))
-  wm_bootstrap <- getExportedValue("wdsmatch", "wm_bootstrap")
-  wm_fitted_inference <- getExportedValue("wdsmatch", "wm_fitted_inference")
+    normalizePath(file.path(lib, "WeightedMatching"))))
+  wm_bootstrap <- getExportedValue("WeightedMatching", "wm_bootstrap")
+  wm_fitted_inference <- getExportedValue("WeightedMatching", "wm_fitted_inference")
   source_api <- new.env(parent = .GlobalEnv)
   for (f in list.files(file.path(root, "R"), full.names = TRUE)) source(f, local = source_api)
   stopifnot(identical(formals(wm_bootstrap), formals(source_api$wm_bootstrap)),

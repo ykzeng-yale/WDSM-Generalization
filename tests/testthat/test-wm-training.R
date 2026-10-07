@@ -131,5 +131,5 @@ test_that("training derivative columns and unequal sample row counts are validat
   expect_error(wm_training_adjust(fit, invalid), "unique")
   valid <- wm_training_adjust(fit, U, D, -D)
   expect_identical(valid$training_adjustment$parameter_names, colnames(U))
-  expect_true("wm_training_adjust" %in% getNamespaceExports("wdsmatch"))
+  expect_true("wm_training_adjust" %in% getNamespaceExports("WeightedMatching"))
 })

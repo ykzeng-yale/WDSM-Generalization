@@ -18,3 +18,14 @@ do not establish causal identification, geometric/root assumptions, asymptotic
 numerical availability or nominal coverage in a new population. Diagnostic and
 historical scripts are not required steps for ordinary package users. Current
 release checks are recorded in [software validation](../docs/software_validation.md).
+
+Current installed-package checks resolve `WeightedMatching`. The original
+WDSM parity scripts still source the predecessor `wdsmatchATE`/`wdsmatchATT`
+functions, preserving the comparator rather than substituting the new package.
+`check_fitted_wm_components.R` is an older reference check tied to the
+source-pinned `fitted_wm_components.R` helper and its historical `wdsmatch`
+namespace; run it only with that historical checkout/runtime. Current fitted
+inference is covered by the separate installed-package tests and saved-array
+checks listed above. Historical receipt fields named `wdsmatch_version` keep
+their output schema; the current AI06 reference check records the
+`WeightedMatching` version in that field.

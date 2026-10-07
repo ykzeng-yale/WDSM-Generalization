@@ -6,7 +6,9 @@ model, build a graph, generate data or draw bootstrap counts. PS matching
 and matching on any fixed number of supplied covariates use the same helper.
 The original corrected point, weights, donor fractions and graph are retained.
 
-Source the helper after loading `wdsmatch`:
+Source the helper after installing `WeightedMatching` and pass its namespace
+explicitly. This source-pinned helper retains its historical default namespace;
+the explicit argument selects the separate current WM package:
 
 ```r
 source("simulations/wm_saved_full_x_stack.R")
@@ -18,10 +20,11 @@ stack <- wm_saved_full_x_stack(
     mean0 = list(design = D0, coefficients = beta0),
     mean1 = list(design = D1, coefficients = beta1)),
   family = "PS",
+  wm = asNamespace("WeightedMatching"),
   ps = list(design = Dps, probability = recorded_probability,
             weighting = "probability"))
 
-inference <- do.call(wdsmatch::wm_fitted_inference,
+inference <- do.call(WeightedMatching::wm_fitted_inference,
                      stack$inference_arguments)
 ```
 

@@ -27,7 +27,7 @@
     source_files <- sort(list.files(file.path(root, "R"), "\\.R$", full.names = TRUE))
     if (!length(source_files)) stop("No package sources")
     for (file in source_files) source(file)
-  } else library(wdsmatch)
+  } else library(WeightedMatching)
   dir.create(dirname(output), recursive = TRUE, showWarnings = FALSE)
   records_per_rep <- if (cfg$branch == "split") 3L else 8L
   metadata <- list(schema_version = "supplement_v1", config = cfg, first = first, last = last,

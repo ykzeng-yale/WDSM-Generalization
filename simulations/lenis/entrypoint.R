@@ -25,7 +25,7 @@ lenis_export_output <- function(path, inputs) {
 lenis_export_load <- function(export_dir, mode = c("run", "generate", "report")) {
   mode <- match.arg(mode); export_dir <- lenis_export_directory(export_dir)
   packages <- switch(mode, run = c("digest", "jsonlite", "sampling", "survey", "MatchIt",
-    "data.table", "sandwich", "quickmatch", "wdsmatch"),
+    "data.table", "sandwich", "quickmatch", "WeightedMatching"),
     generate = c("digest", "jsonlite", "sampling", "data.table"), report = c("digest", "jsonlite"))
   for (package in packages) {
     if (!requireNamespace(package, quietly = TRUE)) stop("Missing dependency: ", package, call. = FALSE)
@@ -38,7 +38,7 @@ lenis_export_load <- function(export_dir, mode = c("run", "generate", "report"))
   if (mode != "report") suppressPackageStartupMessages({
     library(sampling); library(data.table)
   })
-  wm <- if (mode == "run") asNamespace("wdsmatch") else NULL
+  wm <- if (mode == "run") asNamespace("WeightedMatching") else NULL
   if (mode == "run") stopifnot(all(vapply(c("wm_match", "wm_wdsm_fit",
     ".wm_wdsm_fit_stack", ".wm_wdsm_prediction_stack", ".wm_wdsm_controls"),
     exists, logical(1), envir = wm, inherits = FALSE)))

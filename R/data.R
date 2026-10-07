@@ -29,10 +29,11 @@
 #' data(survey_obs)
 #' head(survey_obs)
 #'
-#' # Estimate PATE
-#' fit <- wdsmatchATE(Y = survey_obs$Y, X = survey_obs[, 3:8],
-#'                    Z = survey_obs$Z, weights = survey_obs$survey_weight,
-#'                    M = 3, varest = FALSE)
+#' # Estimate PATE using arm-specific double scores
+#' X <- survey_obs[, c("X1", "X2", "X3", "X4", "X5", "X6")]
+#' D <- model.matrix(~ . + X1:X2, data = X)
+#' fit <- wm_wdsm_fit(survey_obs$Y, survey_obs$Z, survey_obs$survey_weight,
+#'                    ps_design = D, pg0_design = D, pg1_design = D, M = 3)
 #' fit
 #'
 #' @source Simulated data; see \code{data-raw/make_survey_data.R}.

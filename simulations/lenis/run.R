@@ -12,7 +12,7 @@ lenis_run_preflight <- function(source_dir, population_dir, job_path, output, ex
 lenis_run_comparison <- function(source_dir, population_dir, job_path, output, export_dir) {
   checked <- lenis_run_preflight(source_dir, population_dir, job_path, output, export_dir)
   setup <- checked$setup; sources <- checked$sources; job <- checked$job
-  out <- checked$output; plan <- setup$plan; wm <- asNamespace("wdsmatch")
+  out <- checked$output; plan <- setup$plan; wm <- asNamespace("WeightedMatching")
   list2env(as.list(setup$functions), envir = environment())
   sha <- lenis_export_sha
   cache_files <- checked$cache$paths; cache_receipt <- checked$cache$receipt

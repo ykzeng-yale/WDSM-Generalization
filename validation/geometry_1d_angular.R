@@ -11,8 +11,8 @@ records <- list()
 for (M in 1:3) {
   seed <- 20260928L + M
   set.seed(seed)
-  numerical <- wdsmatch:::.wm_geometry_mc(M, 1L, as.integer(draws), 256L)
-  exact <- wdsmatch::wm_geometry(M, 1L)
+  numerical <- WeightedMatching:::.wm_geometry_mc(M, 1L, as.integer(draws), 256L)
+  exact <- WeightedMatching::wm_geometry(M, 1L)
   precision <- ifelse(numerical$nonzero == 0, "unresolved_zero_hits",
                       ifelse(numerical$beta_mcse == 0,
                              "unresolved_zero_empirical_variance", "monte_carlo_estimate"))

@@ -1,0 +1,15 @@
+test_that("general WM has an independent package and namespace identity", {
+  ns <- asNamespace("WeightedMatching")
+  description <- utils::packageDescription("WeightedMatching")
+  exports <- getNamespaceExports(ns)
+  expect_identical(description$Package, "WeightedMatching")
+  expect_length(exports, 25L)
+  expect_true(all(startsWith(exports, "wm_")))
+  expect_false(any(c("wdsmatchATE", "wdsmatchATT") %in% exports))
+  imports <- names(getNamespaceImports(ns))
+  expect_false("wdsmatch" %in% imports)
+  methods <- getNamespaceInfo(ns, "S3methods")
+  expect_false(any(methods[, 2L] == "wdsmatch"))
+  expect_true(all(c("wm_match", "wm_wdsm_fit", "wm_model_fit") %in%
+                    methods[, 2L]))
+})
