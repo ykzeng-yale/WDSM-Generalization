@@ -16,7 +16,7 @@ cluster/stratum inference are outside the current framework.
 
 ## Install
 
-This repository contains version 0.3.0 of `wdsmatch`. The GitHub source version
+This repository contains version 0.3.1 of `wdsmatch`. The GitHub source version
 is separate from the previously published CRAN version. Installing it
 updates an existing package of that name. R 3.6.0 or later is required; package
 dependencies and optional dependencies are listed in [DESCRIPTION](DESCRIPTION).
@@ -54,6 +54,7 @@ fit <- wm_fit(Y, Z, W, scores0 = X, M = 3,
               estimand = "PATE", regression = "polynomial", degree = 2)
 fit$estimate
 fit$se
+summary(fit)$donor_usage
 wm_bootstrap(fit, B = 999, seed = 17)$conf.int
 ```
 
@@ -68,7 +69,7 @@ tutorial, first install `knitr` and `rmarkdown`, make Pandoc available, then run
 
 ```sh
 R CMD build .
-R CMD INSTALL wdsmatch_0.3.0.tar.gz
+R CMD INSTALL wdsmatch_0.3.1.tar.gz
 ```
 
 After this built-archive installation, run
@@ -115,6 +116,12 @@ probabilities. Under an unbounded Gaussian propensity index, eventual numerical
 availability does not follow from exact-root asymptotic theory. Failed fits or
 requested replicates remain failures: probabilities are not clipped and failed
 draws are not silently replaced. Full details are in the guide and R help.
+
+For argument choices, defaults, result summaries and differences from Matching,
+MatchIt, dsmatch and the original WDSM API, see the
+[user-options guide](docs/user_options.md). `print(fit)` gives a compact result;
+`summary(fit)` returns retained statistics and donor-use counts without creating
+a new variance or interval.
 
 ## Reproduce the published synthetic results
 
@@ -167,7 +174,7 @@ Build and check the source package after installing its suggested dependencies:
 
 ```sh
 R CMD build .
-R CMD check --no-manual wdsmatch_0.3.0.tar.gz
+R CMD check --no-manual wdsmatch_0.3.1.tar.gz
 ```
 
 The executable HTML vignette requires Pandoc to build. The reference manual

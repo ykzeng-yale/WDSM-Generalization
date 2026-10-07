@@ -1,5 +1,8 @@
 # Documentation
 
+- [User options and predecessor interfaces](user_options.md): donor count,
+  distance/scaling, weights, targets, correction, ties and inference, including
+  differences from Matching, MatchIt, dsmatch and the original WDSM API.
 - [Getting started](../vignettes/weighted-matching.Rmd): executable package
   tutorial for supplied coordinates, fitted DSM, PATE/PATT and the two
   replication operators. Build/install the package archive with the vignette

@@ -1,7 +1,7 @@
 Package: wdsmatch
 Type: Package
 Title: Weighted Matching for Causal Inference
-Version: 0.3.0
+Version: 0.3.1
 Authors@R: c(
     person("Yukang", "Zeng", email = "ykzeng2019@gmail.com", role = c("aut", "cre")),
     person("Guangyu", "Tong", role = "aut"),

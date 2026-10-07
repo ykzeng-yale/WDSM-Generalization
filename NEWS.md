@@ -1,3 +1,16 @@
+# wdsmatch 0.3.1
+
+* Add compact print and structured summary methods for supplied-map fits and
+  fitted WDSM/model-list wrappers. Summaries retain existing estimates,
+  uncertainty and inference status, and expose donor-use counts without
+  introducing a variance formula or confidence interval.
+* Document user options against Matching, MatchIt, dsmatch and the original
+  wdsmatch interfaces, including different weight, tie and donor-count semantics
+  and options outside the fixed-count WM framework.
+* Add tests for S3 dispatch, distinct arm dimensions, unavailable uncertainty,
+  retained confidence levels and potential-mean/independent-block summaries.
+  Point estimation, matching, variance routines and frozen studies are unchanged.
+
 # wdsmatch 0.3.0
 
 * Accept retained `wm_wdsm_fit` and `wm_model_fit` results in `wm_bootstrap`.

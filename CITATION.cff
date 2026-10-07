@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "Please cite this software and the specific commit used in your analysis."
 type: software
 title: "wdsmatch: Weighted Matching for Causal Inference"
-version: 0.3.0
+version: 0.3.1
 authors:
   - family-names: Zeng
     given-names: Yukang

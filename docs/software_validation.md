@@ -1,14 +1,27 @@
 # Software validation
 
-Version 0.3.0 adds a tested public fitted-wrapper bootstrap handoff and repository
-publication documentation. It retains the original donor-normalized point
-estimator, analytic variance routines and frozen numerical study records.
+Version 0.3.1 adds compact WM print/summary methods, an explicit
+[user-options guide](user_options.md), and installed tests for the three scalar
+interfaces previously covered only by standalone validation scripts. Existing
+donor-normalized estimation, graph selection, analytic variance and replication
+routines are unchanged. The original synthetic scalar fixture is reused byte
+for byte; publication simulations and participant analyses were not rerun.
 
 The final source-bound package build/check receipt is recorded in
 `software_validation.json`. Unit tests, independent reference comparisons and
 public saved-result replay are separate checks. Linux/macOS/Windows CI is
 defined in `.github/workflows/R-CMD-check.yaml`; consult the observed Actions
 status rather than treating workflow configuration as a completed test.
+
+The current local macOS/R 4.4.2 source archive passes `R CMD check --no-manual`
+with zero errors, warnings and notes: 5,165 passed expectations, no failures,
+warnings or skips. The 119 package-input identities and source/archive binding
+are recorded in the receipt. Help usage/defaults, examples and the executed,
+installed and rebuilt HTML vignette passed. The additional 141 expectations
+cover retained summary statistics/intervals and scalar option/input contracts.
+All 27 exports have installed help and test-call bindings; this is not exhaustive
+coverage of every option combination. The earlier 0.3.0 receipt remains bound to
+its own tag and source; its reference comparisons/replay were not newly rerun.
 
 Independent reference checks cover PATE/PATT, d=1/2/3/6, M=1/3/7, nonconstant and
 unit weights, distinct/unequal arm maps, direct weighted imputation and full

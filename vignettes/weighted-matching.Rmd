@@ -49,6 +49,7 @@ fixed_ate <- wm_fit(Y, Z, W, scores0 = X, M = 3,
 fixed_att <- wm_fit(Y, Z, W, scores0 = X, M = 3,
                     estimand = "PATT", regression = "polynomial", degree = 2)
 c(PATE = fixed_ate$estimate, PATT = fixed_att$estimate)
+summary(fixed_ate)$donor_usage
 ```
 
 `wm_fit()` uses a complete weighted polynomial or the specified tensor spline

@@ -9,12 +9,22 @@ Install the suggested dependencies in DESCRIPTION, then run:
 
 ```sh
 R CMD build .
-R CMD check --no-manual wdsmatch_0.3.0.tar.gz
+R CMD check --no-manual wdsmatch_0.3.1.tar.gz
 ```
 
 Building the executable HTML vignette requires Pandoc. Checking the PDF reference
 manual separately requires TeX. The package tests use synthetic fixtures; source
 studies, result replay and external-data workflows have separate dependencies.
+
+The installed reference in `man/*.Rd` and `NAMESPACE` is maintained alongside
+the R source. Source roxygen comments are not complete enough to regenerate all
+manual pages and exports: do not run an unreviewed `roxygen2::roxygenise()` over
+this checkout. For an API change, update its Rd usage, argument/default and return
+contracts, namespace/S3 registration, tutorial and tests together. `R CMD check`
+checks current usage/documentation consistency; existing help does not establish
+exhaustive behavioral coverage. The small scalar fixture under
+`tests/testthat/fixtures/` is an exact copy of the documented synthetic validation
+fixture, so those interface checks also run after source-package installation.
 
 For estimator/inference changes, add a check against independently written
 equations or a properly aligned comparator. Retain the complete nuisance
