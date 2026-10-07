@@ -172,7 +172,7 @@ R CMD check --no-manual wdsmatch_0.3.0.tar.gz
 
 The executable HTML vignette requires Pandoc to build. The reference manual
 requires a TeX toolchain when checked separately.
-[Validation index](validation/README.md) cover estimator identities, aligned unit-weight
+[Validation index](validation/README.md) covers estimator identities, aligned unit-weight
 reductions, fitted covariance, count-refit arithmetic and failure handling.
 Individual script dependencies and source/installed-package scopes are stated
 in their headers. [SOURCE_PROVENANCE.json](SOURCE_PROVENANCE.json) records the

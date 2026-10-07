@@ -43,8 +43,10 @@ original_wdsm_load <- function(directory, upstream) {
   sys.source(file.path(upstream, "R", "comparators_final.R"), original)
   original$comparator_final_check_dependencies()
   wm <- asNamespace("wdsmatch")
-  if (!identical(as.character(utils::packageVersion("wdsmatch")), "0.3.0.9000"))
-    stop("Install the development wdsmatch package from this source checkout.")
+  expected_version <- unname(read.dcf(
+    file.path(directory, "..", "..", "DESCRIPTION"), fields = "Version")[1L, 1L])
+  if (!identical(as.character(utils::packageVersion("wdsmatch")), expected_version))
+    stop("Install wdsmatch version ", expected_version, " from this source checkout.")
   required <- c("wm_match", ".wm_wdsm_controls", ".wm_wdsm_fit_stack",
                 ".wm_wdsm_prediction_stack", ".wm_wdsm_nuisance_stack",
                 ".wm_wdsm_fitted_pipeline")

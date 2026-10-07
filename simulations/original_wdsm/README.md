@@ -22,8 +22,8 @@ Install the package from this checkout into a separate existing R library.
 Additional simulation dependencies are digest, jsonlite, sampling, Matching,
 boot, MatchIt, optmatch, marginaleffects and sandwich. The original runtime's
 reference versions are in `dependency_versions.json`.
-The namespace guards also reject the earlier development package with missing
-required interfaces, even if it uses the same development version number.
+The namespace guard requires the package version declared in this checkout
+and all required study interfaces. A matching version alone is insufficient.
 Supply the source checkout of [SW_DSM](https://github.com/ykzeng-yale/SW_DSM/tree/e96dcc82baa9f8f8e50c2c5d56dadaa756cf6731).
 `upstream_source_pins.json` checks the 14 required statistical source files;
 that dependency tree is not redistributed here. Its use follows its upstream
